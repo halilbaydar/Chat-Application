@@ -1,0 +1,50 @@
+server:
+  port: 80
+
+redis:
+  redisHost: localhost
+  redisPort: 6379
+
+amqp:
+  queue: queue
+  exchange: messageExchange
+  routingKey: messageRoutingKey
+
+spring:
+  data:
+    mongodb:
+      database: chatdb
+      username: user
+      password: password
+      port: 27017
+      host: localhost
+    #rabbitmq:
+    # host: localhost
+    # port: 5672
+    # username: guest
+    # password: guest
+  session:
+    store-type: redis
+    redis:
+      flush-mode: on_save
+      namespace: spring:session
+
+jwt:
+  secretKey: 132135138641684365168954841635138413581381895469846841351684618
+  tokenPrefix: 'Bearer '
+  tokenExpirationForVerification: 10
+  tokenExpirationForLogin: 20
+
+cors:
+  origins: /**
+  allowedHeaders:
+    Content-Type, content-type, x-requested-with,
+    Access-Control-Allow-Origin,
+    Access-Control-Allow-Credentials,
+    Access-Control-Allow-Headers,
+    x-auth-token, x-app-id, Origin, Accept,
+    X-Requested-With, Access-Control-Request-Method,
+    Access-Control-Request-Headers, Authorization,
+    Set-Cookie, Cookie
+  exposedHeaders:
+    Authorization, set-cookie
