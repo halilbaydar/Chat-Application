@@ -67,11 +67,15 @@ public class CustomChannelInterceptor implements ChannelInterceptor {
                     simpleGrantedAuthorities
             );
             accessor.setUser(authentication);
-            sessionService.connectSession(sessionId, authentication);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            sessionService.connectSession(authentication.getName(), authentication);
         }
         if (StompCommand.DISCONNECT.equals(accessor.getCommand())) {
+            /*Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            sessionService.disConnectSession(authentication.getName());
             SecurityContextHolder.clearContext();
-            sessionService.disConnectSession(sessionId);
+
+             */
         }
         if (StompCommand.SUBSCRIBE.equals(accessor.getCommand())) {
             List<String> authorization = accessor.getNativeHeader("Authorization");
