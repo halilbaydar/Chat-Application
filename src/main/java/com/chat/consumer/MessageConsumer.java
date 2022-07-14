@@ -53,8 +53,8 @@ public class MessageConsumer implements Consumer {
                 MessageRequest messageRequest = objectMapper.convertValue(broadCastNotification.getPayload(), MessageRequest.class);
                 if (sessionService.isUserConnectedGlobally(messageRequest.getReceiverName())) {
                     if (chatService.isUserConnected(messageRequest.getReceiverName())) {
-                        runAsync(() -> runAsync(() ->
-                                simpMessagingTemplate.convertAndSend(CHAT_DESTINATION_PREFIX + messageRequest.getChatId(), messageRequest.getMessage())));
+                        runAsync(() ->
+                                simpMessagingTemplate.convertAndSend(CHAT_DESTINATION_PREFIX + messageRequest.getChatId(), messageRequest.getMessage()));
                         runAsync(() -> chatService.saveMessageOperations(messageRequest));
                     }
                 }
