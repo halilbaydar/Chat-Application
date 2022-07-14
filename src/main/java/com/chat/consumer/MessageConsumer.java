@@ -30,9 +30,13 @@ public class MessageConsumer implements Consumer {
         switch (broadCastNotification.getNotificationType()) {
             case SEEN: {
                 SeenRequest seenRequest = objectMapper.convertValue(broadCastNotification.getPayload(), SeenRequest.class);
-                runAsync(() -> simpMessagingTemplate.convertAndSend(String.format("%s%s/%s", MESSAGE_SEEN_DESTINATION_PREFIX,
-                        seenRequest.getChatId(), seenRequest.getMessageId()), true));
-                runAsync(() -> chatService.seenMessageOperations(seenRequest));
+                checkIsUserConnected(seenRequest, connected -> {
+                    if (connected) {
+                        runAsync(() -> simpMessagingTemplate.convertAndSend(String.format("%s%s/%s", MESSAGE_SEEN_DESTINATION_PREFIX,
+                                seenRequest.getChatId(), seenRequest.getMessageId()), true));
+                        runAsync(() -> chatService.seenMessageOperations(seenRequest));
+                    }
+                });
             }
             break;
             case ONLINE: {
@@ -42,35 +46,39 @@ public class MessageConsumer implements Consumer {
             break;
             case TYPING: {
                 TypingRequest typingRequest = objectMapper.convertValue(broadCastNotification.getPayload(), TypingRequest.class);
-                if (sessionService.isUserConnectedGlobally(typingRequest.getReceiverName())) {
-                    if (chatService.isUserConnected(typingRequest.getReceiverName())) {
+                checkIsUserConnected(typingRequest, connected -> {
+                    if (connected) {
                         simpMessagingTemplate.convertAndSend(String.format("%s%s", CHAT_TYPING_DESTINATION_PREFIX, typingRequest.getChatId()), true);
                     }
-                }
+                });
             }
             break;
             case MESSAGE: {
                 MessageRequest messageRequest = objectMapper.convertValue(broadCastNotification.getPayload(), MessageRequest.class);
-                if (sessionService.isUserConnectedGlobally(messageRequest.getReceiverName())) {
-                    if (chatService.isUserConnected(messageRequest.getReceiverName())) {
+                checkIsUserConnected(messageRequest, connected -> {
+                    if (connected) {
                         runAsync(() ->
                                 simpMessagingTemplate.convertAndSend(CHAT_DESTINATION_PREFIX + messageRequest.getChatId(), messageRequest.getMessage()));
                         runAsync(() -> chatService.saveMessageOperations(messageRequest));
                     }
-                }
+                });
             }
             break;
             case DELIVER: {
                 DeliverRequest deliverRequest = objectMapper.convertValue(broadCastNotification.getPayload(), DeliverRequest.class);
-                if (sessionService.isUserConnectedGlobally(deliverRequest.getReceiverName())) {
-                    if (chatService.isUserConnected(deliverRequest.getReceiverName())) {
+                checkIsUserConnected(deliverRequest, connected -> {
+                    if (connected) {
                         runAsync(() -> simpMessagingTemplate.convertAndSend(String.format("%s%s/%S", MESSAGE_DESTINATION_PREFIX,
                                 deliverRequest.getChatId(), deliverRequest.getMessageId()), MessageStatus.DELIVERED.name()));
                         runAsync(() -> chatService.deliverMessageOperations(deliverRequest));
                     }
-                }
+                });
             }
             break;
         }
+    }
+
+    private <T extends ParentMessageRequest> void checkIsUserConnected(T t, java.util.function.Consumer<Boolean> consumer) {
+        consumer.accept(sessionService.isUserConnectedGlobally(t.getReceiverName()) && chatService.isUserConnected(t.getReceiverName()));
     }
 }
