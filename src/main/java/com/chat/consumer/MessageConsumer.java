@@ -37,7 +37,7 @@ public class MessageConsumer implements Consumer {
             break;
             case ONLINE: {
                 OnlineRequest onlineRequest = objectMapper.convertValue(broadCastNotification.getPayload(), OnlineRequest.class);
-                //TODO implement there
+                //TODO implement here
             }
             break;
             case TYPING: {
