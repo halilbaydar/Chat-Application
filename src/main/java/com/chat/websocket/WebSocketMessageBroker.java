@@ -60,7 +60,7 @@ public class WebSocketMessageBroker implements WebSocketMessageBrokerConfigurer 
         registry
                 .addEndpoint(WS)
                 .addInterceptors(handshakeInterceptor())
-                .setAllowedOrigins("http://localhost:3000")
+                .setAllowedOrigins("http://localhost:3000", "http://localhost:3001")
                 .withSockJS();
     }
 

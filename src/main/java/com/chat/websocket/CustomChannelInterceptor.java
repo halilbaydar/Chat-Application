@@ -74,7 +74,6 @@ public class CustomChannelInterceptor implements ChannelInterceptor {
             /*Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             sessionService.disConnectSession(authentication.getName());
             SecurityContextHolder.clearContext();
-
              */
         }
         if (StompCommand.SUBSCRIBE.equals(accessor.getCommand())) {

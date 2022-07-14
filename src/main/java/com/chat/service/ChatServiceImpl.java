@@ -11,31 +11,21 @@ import com.chat.model.request.*;
 import com.chat.property.RabbitMQProperties;
 import com.chat.redis.RedisStorageManager;
 import lombok.AllArgsConstructor;
-import org.springframework.amqp.core.MessageProperties;
-import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.amqp.support.converter.MessageConverter;
-import org.springframework.amqp.support.converter.MessagingMessageConverter;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.converter.SimpleMessageConverter;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.stereotype.Service;
 
+import static com.chat.constant.PrefixConstant.*;
 import static java.util.concurrent.CompletableFuture.runAsync;
 
 @Service
 @AllArgsConstructor
 public class ChatServiceImpl implements ChatService {
-    private static final String CHAT_DESTINATION_PREFIX = "/user/chat/";
-    private static final String MESSAGE_SEEN_DESTINATION_PREFIX = "/user/chat/seen/";
-    private static final String CHAT_TYPING_DESTINATION_PREFIX = "/user/chat/typing/";
-    private static final String CHAT_ONLINE_DESTINATION_PREFIX = "/user/chat/online/";
-    private static final String MESSAGE_DESTINATION_PREFIX = "/user/chat/message/";
 
     private final SimpUserRegistry simpUserRegistry;
     private final RedisStorageManager redisStorageManager;
@@ -67,7 +57,8 @@ public class ChatServiceImpl implements ChatService {
         }
     }
 
-    private void saveMessageOperations(MessageRequest messageRequest) {
+    @Override
+    public void saveMessageOperations(MessageRequest messageRequest) {
         MessageEntity message = MessageEntity
                 .builder()
                 .ChatId(messageRequest.getChatId())
@@ -99,7 +90,8 @@ public class ChatServiceImpl implements ChatService {
         }
     }
 
-    private void seenMessageOperations(SeenRequest seenRequest) {
+    @Override
+    public void seenMessageOperations(SeenRequest seenRequest) {
         Query validationQuery = new Query();
         validationQuery.addCriteria(Criteria.where("id").is(seenRequest.getChatId()));
         Update update = new Update()
@@ -151,13 +143,18 @@ public class ChatServiceImpl implements ChatService {
         } catch (Exception ignore) {
 
         } finally {
-            Query validationQuery = new Query();
-            validationQuery.addCriteria(new Criteria().andOperator(Criteria.where("id").is(deliverRequest.getChatId())));
-            Update update = new Update()
-                    .filterArray(Criteria.where("x.recipientId").is(deliverRequest.getRecipientId())
-                            .and("x.messageStatus").is(MessageStatus.SENT.toString()))
-                    .set("messages.$[x].messageStatus", MessageStatus.DELIVERED.toString());
-            mongoTemplate.updateFirst(validationQuery, update, ChatEntity.class);
+            deliverMessageOperations(deliverRequest);
         }
+    }
+
+    @Override
+    public void deliverMessageOperations(DeliverRequest deliverRequest) {
+        Query validationQuery = new Query();
+        validationQuery.addCriteria(new Criteria().andOperator(Criteria.where("id").is(deliverRequest.getChatId())));
+        Update update = new Update()
+                .filterArray(Criteria.where("x.recipientId").is(deliverRequest.getRecipientId())
+                        .and("x.messageStatus").is(MessageStatus.SENT.toString()))
+                .set("messages.$[x].messageStatus", MessageStatus.DELIVERED.toString());
+        mongoTemplate.updateFirst(validationQuery, update, ChatEntity.class);
     }
 }

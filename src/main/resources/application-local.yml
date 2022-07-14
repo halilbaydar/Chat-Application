@@ -30,7 +30,7 @@ spring:
       namespace: spring:session
 
 jwt:
-  secretKey: 132135138641684365168954841635138413581381895469846841351684618
+  secretKey: 1231231231231231231231231231231231231231231231231231231231231231
   tokenPrefix: 'Bearer '
   tokenExpirationForVerification: 10
   tokenExpirationForLogin: 20
