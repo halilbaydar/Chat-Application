@@ -4,6 +4,8 @@ import com.chat.interfaces.service.JwtService;
 import com.chat.interfaces.service.SessionService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHeaders;
@@ -16,6 +18,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 
 import java.security.Principal;
 import java.util.List;
@@ -23,7 +26,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-
+@Component
+@Order(Ordered.HIGHEST_PRECEDENCE + 99)
 @RequiredArgsConstructor
 public class CustomChannelInterceptor implements ChannelInterceptor {
 

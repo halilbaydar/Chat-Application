@@ -12,13 +12,11 @@ services:
   redis:
     container_name: redis
     image: redis:alpine
-    restart: always
     ports:
       - '6379:6379'
   mongo:
     container_name: mongo
     image: mongo
-    restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: user
       MONGO_INITDB_ROOT_PASSWORD: password

@@ -24,10 +24,9 @@ import org.springframework.web.socket.config.annotation.WebSocketTransportRegist
 import java.util.List;
 
 @Configuration
-@EnableAutoConfiguration
 @EnableWebSocketMessageBroker
-@RequiredArgsConstructor
 @Order(Ordered.HIGHEST_PRECEDENCE + 99)
+@RequiredArgsConstructor
 public class WebSocketMessageBroker implements WebSocketMessageBrokerConfigurer {
 
     private static final String WS = "/ws";
@@ -36,7 +35,6 @@ public class WebSocketMessageBroker implements WebSocketMessageBrokerConfigurer 
 
     private final JwtService jwtService;
     private final SessionService sessionService;
-    private final RabbitMQProperties rabbitMQProperties;
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
@@ -86,5 +84,11 @@ public class WebSocketMessageBroker implements WebSocketMessageBrokerConfigurer 
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
         registration.interceptors(channelInterceptor());
+    }
+
+    @Override
+    public void configureClientOutboundChannel(ChannelRegistration registration) {
+        registration.interceptors(channelInterceptor());
+        WebSocketMessageBrokerConfigurer.super.configureClientOutboundChannel(registration);
     }
 }
