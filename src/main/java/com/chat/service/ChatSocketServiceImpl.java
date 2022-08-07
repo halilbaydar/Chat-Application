@@ -80,7 +80,7 @@ public class ChatSocketServiceImpl implements ChatSocketService {
         if (isUserConnected(seenRequest.getReceiverName())) {
             runAsync(() -> simpMessagingTemplate.convertAndSend(String.format("%s%s/%s", MESSAGE_SEEN_DESTINATION_PREFIX,
                     seenRequest.getChatId(), seenRequest.getMessageId()), true));
-        } else if (redisStorageManager.redisTemplate.hasKey(seenRequest.getReceiverName())) {
+        } else if (Boolean.TRUE.equals(redisStorageManager.redisTemplate.hasKey(seenRequest.getReceiverName()))) {
             BroadCastNotification<SeenRequest> broadCastNotification = new BroadCastNotification<>();
             broadCastNotification.setNotificationType(NotificationType.SEEN);
             broadCastNotification.setPayload(seenRequest);
@@ -106,7 +106,7 @@ public class ChatSocketServiceImpl implements ChatSocketService {
         if (isUserConnected(typingRequest.getReceiverName())) {
             simpMessagingTemplate.convertAndSend(String.format("%s%s", CHAT_TYPING_DESTINATION_PREFIX,
                     typingRequest.getChatId()), true);
-        } else if (redisStorageManager.redisTemplate.hasKey(typingRequest.getReceiverName())) {
+        } else if (Boolean.TRUE.equals(redisStorageManager.redisTemplate.hasKey(typingRequest.getReceiverName()))) {
             BroadCastNotification<TypingRequest> broadCastNotification = new BroadCastNotification<>();
             broadCastNotification.setNotificationType(NotificationType.TYPING);
             broadCastNotification.setPayload(typingRequest);
