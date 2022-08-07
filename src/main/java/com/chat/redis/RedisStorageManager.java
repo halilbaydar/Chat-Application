@@ -3,7 +3,7 @@ package com.chat.redis;
 import com.chat.property.RedisProperties;
 import io.lettuce.core.ClientOptions;
 import io.lettuce.core.SocketOptions;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,7 +28,10 @@ import java.util.Objects;
 @Component
 @Configuration
 @EnableRedisHttpSession
+@RequiredArgsConstructor
 public class RedisStorageManager {
+
+    private final RedisProperties redisProperties;
 
     public HashOperations map;
     public ListOperations list;
@@ -36,10 +39,9 @@ public class RedisStorageManager {
     public ValueOperations value;
     public RedisConnection conn;
     public RedisTemplate<Object, Object> redisTemplate;
+
     @Value("${spring.profiles.active}")
     private String profile;
-    @Autowired
-    private RedisProperties redisProperties;
 
     @Bean
     public LettuceConnectionFactory redisConnectionFactory() {
