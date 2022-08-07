@@ -1,6 +1,6 @@
 package com.chat.interfaces.controller;
 
-import com.chat.interfaces.service.ChatService;
+import com.chat.interfaces.service.ChatSocketService;
 import com.chat.model.request.*;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -8,7 +8,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 
 import javax.validation.Valid;
 
-public interface ChatController extends ParentController<ChatService> {
+public interface ChatSocketController extends ParentController<ChatSocketService> {
     @MessageMapping("/chat/message/send")
     void sendMessage(@Valid @Payload MessageRequest messageRequest);
 

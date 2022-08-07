@@ -2,7 +2,7 @@ package com.chat.consumer;
 
 import com.chat.constant.MessageStatus;
 import com.chat.interfaces.common.Consumer;
-import com.chat.interfaces.service.ChatService;
+import com.chat.interfaces.service.ChatSocketService;
 import com.chat.interfaces.service.SessionService;
 import com.chat.model.other.BroadCastNotification;
 import com.chat.model.request.*;
@@ -22,7 +22,7 @@ public class MessageConsumer implements Consumer {
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final ObjectMapper objectMapper;
     private final SessionService sessionService;
-    private final ChatService chatService;
+    private final ChatSocketService chatSocketService;
 
     @Override
     @RabbitListener(queues = "${amqp.queue}")
@@ -34,7 +34,7 @@ public class MessageConsumer implements Consumer {
                     if (connected) {
                         runAsync(() -> simpMessagingTemplate.convertAndSend(String.format("%s%s/%s", MESSAGE_SEEN_DESTINATION_PREFIX,
                                 seenRequest.getChatId(), seenRequest.getMessageId()), true));
-                        runAsync(() -> chatService.seenMessageOperations(seenRequest));
+                        runAsync(() -> chatSocketService.seenMessageOperations(seenRequest));
                     }
                 });
             }
@@ -59,7 +59,7 @@ public class MessageConsumer implements Consumer {
                     if (connected) {
                         runAsync(() ->
                                 simpMessagingTemplate.convertAndSend(CHAT_DESTINATION_PREFIX + messageRequest.getChatId(), messageRequest.getMessage()));
-                        runAsync(() -> chatService.saveMessageOperations(messageRequest));
+                        runAsync(() -> chatSocketService.saveMessageOperations(messageRequest));
                     }
                 });
             }
@@ -70,7 +70,7 @@ public class MessageConsumer implements Consumer {
                     if (connected) {
                         runAsync(() -> simpMessagingTemplate.convertAndSend(String.format("%s%s/%S", MESSAGE_DESTINATION_PREFIX,
                                 deliverRequest.getChatId(), deliverRequest.getMessageId()), MessageStatus.DELIVERED.name()));
-                        runAsync(() -> chatService.deliverMessageOperations(deliverRequest));
+                        runAsync(() -> chatSocketService.deliverMessageOperations(deliverRequest));
                     }
                 });
             }
@@ -79,6 +79,6 @@ public class MessageConsumer implements Consumer {
     }
 
     private <T extends ParentMessageRequest> void checkIsUserConnected(T t, java.util.function.Consumer<Boolean> consumer) {
-        consumer.accept(sessionService.isUserConnectedGlobally(t.getReceiverName()) && chatService.isUserConnected(t.getReceiverName()));
+        consumer.accept(sessionService.isUserConnectedGlobally(t.getReceiverName()) && chatSocketService.isUserConnected(t.getReceiverName()));
     }
 }

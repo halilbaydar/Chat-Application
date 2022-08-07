@@ -1,7 +1,7 @@
 package com.chat.controller;
 
-import com.chat.interfaces.controller.ChatController;
-import com.chat.interfaces.service.ChatService;
+import com.chat.interfaces.controller.ChatSocketController;
+import com.chat.interfaces.service.ChatSocketService;
 import com.chat.model.request.*;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.LoggerFactory;
@@ -9,12 +9,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-public class ChatControllerImpl implements ChatController {
-    private final ChatService chatService;
+public class ChatSocketControllerImpl implements ChatSocketController {
+    private final ChatSocketService chatSocketService;
 
     @Override
-    public ChatService getService() {
-        return chatService;
+    public ChatSocketService getService() {
+        return chatSocketService;
     }
 
     @Override

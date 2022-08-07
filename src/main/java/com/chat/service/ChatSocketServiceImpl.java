@@ -2,7 +2,7 @@ package com.chat.service;
 
 import com.chat.constant.MessageStatus;
 import com.chat.constant.NotificationType;
-import com.chat.interfaces.service.ChatService;
+import com.chat.interfaces.service.ChatSocketService;
 import com.chat.interfaces.service.SessionService;
 import com.chat.model.entity.ChatEntity;
 import com.chat.model.entity.MessageEntity;
@@ -25,7 +25,7 @@ import static java.util.concurrent.CompletableFuture.runAsync;
 
 @Service
 @AllArgsConstructor
-public class ChatServiceImpl implements ChatService {
+public class ChatSocketServiceImpl implements ChatSocketService {
 
     private final SimpUserRegistry simpUserRegistry;
     private final RedisStorageManager redisStorageManager;
@@ -47,7 +47,7 @@ public class ChatServiceImpl implements ChatService {
         if (isUserConnected(messageRequest.getReceiverName())) {
             runAsync(() -> simpMessagingTemplate.convertAndSend(CHAT_DESTINATION_PREFIX + messageRequest.getChatId(),
                     messageRequest.getMessage()));
-        } else if (redisStorageManager.redisTemplate.hasKey(messageRequest.getReceiverName())) {
+        } else if (Boolean.TRUE.equals(redisStorageManager.redisTemplate.hasKey(messageRequest.getReceiverName()))) {
             BroadCastNotification<MessageRequest> broadCastNotification = new BroadCastNotification<>();
             broadCastNotification.setNotificationType(NotificationType.MESSAGE);
             broadCastNotification.setPayload(messageRequest);

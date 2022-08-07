@@ -2,7 +2,7 @@ package com.chat.interfaces.service;
 
 import com.chat.model.request.*;
 
-public interface ChatService {
+public interface ChatSocketService {
     boolean isUserConnected(String name);
 
     void sendMessage(MessageRequest messageRequest);
