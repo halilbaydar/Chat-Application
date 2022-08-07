@@ -84,7 +84,8 @@ public class ChatSocketServiceImpl implements ChatSocketService {
             BroadCastNotification<SeenRequest> broadCastNotification = new BroadCastNotification<>();
             broadCastNotification.setNotificationType(NotificationType.SEEN);
             broadCastNotification.setPayload(seenRequest);
-            runAsync(() -> rabbitTemplate.convertAndSend(rabbitProperties.getExchange(), rabbitProperties.getRoutingKey(), broadCastNotification));
+            runAsync(() -> rabbitTemplate.convertAndSend(rabbitProperties.getExchange(),
+                    rabbitProperties.getRoutingKey(), broadCastNotification));
         } else {
             //TODO pass
         }
@@ -110,7 +111,8 @@ public class ChatSocketServiceImpl implements ChatSocketService {
             BroadCastNotification<TypingRequest> broadCastNotification = new BroadCastNotification<>();
             broadCastNotification.setNotificationType(NotificationType.TYPING);
             broadCastNotification.setPayload(typingRequest);
-            rabbitTemplate.convertAndSend(rabbitProperties.getExchange(), rabbitProperties.getRoutingKey(), broadCastNotification);
+            rabbitTemplate.convertAndSend(rabbitProperties.getExchange(),
+                    rabbitProperties.getRoutingKey(), broadCastNotification);
         } else {
             //TODO pass
         }
