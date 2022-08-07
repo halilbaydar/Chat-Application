@@ -26,7 +26,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JwtConfig jwtConfig;
     private final JwtService jwtService;
-    private final SessionService sessionService;
     private final FindByIndexNameSessionRepository<? extends Session> sessionRepository;
 
     @Bean
@@ -41,10 +40,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()// TODO: Enabeble this in production
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 .and()
-                //.addFilterBefore(new JwtTokenVerifier(jwtConfig, jwtService), BasicAuthenticationFilter.class)
+                .addFilterBefore(new JwtTokenVerifier(jwtConfig, jwtService), BasicAuthenticationFilter.class)
                 .authorizeRequests()
-                .antMatchers("/home/**", "/swagger-ui/**").permitAll()
-                .antMatchers("/user/**", "/ws/**", "/app/**").hasAnyRole(Role.USER.name())
+                .antMatchers("/home/**", "/swagger-ui/**", "/ws/**", "/app/**").permitAll()
+                .antMatchers("/user/**").hasAnyRole(Role.USER.name())
         ;
     }
 
@@ -55,6 +54,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/home/**");
+        web.ignoring().antMatchers("/home/**", "/ws/**", "/app/**");
     }
 }
