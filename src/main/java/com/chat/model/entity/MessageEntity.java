@@ -8,27 +8,29 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 @Getter
 @Setter
 @Builder
-public class MessageEntity {
-    @NotBlank
+public class MessageEntity implements Serializable {
     @Field
+    @NotBlank
     private String ChatId;
 
-    @NotBlank
     @Field
+    @NotBlank
     private String senderId;
 
-    @NotBlank
     @Field
+    @NotBlank
     private String recipientId;
 
     @Field
+    @NotBlank
     private String message;
 
-    @NotNull
     @Field
+    @NotNull
     private MessageStatus messageStatus;
 }

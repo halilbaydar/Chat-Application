@@ -1,7 +1,8 @@
-package com.chat.mongo;
+package com.chat.config;
 
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 import lombok.RequiredArgsConstructor;
 import org.bson.codecs.configuration.CodecRegistry;
@@ -18,15 +19,25 @@ import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 @Component
 @RequiredArgsConstructor
 public class MongoDatabaseConfig {
-    private final MongoClient mongoClient;
-
+    private MongoClient mongoClient;
     private MongoDatabase database;
 
     @Value("${spring.data.mongodb.database}")
     private String databaseName;
 
+    @Value("${spring.data.mongodb.uri}")
+    private String uri;
+
     @Bean
-    private CodecRegistry pojoCodecRegistry() {
+    public MongoClient mongoClient() {
+        if (mongoClient == null) {
+            mongoClient = MongoClients.create(uri);
+        }
+        return mongoClient;
+    }
+
+    @Bean
+    public CodecRegistry pojoCodecRegistry() {
         return fromRegistries(
                 MongoClientSettings.getDefaultCodecRegistry(),
                 fromProviders(

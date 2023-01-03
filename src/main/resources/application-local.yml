@@ -18,6 +18,7 @@ spring:
       password: password
       port: 27017
       host: localhost
+      uri: mongodb://user:password@localhost:27017
     #rabbitmq:
     # host: localhost
     # port: 5672

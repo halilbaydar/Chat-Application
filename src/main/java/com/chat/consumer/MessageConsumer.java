@@ -26,7 +26,7 @@ public class MessageConsumer implements Consumer {
 
     @Override
     @RabbitListener(queues = "${amqp.queue}")
-    public void consumeMessage(BroadCastNotification broadCastNotification) {
+    public <T> void consumeMessage(BroadCastNotification<T> broadCastNotification) {
         switch (broadCastNotification.getNotificationType()) {
             case SEEN: {
                 SeenRequest seenRequest = objectMapper.convertValue(broadCastNotification.getPayload(), SeenRequest.class);

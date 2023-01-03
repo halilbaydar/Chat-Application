@@ -19,5 +19,12 @@ public class ChatEntity extends ParentEntity {
     private Stack<MessageEntity> messages = new Stack<>();
 
     @Indexed
-    private Set<String> users = new HashSet<>(2);
+    private Set<String> users = new HashSet<>();
+
+    @Field
+    private ChatType type;
+
+    public enum ChatType {
+        SINGLE, GROUP
+    }
 }

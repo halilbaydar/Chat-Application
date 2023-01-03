@@ -36,6 +36,14 @@ public class CustomChannelInterceptor implements ChannelInterceptor {
 
     @Override
     public void afterReceiveCompletion(Message<?> message, MessageChannel channel, Exception ex) {
+        StompHeaderAccessor accessor =
+                MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+        if (accessor == null || accessor.getCommand() == null)
+            return;
+
+        MessageHeaders headers = message.getHeaders();
+        String sessionId = SimpMessageHeaderAccessor.getSessionId(headers);
+
 
     }
 
@@ -89,6 +97,9 @@ public class CustomChannelInterceptor implements ChannelInterceptor {
             sessionService.isSubscribeValid(username, senderId);
             Principal simpUser = SimpMessageHeaderAccessor.getUser(headers);
             sessionService.subscribeSession(message, sessionId, simpUser);
+        }
+        if (StompCommand.RECEIPT.equals(accessor.getCommand())) {
+
         }
         System.gc();
         System.runFinalization();

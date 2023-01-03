@@ -39,7 +39,6 @@ public class ChatServiceImpl implements ChatService {
 
         int skip = 0;
         if (pageNumber == totalPages) {
-            skip = 0;
             pageSize = mod;
             if (skip == pageSize)
                 pageSize += 1;
