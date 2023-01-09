@@ -53,7 +53,7 @@ public class ChatServiceImpl implements ChatService {
     public List<?> getChatsByPagination(PageNumberRequest pageNumberRequest) {
         UserEntity activeUser = getActiveUser();
         List<?> response = mongoDatabase.getCollection(CHATS, ChatEntity.class).aggregate(List.of(
-                new Document("$match", new Document("users", new Document("$in", new String[]{activeUser.getUsername()}))),
+                new Document("$match", new Document("users", new Document("$all", List.of(activeUser.getUsername())))),
                 new Document("$addFields",
                         new Document("id",
                                 new Document("$toString", "$_id")
@@ -61,10 +61,12 @@ public class ChatServiceImpl implements ChatService {
                 ),
                 new Document("$skip", PAGE_SIZE * pageNumberRequest.getPageNumber()),
                 new Document("$limit", PAGE_SIZE),
-                new Document("$project", new Document("users", 1)
-                        .append("_id", 0)
-                        .append("id", 1)
-                        .append("messages", 0))
+                new Document("$project",
+                        new Document("users", 1)
+                                .append("id", 1)
+                                .append("type", 1)
+                                .append("createdDate", 1)
+                )
         )).into(new ArrayList<>());
         return response;
     }
