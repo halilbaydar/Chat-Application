@@ -12,11 +12,11 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
+
+import static com.chat.constant.ErrorConstant.INVALID_OPERATION;
+import static com.chat.util.StringUtil.isBlank;
 
 @Service
 @RequiredArgsConstructor
@@ -68,5 +68,18 @@ public class JwtServiceImpl implements JwtService {
     @Override
     public String generateTokenForLogin(String name, Collection<? extends GrantedAuthority> authorities) {
         return this.generateTokenForLogin(name, authorities, UUID.randomUUID().toString());
+    }
+
+    @Override
+    public String getUsernameFromToken(String token) {
+        if (isBlank(token)) throw new RuntimeException(INVALID_OPERATION);
+        return getBody(token).getSubject();
+    }
+
+    @Override
+    public List<Map<String, String>> getAuthorities(String token) {
+        if (isBlank(token)) throw new RuntimeException(INVALID_OPERATION);
+        return (List<Map<String, String>>) getBody(token).get("authorities");
+
     }
 }

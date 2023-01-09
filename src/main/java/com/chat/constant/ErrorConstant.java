@@ -5,4 +5,5 @@ public class ErrorConstant {
     public static final String INVALID_OPERATION = "0002";
     public static final String CHAT_ALREADY_EXISTS = "0003";
     public static final String CHAT_NOT_FOUND = "0004";
+    public static final String INVALID_TOKEN = "0005";
 }
