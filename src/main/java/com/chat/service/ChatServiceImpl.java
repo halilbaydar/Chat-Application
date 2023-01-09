@@ -1,6 +1,7 @@
 package com.chat.service;
 
 import com.chat.interfaces.repository.ChatEntityRepository;
+import com.chat.interfaces.repository.UserRepository;
 import com.chat.interfaces.service.ChatService;
 import com.chat.model.entity.ChatEntity;
 import com.chat.model.entity.UserEntity;
@@ -12,8 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,8 +20,7 @@ import java.util.List;
 import java.util.Set;
 
 import static com.chat.constant.DocumentConstant.CHATS;
-import static com.chat.constant.ErrorConstant.CHAT_ALREADY_EXISTS;
-import static com.chat.constant.ErrorConstant.CHAT_NOT_FOUND;
+import static com.chat.constant.ErrorConstant.*;
 import static com.chat.constant.GeneralConstant.PAGE_SIZE;
 import static com.chat.util.SessionUtil.getActiveUser;
 
@@ -32,6 +30,7 @@ public class ChatServiceImpl implements ChatService {
     private final ChatEntityRepository chatRepository;
     private final MongoTemplate mongoTemplate;
     private final MongoDatabase mongoDatabase;
+    private final UserRepository userRepository;
 
     private static int getSkip(int pageNumber, long size, int pageSize) {
         int mod = (int) (size % PAGE_SIZE);
@@ -113,10 +112,14 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public <Res> Res createChatRoom(CreateChatRoomRequest createChatRoomRequest) {
         UserEntity activeUser = getActiveUser();
-        Query query = new Query();
-        query.addCriteria(Criteria.where("users").in(activeUser.getUsername())
-                .and(createChatRoomRequest.getUsername()));
-        ChatEntity chatEntity = mongoTemplate.findOne(query, ChatEntity.class);
+        if (createChatRoomRequest.getUsername().equals(activeUser.getUsername())) {
+            throw new RuntimeException("YOU_CANNOT_CHAT_YOURSELF");
+        }
+        boolean usernameExists = userRepository.existsByUsername(createChatRoomRequest.getUsername());
+        if (!usernameExists) {
+            throw new RuntimeException(USER_NOT_EXIST);
+        }
+        ChatEntity chatEntity = chatRepository.findByUsers(mongoDatabase, activeUser.getUsername(), createChatRoomRequest.getUsername());
         if (chatEntity != null) {
             throw new RuntimeException(CHAT_ALREADY_EXISTS);
         }

@@ -6,4 +6,5 @@ import org.springframework.data.repository.NoRepositoryBean;
 
 @NoRepositoryBean
 public interface ChatRepository<T, ID> extends MongoRepository<T, ID> {
+
 }
