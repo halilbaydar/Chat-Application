@@ -2,6 +2,7 @@ package com.chat.filter;
 
 import com.chat.config.JwtConfig;
 import com.chat.interfaces.service.JwtService;
+import com.chat.util.StringUtil;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -23,39 +24,44 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.chat.util.StringUtil.isBlank;
-
 @RequiredArgsConstructor
 public class JwtTokenVerifier extends OncePerRequestFilter {
     private final JwtConfig jwtConfig;
     private final JwtService jwtService;
 
-    //TODO doFilter will be reviewed
+    private static boolean isNoteBefore(Date notBefore, Date issueAt) {
+        if (notBefore == null || issueAt == null) return true;
+        return notBefore.before(issueAt);
+    }
+
     //@SneakyThrows
     @Override
     protected void doFilterInternal(final HttpServletRequest httpServletRequest, final HttpServletResponse response,
                                     final FilterChain filterChain) throws ServletException, IOException {
-        Authentication authenticationByWebSocket = SecurityContextHolder.getContext().getAuthentication();
-        if (authenticationByWebSocket == null || !authenticationByWebSocket.isAuthenticated()) {
-            final String authorizationHeader = httpServletRequest.getHeader(jwtConfig.getAuthorizationHeader());
-            if (isBlank(authorizationHeader) || !authorizationHeader.startsWith(jwtConfig.getTokenPrefix())) {
-                getExceptionResponse(response, "0021");
-                return;
-            }
-            final String token = authorizationHeader.replace(jwtConfig.getTokenPrefix(), "");
-            try {
-                String username = null;
-                Claims claims = jwtService.getBody(token);
-                username = claims.getSubject();
+        final String authorizationHeader = httpServletRequest.getHeader(jwtConfig.getAuthorizationHeader());
+        if (StringUtil.isBlank(authorizationHeader) || !authorizationHeader.startsWith(jwtConfig.getTokenPrefix())) {
+            getExceptionResponse(response, "0021");
+            return;
+        }
+        final String token = authorizationHeader.replace(jwtConfig.getTokenPrefix(), "");
+        try {
+            String username = null;
+            Claims claims = jwtService.getBody(token);
+            username = claims.getSubject();
 
-                Authentication authentication = generateAuthentication(token, username);
+            //String tokenId = claims.getId();
+                /*if (redisTokenManager.invalidTokenId(tokenId)) {
+                    getExceptionResponse(response, "0403");
+                    return;
+                }
+                 */
 
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+            Authentication authentication = generateAuthentication(token, username);
 
-            } catch (RuntimeException e) {
-                getExceptionResponse(response, "0403");
-                return;
-            }
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        } catch (RuntimeException e) {
+            getExceptionResponse(response, "0403");
         }
         filterChain.doFilter(httpServletRequest, response);
     }

@@ -17,5 +17,8 @@ public class UserEntity extends ParentEntity {
     private String username;
 
     @Field
+    private String password;
+
+    @Field
     private Role role;
 }

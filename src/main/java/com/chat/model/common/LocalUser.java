@@ -12,10 +12,10 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 
-public class LocalUser implements SimpUser {
+public class LocalUser implements SimpUser, Principal {
     private final String name;
     private final Principal user;
-    private final Map<String, SimpSession> userSessions = new ConcurrentHashMap(1);
+    private final Map<String, SimpSession> userSessions = new ConcurrentHashMap<>();
 
     public LocalUser(String userName, Principal user) {
         Assert.notNull(userName, "User name must not be null");

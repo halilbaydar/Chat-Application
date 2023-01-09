@@ -17,7 +17,7 @@ public class MessageOperationServiceImpl implements MessageOperationService {
 
     @Override
     public void labelDeliverMessages(String chatId, String receiverId) {
-        Runnable runnable = () -> {
+        new Thread(() -> {
             Query validationQuery = new Query();
             validationQuery.addCriteria(new Criteria().andOperator(Criteria.where("id").is(chatId)));
 
@@ -26,20 +26,18 @@ public class MessageOperationServiceImpl implements MessageOperationService {
                             .and("x.messageStatus").is(MessageStatus.SENT.name()))
                     .set("messages.$[x].messageStatus", MessageStatus.DELIVERED.name());
             mongoTemplate.updateFirst(validationQuery, update, ChatEntity.class);
-        };
-        runnable.run();
+        }).start();
     }
 
     @Override
     public void labelSeenMessages(String chatId, String receiverId) {
-        Runnable runnable = () -> {
+        new Thread(() -> {
             Query validationQuery = new Query();
             validationQuery.addCriteria(Criteria.where("id").is(chatId));
             Update update = new Update()
                     .filterArray(Criteria.where("x.recipientId").is(receiverId))
                     .set("messages.$[x].messageStatus", MessageStatus.SEEN.name());
             mongoTemplate.updateFirst(validationQuery, update, ChatEntity.class);
-        };
-        runnable.run();
+        }).start();
     }
 }

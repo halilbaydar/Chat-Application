@@ -7,7 +7,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
@@ -16,6 +15,7 @@ import javax.crypto.SecretKey;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Function;
 
 @Service
@@ -50,12 +50,23 @@ public class JwtServiceImpl implements JwtService {
     }
 
     @Override
-    public String generateLoginJwtToken(String username, Collection<? extends GrantedAuthority> authorities, String tokenId) {
+    public String generateLoginJwtToken(String username, Collection<? extends GrantedAuthority> authorities, String tokenId, Date date) {
         return Jwts.builder()
                 .setSubject(username)
                 .claim("authorities", authorities)
-                .setIssuedAt(new Date())
+                .setIssuedAt(date)
+                .setId(tokenId)
                 .signWith(secretKey)
                 .compact();
+    }
+
+    @Override
+    public String generateTokenForLogin(String name, Collection<? extends GrantedAuthority> authorities, String tokenId) {
+        return this.generateLoginJwtToken(name, authorities, tokenId, new Date());
+    }
+
+    @Override
+    public String generateTokenForLogin(String name, Collection<? extends GrantedAuthority> authorities) {
+        return this.generateTokenForLogin(name, authorities, UUID.randomUUID().toString());
     }
 }
