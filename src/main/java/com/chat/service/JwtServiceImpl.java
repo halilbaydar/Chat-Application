@@ -73,7 +73,12 @@ public class JwtServiceImpl implements JwtService {
     @Override
     public String getUsernameFromToken(String token) {
         if (isBlank(token)) throw new RuntimeException(INVALID_OPERATION);
-        return getBody(token).getSubject();
+        return getBody(pickBearer(token)).getSubject();
+    }
+
+    private String pickBearer(String token) {
+        if (isBlank(token)) throw new RuntimeException(INVALID_OPERATION);
+        return token.replaceFirst("Bearer ", "");
     }
 
     @Override
