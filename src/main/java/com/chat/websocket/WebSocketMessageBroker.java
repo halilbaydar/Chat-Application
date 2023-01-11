@@ -2,10 +2,8 @@ package com.chat.websocket;
 
 import com.chat.interfaces.service.JwtService;
 import com.chat.interfaces.service.SessionService;
-import com.chat.property.RabbitMQProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -58,7 +56,7 @@ public class WebSocketMessageBroker implements WebSocketMessageBrokerConfigurer 
         registry
                 .addEndpoint(WS)
                 .addInterceptors(handshakeInterceptor())
-                .setAllowedOrigins("http://localhost:3000", "http://localhost:3001")
+                .setAllowedOrigins("http://localhost:3000")
                 .withSockJS();
     }
 

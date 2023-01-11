@@ -53,7 +53,7 @@ public class CustomChannelInterceptor implements ChannelInterceptor {
         StompHeaderAccessor accessor =
                 MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
-        if (accessor.getCommand() == null)
+        if (accessor == null || accessor.getCommand() == null)
             return message;
 
         MessageHeaders headers = message.getHeaders();

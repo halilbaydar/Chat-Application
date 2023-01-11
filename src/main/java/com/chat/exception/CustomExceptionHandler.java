@@ -83,8 +83,11 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     private List<String> getAllErrorsIfFieldErrorsIsEmpty(BindException ex) {
-        List<String> errors = ex.getBindingResult().getAllErrors().stream().map(x -> x.getDefaultMessage()).collect(Collectors.toList());
-        return errors;
+        return ex.getBindingResult()
+                .getAllErrors()
+                .stream()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .collect(Collectors.toList());
     }
 
     @Override

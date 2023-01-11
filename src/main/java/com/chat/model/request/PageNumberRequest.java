@@ -8,6 +8,6 @@ import javax.validation.constraints.Min;
 @Getter
 @Setter
 public class PageNumberRequest {
-    @Min(value = 0)
+    @Min(value = 0, message = "@@@@@@@")
     private int pageNumber;
 }

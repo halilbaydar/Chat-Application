@@ -7,7 +7,7 @@ import com.chat.model.request.PageNumberRequest;
 import java.util.List;
 
 public interface ChatService {
-    List<?> getChatsByPagination(PageNumberRequest pageNumberRequest);
+    List<?> getChatsByPagination(Integer pageNumber);
 
     List<?> getChatMessagesByPagination(GetMessagesRequest getMessagesRequest);
 

@@ -1,5 +1,6 @@
 package com.chat.service;
 
+import com.chat.exception.CustomException;
 import com.chat.interfaces.repository.ChatEntityRepository;
 import com.chat.interfaces.repository.UserRepository;
 import com.chat.interfaces.service.ChatService;
@@ -7,7 +8,6 @@ import com.chat.model.entity.ChatEntity;
 import com.chat.model.entity.UserEntity;
 import com.chat.model.request.CreateChatRoomRequest;
 import com.chat.model.request.GetMessagesRequest;
-import com.chat.model.request.PageNumberRequest;
 import com.mongodb.client.MongoDatabase;
 import lombok.RequiredArgsConstructor;
 import org.bson.Document;
@@ -49,7 +49,7 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public List<?> getChatsByPagination(PageNumberRequest pageNumberRequest) {
+    public List<?> getChatsByPagination(Integer pageNumber) {
         UserEntity activeUser = getActiveUser();
         List<?> response = mongoDatabase.getCollection(CHATS, ChatEntity.class).aggregate(List.of(
                 new Document("$match", new Document("users", new Document("$all", List.of(activeUser.getUsername())))),
@@ -58,7 +58,7 @@ public class ChatServiceImpl implements ChatService {
                                 new Document("$toString", "$_id")
                         )
                 ),
-                new Document("$skip", PAGE_SIZE * pageNumberRequest.getPageNumber()),
+                new Document("$skip", PAGE_SIZE * pageNumber),
                 new Document("$limit", PAGE_SIZE),
                 new Document("$project",
                         new Document("users", 1)
@@ -117,7 +117,7 @@ public class ChatServiceImpl implements ChatService {
         }
         boolean usernameExists = userRepository.existsByUsername(createChatRoomRequest.getUsername());
         if (!usernameExists) {
-            throw new RuntimeException(USER_NOT_EXIST);
+            throw new CustomException(USER_NOT_EXIST);
         }
         ChatEntity chatEntity = chatRepository.findByUsers(mongoDatabase, activeUser.getUsername(), createChatRoomRequest.getUsername());
         if (chatEntity != null) {
@@ -126,6 +126,6 @@ public class ChatServiceImpl implements ChatService {
         ChatEntity chat = new ChatEntity();
         chat.setUsers(Set.of(activeUser.getUsername(), createChatRoomRequest.getUsername()));
         chatRepository.save(chat);
-        return null;
+        return (Res) "SUCCESS";
     }
 }
