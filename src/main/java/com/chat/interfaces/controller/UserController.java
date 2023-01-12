@@ -9,6 +9,6 @@ public interface UserController {
     @GetMapping("/user")
     <R> R getUser();
 
-    @GetMapping("/users")
+    @GetMapping("/user/users")
     <R> R getUsers();
 }

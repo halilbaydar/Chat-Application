@@ -1,5 +1,8 @@
 package com.chat.exception;
 
+import lombok.SneakyThrows;
+import net.minidev.json.JSONObject;
+import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -10,11 +13,14 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.time.ZoneId;
@@ -24,7 +30,7 @@ import java.util.stream.Collectors;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
 @RestControllerAdvice
-public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
+public class CustomExceptionHandler extends ResponseEntityExceptionHandler implements ErrorController {
 
     public static Object prepareErrorJSON(final HttpStatus status, final Exception ex) {
         Map respond = new HashMap();
@@ -36,6 +42,24 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
             respond.put("code", "0500");
         }
         return respond;
+    }
+
+    @SneakyThrows
+    public static void getExceptionResponse(HttpServletResponse response, String code) {
+        response.setStatus(HttpStatus.FORBIDDEN.value());
+        response.getWriter().write(String.valueOf(
+                new JSONObject().appendField("code", code)
+                        .appendField("status", HttpStatus.FORBIDDEN)));
+    }
+
+    @RequestMapping("/error")
+    public ResponseEntity handleError(final HttpServletRequest request,
+                                      final HttpServletResponse response) {
+
+        Object exception = request.getAttribute("javax.servlet.error.exception");
+        //System.out.println(exception);
+        // TODO: Logic to inspect exception thrown from Filters...
+        return ResponseEntity.badRequest().body(new Error(/* whatever */));
     }
 
     @ExceptionHandler({CustomException.class})

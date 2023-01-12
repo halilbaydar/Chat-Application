@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import java.io.Serializable;
 import java.util.List;
 
-import static com.chat.constant.ErrorConstant.USER_NOT_EXIST;
+import static com.chat.constant.ErrorConstant.ErrorMessage.USER_NOT_EXIST;
 
 @Service
 @RequiredArgsConstructor

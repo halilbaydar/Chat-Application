@@ -18,7 +18,9 @@ public interface ChatEntityRepository extends ChatRepository<ChatEntity, String>
                                 new Document("_id",
                                         new Document("$toString", "$_id")
                                 )
-                        )
+                        ),
+                        new Document("$project",
+                                new Document("messages", 0))
                 ))
                 .cursor().tryNext();
     }

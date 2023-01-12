@@ -22,7 +22,7 @@ public class ChatEntity extends ParentEntity {
     private Set<String> users = new HashSet<>();
 
     @Field
-    private ChatType type;
+    private ChatType type = ChatType.SINGLE;
 
     public enum ChatType {
         SINGLE, GROUP

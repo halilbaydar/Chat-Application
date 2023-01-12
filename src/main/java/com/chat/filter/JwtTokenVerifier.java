@@ -5,9 +5,6 @@ import com.chat.interfaces.service.JwtService;
 import com.chat.util.StringUtil;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
-import net.minidev.json.JSONObject;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,49 +16,38 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static com.chat.constant.ErrorConstant.ErrorStatus.UNAUTHORIZED;
+import static com.chat.exception.CustomExceptionHandler.getExceptionResponse;
 
 @RequiredArgsConstructor
 public class JwtTokenVerifier extends OncePerRequestFilter {
     private final JwtConfig jwtConfig;
     private final JwtService jwtService;
 
-    private static boolean isNoteBefore(Date notBefore, Date issueAt) {
-        if (notBefore == null || issueAt == null) return true;
-        return notBefore.before(issueAt);
-    }
-
     //@SneakyThrows
     @Override
     protected void doFilterInternal(final HttpServletRequest httpServletRequest, final HttpServletResponse response,
                                     final FilterChain filterChain) throws ServletException, IOException {
-        final String authorizationHeader = httpServletRequest.getHeader(jwtConfig.getAuthorizationHeader());
-        if (StringUtil.isBlank(authorizationHeader) || !authorizationHeader.startsWith(jwtConfig.getTokenPrefix())) {
-            getExceptionResponse(response, "0021");
-            return;
-        }
-        final String token = authorizationHeader.replace(jwtConfig.getTokenPrefix(), "");
         try {
-            String username = null;
+            final String authorizationHeader = httpServletRequest.getHeader(jwtConfig.getAuthorizationHeader());
+            if (StringUtil.isBlank(authorizationHeader) || !authorizationHeader.startsWith(jwtConfig.getTokenPrefix())) {
+                getExceptionResponse(response, UNAUTHORIZED);
+                return;
+            }
+            final String token = authorizationHeader.replace(jwtConfig.getTokenPrefix(), "");
             Claims claims = jwtService.getBody(token);
-            username = claims.getSubject();
-
-            //String tokenId = claims.getId();
-                /*if (redisTokenManager.invalidTokenId(tokenId)) {
-                    getExceptionResponse(response, "0403");
-                    return;
-                }
-                 */
-
+            String username = claims.getSubject();
             Authentication authentication = generateAuthentication(token, username);
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        } catch (RuntimeException e) {
-            getExceptionResponse(response, "0403");
+        } catch (Exception e) {
+            getExceptionResponse(response, UNAUTHORIZED);
+            return;
         }
         filterChain.doFilter(httpServletRequest, response);
     }
@@ -79,14 +65,6 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
                 null,
                 simpleGrantedAuthorities
         );
-    }
-
-    @SneakyThrows
-    void getExceptionResponse(HttpServletResponse response, String code) {
-        response.setStatus(HttpStatus.FORBIDDEN.value());
-        response.getWriter().write(String.valueOf(
-                new JSONObject().appendField("code", code)
-                        .appendField("status", HttpStatus.FORBIDDEN)));
     }
 
     private void isValidRole(String username, List<SimpleGrantedAuthority> authorities) {

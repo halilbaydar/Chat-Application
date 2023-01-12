@@ -15,7 +15,7 @@ import javax.crypto.SecretKey;
 import java.util.*;
 import java.util.function.Function;
 
-import static com.chat.constant.ErrorConstant.INVALID_OPERATION;
+import static com.chat.constant.ErrorConstant.ErrorMessage.INVALID_OPERATION;
 import static com.chat.util.StringUtil.isBlank;
 
 @Service

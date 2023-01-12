@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.Serializable;
 
-import static com.chat.constant.ErrorConstant.INVALID_OPERATION;
+import static com.chat.constant.ErrorConstant.ErrorMessage.INVALID_OPERATION;
 import static com.chat.constant.GeneralConstant.ACTIVE_USER;
 
 public final class SessionUtil {

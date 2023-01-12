@@ -1,5 +1,7 @@
 package com.chat.filter;
 
+import com.chat.constant.ErrorConstant;
+import com.chat.exception.CustomException;
 import com.chat.interfaces.repository.UserRepository;
 import com.chat.interfaces.service.JwtService;
 import com.chat.model.entity.UserEntity;
@@ -13,10 +15,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.UUID;
 
-import static com.chat.constant.ErrorConstant.*;
+import static com.chat.constant.ErrorConstant.ErrorMessage.*;
 import static com.chat.constant.GeneralConstant.ACTIVE_USER;
+import static com.chat.exception.CustomExceptionHandler.getExceptionResponse;
 import static com.chat.util.StringUtil.isBlank;
 
 @Component
@@ -30,32 +32,37 @@ public class UserSetFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        String token = request.getHeader(HttpHeaders.AUTHORIZATION);
+        try {
+            String token = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-        request.getSession().setAttribute("sessionId", request.getSession().getId());
-        request.getSession().setAttribute("requestId", UUID.randomUUID().toString());
+            if (!isBlank(token)) {
+                String username;
 
-        if (!isBlank(token)) {
-            String username = null;
+                try {
+                    username = jwtService.getUsernameFromToken(token);
+                } catch (Exception e) {
+                    throw new CustomException(INVALID_TOKEN);
+                }
 
-            try {
-                username = jwtService.getUsernameFromToken(token);
-            } catch (Exception e) {
-                throw new RuntimeException(INVALID_TOKEN);
+                UserEntity activeUser = (UserEntity) request.getSession().getAttribute(ACTIVE_USER);
+                if (activeUser == null) {
+                    activeUser = userRepository.findByUsername(username);
+                    if (activeUser == null)
+                        throw new CustomException(USER_NOT_EXIST);
+                    request.getSession().setAttribute(ACTIVE_USER, activeUser);
+                }
+
+                if (!activeUser.getUsername().equals(username))
+                    throw new CustomException(INVALID_OPERATION);
             }
-
-            UserEntity activeUser = (UserEntity) request.getSession().getAttribute(ACTIVE_USER);
-            if (activeUser == null) {
-                activeUser = userRepository.findByUsername(username);
-                if (activeUser == null)
-                    throw new RuntimeException(USER_NOT_EXIST);
-                request.getSession().setAttribute(ACTIVE_USER, activeUser);
+        } catch (Exception ex) {
+            if (ex instanceof CustomException) {
+                getExceptionResponse(response, ((CustomException) ex).getStatus().name());
+            } else {
+                getExceptionResponse(response, ErrorConstant.ErrorStatus.UNAUTHORIZED);
             }
-
-            if (!activeUser.getUsername().equals(username))
-                throw new RuntimeException(INVALID_OPERATION);
+            return;
         }
-
         filterChain.doFilter(request, response);
     }
 }
