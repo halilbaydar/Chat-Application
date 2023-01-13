@@ -23,7 +23,9 @@ import org.springframework.stereotype.Component;
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Component
@@ -60,49 +62,54 @@ public class CustomChannelInterceptor implements ChannelInterceptor {
         String sessionId = SimpMessageHeaderAccessor.getSessionId(headers);
 
         if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-
-            List<String> authorization = accessor.getNativeHeader("Authorization");
-
-            assert authorization != null;
-            String accessToken = authorization.get(0).split(" ")[1];
-
-            String username = jwtService.getBody(accessToken).getSubject();
-
-            List<Map<String, String>> authorities = (List<Map<String, String>>) jwtService.getBody(accessToken).get("authorities");
-
-            Set<SimpleGrantedAuthority> simpleGrantedAuthorities = authorities.stream()
-                    .map(m -> new SimpleGrantedAuthority(m.get("authority"))).collect(Collectors.toSet());
-
-            Authentication authentication = new UsernamePasswordAuthenticationToken(
-                    username,
-                    null,
-                    simpleGrantedAuthorities
-            );
-            accessor.setUser(authentication);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            sessionService.connectSession(authentication.getName(), authentication);
-        }
-        if (StompCommand.DISCONNECT.equals(accessor.getCommand())) {
+            authorize(accessor, (authentication -> {
+                sessionService.connectSession(authentication.getName(), authentication);
+            }));
+        } else if (StompCommand.DISCONNECT.equals(accessor.getCommand())) {
             /*Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             sessionService.disConnectSession(authentication.getName());
             SecurityContextHolder.clearContext();
              */
-        }
-        if (StompCommand.SUBSCRIBE.equals(accessor.getCommand())) {
+        } else if (StompCommand.SUBSCRIBE.equals(accessor.getCommand())) {
             List<String> authorization = accessor.getNativeHeader("Authorization");
             assert authorization != null;
             String accessToken = authorization.get(0).split(" ")[1];
             String username = jwtService.getBody(accessToken).getSubject();
-            String senderId = accessor.getNativeHeader("senderId").get(0);
+            String senderId = Objects.requireNonNull(accessor.getNativeHeader("senderId")).get(0);
             sessionService.isSubscribeValid(username, senderId);
             Principal simpUser = SimpMessageHeaderAccessor.getUser(headers);
             sessionService.subscribeSession(message, sessionId, simpUser);
-        }
-        if (StompCommand.RECEIPT.equals(accessor.getCommand())) {
+        } else if (StompCommand.RECEIPT.equals(accessor.getCommand())) {
 
+        } else if (StompCommand.SEND.equals(accessor.getCommand())) {
+            authorize(accessor, (authentication) -> {
+            });
         }
         System.gc();
         System.runFinalization();
         return message;
+    }
+
+    private void authorize(StompHeaderAccessor accessor, Consumer<Authentication> callback) {
+        List<String> authorization = accessor.getNativeHeader("Authorization");
+
+        assert authorization != null;
+        String accessToken = authorization.get(0).split(" ")[1];
+
+        String username = jwtService.getBody(accessToken).getSubject();
+
+        List<Map<String, String>> authorities = (List<Map<String, String>>) jwtService.getBody(accessToken).get("authorities");
+
+        Set<SimpleGrantedAuthority> simpleGrantedAuthorities = authorities.stream()
+                .map(m -> new SimpleGrantedAuthority(m.get("authority"))).collect(Collectors.toSet());
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                username,
+                null,
+                simpleGrantedAuthorities
+        );
+        accessor.setUser(authentication);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        callback.accept(authentication);
     }
 }

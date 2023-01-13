@@ -17,8 +17,5 @@ public interface ChatSocketService {
 
     void online(OnlineRequest onlineRequest);
 
-    void deliverMessage(DeliverRequest deliverRequest);
-
     void deliverMessageOperations(DeliverRequest deliverRequest);
-
 }

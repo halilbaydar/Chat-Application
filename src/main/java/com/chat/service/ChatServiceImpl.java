@@ -105,8 +105,12 @@ public class ChatServiceImpl implements ChatService {
                             ))),
                             new Document("$addFields",
                                     new Document("messages",
-                                            new Document("messages",
-                                                    new Document("$slice", List.of(1, 1))))),
+                                            new Document("$slice", List.of("$messages", 1, 1)))),
+                            new Document("$addFields",
+                                    new Document("_id",
+                                            new Document("$toString", "$_id")
+                                    )
+                            ),
                             new Document("$project", new Document("messages", 1))
                     )).cursor().tryNext();
 

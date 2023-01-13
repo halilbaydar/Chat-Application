@@ -2,7 +2,10 @@ package com.chat.controller;
 
 import com.chat.interfaces.controller.ChatSocketController;
 import com.chat.interfaces.service.ChatSocketService;
-import com.chat.model.request.*;
+import com.chat.model.request.MessageRequest;
+import com.chat.model.request.OnlineRequest;
+import com.chat.model.request.SeenRequest;
+import com.chat.model.request.TypingRequest;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,11 +28,6 @@ public class ChatSocketControllerImpl implements ChatSocketController {
     @Override
     public void seenMessage(SeenRequest seenRequest) {
         getService().seenMessage(seenRequest);
-    }
-
-    @Override
-    public void deliverMessage(DeliverRequest deliverRequest) {
-        getService().deliverMessage(deliverRequest);
     }
 
     @Override

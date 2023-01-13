@@ -45,7 +45,7 @@ public class ChatSocketServiceImpl implements ChatSocketService {
         runAsync(() -> saveMessageOperations(messageRequest));
 
         if (isUserConnected(messageRequest.getReceiverName())) {
-            runAsync(() -> simpMessagingTemplate.convertAndSend(CHAT_DESTINATION_PREFIX + messageRequest.getChatId(),
+            runAsync(() -> simpMessagingTemplate.convertAndSend(MESSAGE_DESTINATION_PREFIX + messageRequest.getRecipientId(),
                     messageRequest.getMessage()));
         } else if (Boolean.TRUE.equals(redisStorageManager.redisTemplate.hasKey(messageRequest.getReceiverName()))) {
             BroadCastNotification<MessageRequest> broadCastNotification = new BroadCastNotification<>();
@@ -78,8 +78,8 @@ public class ChatSocketServiceImpl implements ChatSocketService {
     public void seenMessage(SeenRequest seenRequest) {
         runAsync(() -> seenMessageOperations(seenRequest));
         if (isUserConnected(seenRequest.getReceiverName())) {
-            runAsync(() -> simpMessagingTemplate.convertAndSend(String.format("%s%s/%s", MESSAGE_SEEN_DESTINATION_PREFIX,
-                    seenRequest.getChatId(), seenRequest.getMessageId()), true));
+            runAsync(() -> simpMessagingTemplate.convertAndSend(String.format("%s%s",
+                    MESSAGE_SEEN_DESTINATION_PREFIX, seenRequest.getChatId()), true));
         } else if (Boolean.TRUE.equals(redisStorageManager.redisTemplate.hasKey(seenRequest.getReceiverName()))) {
             BroadCastNotification<SeenRequest> broadCastNotification = new BroadCastNotification<>();
             broadCastNotification.setNotificationType(NotificationType.SEEN);
@@ -125,28 +125,6 @@ public class ChatSocketServiceImpl implements ChatSocketService {
         broadCastNotification.setPayload(onlineRequest);
         rabbitTemplate.convertAndSend(rabbitProperties.getExchange(),
                 rabbitProperties.getRoutingKey(), broadCastNotification);
-    }
-
-    @Override
-    public void deliverMessage(DeliverRequest deliverRequest) {
-        try {
-            if (isUserConnected(deliverRequest.getReceiverName())) {
-                simpMessagingTemplate.convertAndSend(String.format("%s%s/%S", MESSAGE_DESTINATION_PREFIX,
-                        deliverRequest.getChatId(), deliverRequest.getMessageId()), MessageStatus.DELIVERED.name());
-            } else if (sessionService.isUserConnectedGlobally(deliverRequest.getReceiverName())) {
-                BroadCastNotification<DeliverRequest> broadCastNotification = new BroadCastNotification<>();
-                broadCastNotification.setNotificationType(NotificationType.DELIVER);
-                broadCastNotification.setPayload(deliverRequest);
-                rabbitTemplate.convertAndSend(rabbitProperties.getExchange(),
-                        rabbitProperties.getRoutingKey(), broadCastNotification);
-            } else {
-                //TODO do nothing
-            }
-        } catch (Exception ignore) {
-
-        } finally {
-            deliverMessageOperations(deliverRequest);
-        }
     }
 
     @Override

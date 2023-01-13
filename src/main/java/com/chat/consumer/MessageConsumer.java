@@ -1,6 +1,5 @@
 package com.chat.consumer;
 
-import com.chat.constant.MessageStatus;
 import com.chat.interfaces.common.Consumer;
 import com.chat.interfaces.service.ChatSocketService;
 import com.chat.interfaces.service.SessionService;
@@ -58,19 +57,8 @@ public class MessageConsumer implements Consumer {
                 checkIsUserConnected(messageRequest, connected -> {
                     if (connected) {
                         runAsync(() ->
-                                simpMessagingTemplate.convertAndSend(CHAT_DESTINATION_PREFIX + messageRequest.getChatId(), messageRequest.getMessage()));
+                                simpMessagingTemplate.convertAndSend(MESSAGE_DESTINATION_PREFIX + messageRequest.getChatId(), messageRequest.getMessage()));
                         runAsync(() -> chatSocketService.saveMessageOperations(messageRequest));
-                    }
-                });
-            }
-            break;
-            case DELIVER: {
-                DeliverRequest deliverRequest = objectMapper.convertValue(broadCastNotification.getPayload(), DeliverRequest.class);
-                checkIsUserConnected(deliverRequest, connected -> {
-                    if (connected) {
-                        runAsync(() -> simpMessagingTemplate.convertAndSend(String.format("%s%s/%S", MESSAGE_DESTINATION_PREFIX,
-                                deliverRequest.getChatId(), deliverRequest.getMessageId()), MessageStatus.DELIVERED.name()));
-                        runAsync(() -> chatSocketService.deliverMessageOperations(deliverRequest));
                     }
                 });
             }

@@ -1,7 +1,10 @@
 package com.chat.interfaces.controller;
 
 import com.chat.interfaces.service.ChatSocketService;
-import com.chat.model.request.*;
+import com.chat.model.request.MessageRequest;
+import com.chat.model.request.OnlineRequest;
+import com.chat.model.request.SeenRequest;
+import com.chat.model.request.TypingRequest;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -14,9 +17,6 @@ public interface ChatSocketController extends ParentController<ChatSocketService
 
     @MessageMapping("/chat/message/seen")
     void seenMessage(@Valid @Payload SeenRequest seenRequest);
-
-    @MessageMapping("/chat/message/deliver")
-    void deliverMessage(@Valid @Payload DeliverRequest deliverRequest);
 
     @MessageMapping("/chat/typing")
     void typing(@Valid @Payload TypingRequest typingRequest);
