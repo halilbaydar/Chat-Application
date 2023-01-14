@@ -3,7 +3,6 @@ package com.chat.service;
 import com.chat.constant.MessageStatus;
 import com.chat.constant.NotificationType;
 import com.chat.interfaces.service.ChatSocketService;
-import com.chat.interfaces.service.SessionService;
 import com.chat.model.entity.ChatEntity;
 import com.chat.model.entity.MessageEntity;
 import com.chat.model.other.BroadCastNotification;
@@ -20,6 +19,8 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 import static com.chat.constant.PrefixConstant.*;
 import static java.util.concurrent.CompletableFuture.runAsync;
 
@@ -31,7 +32,6 @@ public class ChatSocketServiceImpl implements ChatSocketService {
     private final RedisStorageManager redisStorageManager;
     private final RabbitTemplate rabbitTemplate;
     private final RabbitMQProperties rabbitProperties;
-    private final SessionService sessionService;
     private final MongoTemplate mongoTemplate;
     private final SimpMessagingTemplate simpMessagingTemplate;
 
@@ -42,12 +42,14 @@ public class ChatSocketServiceImpl implements ChatSocketService {
 
     @Override
     public void sendMessage(MessageRequest messageRequest) {
+        messageRequest.setId(UUID.randomUUID().toString());
         runAsync(() -> saveMessageOperations(messageRequest));
 
-        if (isUserConnected(messageRequest.getReceiverName())) {
-            runAsync(() -> simpMessagingTemplate.convertAndSend(MESSAGE_DESTINATION_PREFIX + messageRequest.getRecipientId(),
-                    messageRequest.getMessage()));
-        } else if (Boolean.TRUE.equals(redisStorageManager.redisTemplate.hasKey(messageRequest.getReceiverName()))) {
+        if (isUserConnected(messageRequest.getRecipientId())) {
+            runAsync(() ->
+                    simpMessagingTemplate.convertAndSend(
+                            MESSAGE_DESTINATION_PREFIX + messageRequest.getRecipientId(), messageRequest));
+        } else if (Boolean.TRUE.equals(redisStorageManager.redisTemplate.hasKey(messageRequest.getRecipientId()))) {
             BroadCastNotification<MessageRequest> broadCastNotification = new BroadCastNotification<>();
             broadCastNotification.setNotificationType(NotificationType.MESSAGE);
             broadCastNotification.setPayload(messageRequest);
@@ -66,6 +68,7 @@ public class ChatSocketServiceImpl implements ChatSocketService {
                 .messageStatus(MessageStatus.SENT)
                 .recipientId(messageRequest.getRecipientId())
                 .senderId(messageRequest.getSenderId())
+                .id(messageRequest.getId())
                 .build();
         Query validationQuery = new Query();
         validationQuery.addCriteria(Criteria.where("id").is(messageRequest.getChatId()));
@@ -77,10 +80,10 @@ public class ChatSocketServiceImpl implements ChatSocketService {
     @Override
     public void seenMessage(SeenRequest seenRequest) {
         runAsync(() -> seenMessageOperations(seenRequest));
-        if (isUserConnected(seenRequest.getReceiverName())) {
+        if (isUserConnected(seenRequest.getRecipientId())) {
             runAsync(() -> simpMessagingTemplate.convertAndSend(String.format("%s%s",
                     MESSAGE_SEEN_DESTINATION_PREFIX, seenRequest.getChatId()), true));
-        } else if (Boolean.TRUE.equals(redisStorageManager.redisTemplate.hasKey(seenRequest.getReceiverName()))) {
+        } else if (Boolean.TRUE.equals(redisStorageManager.redisTemplate.hasKey(seenRequest.getRecipientId()))) {
             BroadCastNotification<SeenRequest> broadCastNotification = new BroadCastNotification<>();
             broadCastNotification.setNotificationType(NotificationType.SEEN);
             broadCastNotification.setPayload(seenRequest);
@@ -105,9 +108,9 @@ public class ChatSocketServiceImpl implements ChatSocketService {
     @Override
     public void typing(TypingRequest typingRequest) {
         if (isUserConnected(typingRequest.getReceiverName())) {
-            simpMessagingTemplate.convertAndSend(String.format("%s%s", CHAT_TYPING_DESTINATION_PREFIX,
-                    typingRequest.getChatId()), true);
-        } else if (Boolean.TRUE.equals(redisStorageManager.redisTemplate.hasKey(typingRequest.getReceiverName()))) {
+            simpMessagingTemplate.convertAndSend(String.format("%s%s/%s", CHAT_TYPING_DESTINATION_PREFIX,
+                    typingRequest.getChatId(), typingRequest.getRecipientId()), true);
+        } else if (Boolean.TRUE.equals(redisStorageManager.redisTemplate.hasKey(typingRequest.getRecipientId()))) {
             BroadCastNotification<TypingRequest> broadCastNotification = new BroadCastNotification<>();
             broadCastNotification.setNotificationType(NotificationType.TYPING);
             broadCastNotification.setPayload(typingRequest);

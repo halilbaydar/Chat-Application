@@ -13,8 +13,6 @@ import com.mongodb.client.MongoDatabase;
 import lombok.RequiredArgsConstructor;
 import org.bson.Document;
 import org.bson.types.ObjectId;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -32,24 +30,26 @@ import static com.chat.util.SessionUtil.getActiveUser;
 @RequiredArgsConstructor
 public class ChatServiceImpl implements ChatService {
     private final ChatEntityRepository chatRepository;
-    private final MongoTemplate mongoTemplate;
     private final MongoDatabase mongoDatabase;
     private final UserRepository userRepository;
 
-    private static Pair<Integer, Integer> getSkip(int pageNumber, long size, int pageSize) {
-        int mod = (int) (size % PAGE_SIZE);
-        int totalPages = (int) Math.ceil((size * 1D) / PAGE_SIZE);
-
+    private static Integer getSkip(int pageNumber, long numberOfMessages) {
+        int totalPages = (int) Math.ceil((numberOfMessages * 1D) / PAGE_SIZE);
         int skip = 0;
-        if (pageNumber == totalPages) {
-            pageSize = mod;
-            if (skip == pageSize)
-                pageSize += 1;
-        } else {
-            skip = (totalPages - pageNumber - 1) * PAGE_SIZE + mod;
-            pageSize = PAGE_SIZE;
+
+        if (pageNumber < 0 || pageNumber >= totalPages) {
+            return -1;
         }
-        return Pair.of(skip, pageSize);
+        if (pageNumber == 0) {//FIRST PAGE
+            if (numberOfMessages > PAGE_SIZE) {
+                skip = (int) (numberOfMessages - PAGE_SIZE);
+            }
+        } else if ((pageNumber + 1) == totalPages) {//LAST PAGE
+            skip = PAGE_SIZE * (totalPages - pageNumber - 1);
+        } else {//MIDDLE PAGE
+            skip = (totalPages - pageNumber - 1) * PAGE_SIZE;
+        }
+        return skip;
     }
 
     @Override
@@ -75,9 +75,8 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public List<?> getChatMessagesByPagination(GetMessagesRequest getMessagesRequest) {
+    public Stack<MessageEntity> getChatMessagesByPagination(GetMessagesRequest getMessagesRequest) {
         UserEntity activeUser = getActiveUser();
-        int pageSize = 0;
 
         Document document = mongoDatabase.getCollection(CHATS, Document.class).aggregate(List.of(
                 new Document("$match", new Document("$and", List.of(
@@ -95,7 +94,10 @@ public class ChatServiceImpl implements ChatService {
             throw new RuntimeException(CHAT_NOT_FOUND);
         }
         long count = document.getInteger("messagesSize");
-        Pair<Integer, Integer> skipAndPageSize = getSkip(getMessagesRequest.getPageNumber(), count, pageSize);
+        int skip = getSkip(getMessagesRequest.getPageNumber(), count);
+        if (skip == -1) {
+            return new Stack<>();
+        }
         try {
             ChatEntity chat = mongoDatabase.getCollection(CHATS, ChatEntity.class)
                     .aggregate(List.of(
@@ -105,7 +107,7 @@ public class ChatServiceImpl implements ChatService {
                             ))),
                             new Document("$addFields",
                                     new Document("messages",
-                                            new Document("$slice", List.of("$messages", 1, 1)))),
+                                            new Document("$slice", List.of("$messages", skip, PAGE_SIZE)))),
                             new Document("$addFields",
                                     new Document("_id",
                                             new Document("$toString", "$_id")
@@ -121,7 +123,7 @@ public class ChatServiceImpl implements ChatService {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-        return List.of();
+        return new Stack<>();
     }
 
     @Override
@@ -136,7 +138,7 @@ public class ChatServiceImpl implements ChatService {
         }
         ChatEntity chatEntity = chatRepository.findByUsers(mongoDatabase, activeUser.getUsername(), createChatRoomRequest.getUsername());
         if (chatEntity != null) {
-            chatEntity.setMessages((Stack<MessageEntity>) getChatMessagesByPagination(new GetMessagesRequest(0, chatEntity.getId())));
+            chatEntity.setMessages(getChatMessagesByPagination(new GetMessagesRequest(0, chatEntity.getId())));
             return (Res) chatEntity;
         }
         ChatEntity chat = new ChatEntity();

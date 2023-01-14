@@ -26,6 +26,7 @@ public class SecurityWebSocketMessageBrokerConfigurer extends AbstractSecurityWe
                         DISCONNECT,
                         DISCONNECT_ACK,
                         OTHER).hasAnyRole(Role.USER.name())
+                .simpTypeMatchers(DISCONNECT).hasAnyRole(Role.USER.name(), "ANONYMOUS")
                 .simpSubscribeDestMatchers("/user/**").hasAnyRole(Role.USER.name())
                 .anyMessage().hasAnyRole(Role.USER.name())
                 .nullDestMatcher().hasAnyRole(Role.USER.name());

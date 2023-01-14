@@ -9,6 +9,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 public class ParentMessageRequest implements Serializable {
-    private String receiverName;
+    private String recipientId;
     private String chatId;
 }

@@ -1,19 +1,23 @@
 package com.chat.model.entity;
 
 import com.chat.constant.MessageStatus;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.UUID;
 
 @Getter
 @Setter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class MessageEntity implements Serializable {
+    @Field
+    private String id;
+
     @Field
     @NotBlank
     private String ChatId;

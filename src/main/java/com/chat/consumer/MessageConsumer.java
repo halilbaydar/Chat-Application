@@ -67,6 +67,6 @@ public class MessageConsumer implements Consumer {
     }
 
     private <T extends ParentMessageRequest> void checkIsUserConnected(T t, java.util.function.Consumer<Boolean> consumer) {
-        consumer.accept(sessionService.isUserConnectedGlobally(t.getReceiverName()) && chatSocketService.isUserConnected(t.getReceiverName()));
+        consumer.accept(sessionService.isUserConnectedGlobally(t.getRecipientId()) && chatSocketService.isUserConnected(t.getRecipientId()));
     }
 }

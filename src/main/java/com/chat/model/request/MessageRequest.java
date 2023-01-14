@@ -9,4 +9,5 @@ public class MessageRequest extends ParentMessageRequest {
     private String message;
     private String recipientId;
     private String senderId;
+    private String id;
 }

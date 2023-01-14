@@ -66,10 +66,12 @@ public class CustomChannelInterceptor implements ChannelInterceptor {
                 sessionService.connectSession(authentication.getName(), authentication);
             }));
         } else if (StompCommand.DISCONNECT.equals(accessor.getCommand())) {
-            /*Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            sessionService.disConnectSession(authentication.getName());
-            SecurityContextHolder.clearContext();
-             */
+            authorize(accessor, (authentication) -> {
+                SecurityContextHolder.clearContext();
+                if (authentication != null) {
+                    sessionService.disConnectSession(authentication.getName());
+                }
+            });
         } else if (StompCommand.SUBSCRIBE.equals(accessor.getCommand())) {
             List<String> authorization = accessor.getNativeHeader("Authorization");
             assert authorization != null;
@@ -93,7 +95,7 @@ public class CustomChannelInterceptor implements ChannelInterceptor {
     private void authorize(StompHeaderAccessor accessor, Consumer<Authentication> callback) {
         List<String> authorization = accessor.getNativeHeader("Authorization");
 
-        assert authorization != null;
+        if (authorization == null) return;
         String accessToken = authorization.get(0).split(" ")[1];
 
         String username = jwtService.getBody(accessToken).getSubject();
