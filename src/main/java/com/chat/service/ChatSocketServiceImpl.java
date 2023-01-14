@@ -63,7 +63,7 @@ public class ChatSocketServiceImpl implements ChatSocketService {
     public void saveMessageOperations(MessageRequest messageRequest) {
         MessageEntity message = MessageEntity
                 .builder()
-                .ChatId(messageRequest.getChatId())
+                .chatId(messageRequest.getChatId())
                 .message(messageRequest.getMessage())
                 .messageStatus(MessageStatus.SENT)
                 .recipientId(messageRequest.getRecipientId())

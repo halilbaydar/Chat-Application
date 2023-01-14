@@ -20,7 +20,7 @@ public class MessageEntity implements Serializable {
 
     @Field
     @NotBlank
-    private String ChatId;
+    private String chatId;
 
     @Field
     @NotBlank
