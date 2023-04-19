@@ -27,7 +27,7 @@ This is a simple chat application built using the Spring Boot framework and WebS
 
 * In the below image there is simplified architecture in terms of users and architecture communitaion
 
-![](https://github.com/halilbaydar/Chat-Application/blob/master/media/chat-architecture.jpeg)
+![](https://github.com/halilbaydar/Chat-Application/blob/feat/gateway-service/github/media/chat-architecture.jpeg)
 
 * In the below image there is a detailed architecture in terms of servers, message brokers, databases, load balancers, gate services and monitoring tools
 
