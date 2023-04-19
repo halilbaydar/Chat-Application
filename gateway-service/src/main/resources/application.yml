@@ -1,0 +1,72 @@
+gateway-service:
+  timeout-ms: 3000
+  failure-rate-threshold: 50
+  slow-call-rate-threshold: 50
+  slow-call-duration-threshold: 50
+  permitted-num-of-calls-in-half-open-state: 10
+  sliding-window-size: 10
+  min-number-of-calls: 10
+  wait-duration-in-open-state: 60000
+
+server:
+  port: 9092
+
+spring:
+  main:
+    web-application-type: reactive
+  application:
+    name: gateway-service
+    gateway:
+      discovery:
+        locator:
+          enabled: false
+          lowerCaseServiceId: true
+      routes:
+        - id: my-name
+          uri: lb://my-name
+          predicates:
+            - Path=/my-name/**
+          filters:
+            - RewritePath=/my-name/(?<path>.*), /$\{path}
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 5
+                redis-rate-limiter.burstCapacity: 10
+                key-resolver: "#{@authHeaderResolver}"
+                redis-rate-limiter.requestedTokens: 1
+            - name: CircuitBreaker
+              args:
+                name: chatCircuitBreaker
+                fallbackUri: forward:/fallback/myname-fallback
+      filter:
+        request-rate-limiter:
+          deny-empty-key: false
+          empty-key-status-code: 403
+  redis:
+    host: 127.0.0.1
+    port: 6379
+
+management:
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure.include: health, prometheus, gateway
+      path-mapping.prometheus: metrics
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      cache.time-to-live: 1ms
+    gateway:
+      enabled: true
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    lease-expiration-duration-in-seconds: 5
+    lease-renewal-interval-in-seconds: 2
+
+log:
+  app-name: gateway-service

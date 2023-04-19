@@ -8,21 +8,17 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
-import org.springframework.web.bind.annotation.RestController;
 
 import static org.springframework.data.redis.core.RedisKeyValueAdapter.EnableKeyspaceEvents.ON_STARTUP;
 
 @Configuration
-@RestController
 @ServletComponentScan
 @EnableRedisRepositories(enableKeyspaceEvents = ON_STARTUP, keyspaceNotificationsConfigParameter = "")
 @EntityScan(basePackages = {"com.chat.model.entity"})
 @EnableMongoRepositories(basePackages = "com.chat.interfaces.repository")
 @SpringBootApplication(exclude = {MongoAutoConfiguration.class})
-public class ChatApplication {
-
+public class ChatServiceApplication {
     public static void main(String[] args) {
-        SpringApplication.run(ChatApplication.class, args);
+        SpringApplication.run(ChatServiceApplication.class, args);
     }
-
 }

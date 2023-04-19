@@ -1,0 +1,28 @@
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+  server:
+    enable-self-preservation: false
+    expected-client-renewal-interval-seconds: 3
+    eviction-interval-timer-in-ms: 2000
+
+server:
+  port: 8761
+
+spring:
+  application:
+    name: discovery-service
+
+logging:
+  level:
+    ROOT: INFO
+    com.netflix.eureka: OFF
+    com.netflix.discovery: OFF
+
+log:
+  app-name: discovery-service
