@@ -1,0 +1,60 @@
+version: '3.7'
+services:
+  discovery-service:
+    image: ${GROUP_ID}/discovery.service:${SERVICE_VERSION:-latest}
+    ports:
+      - "8761:8761"
+    volumes:
+      - "./docker-logs:/workspace/discovery-service/logs"
+    environment:
+      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8761 -Xms128m -Xmx256m"
+      - "LOGGING_LEVEL_ROOT=info"
+      - "SERVER_PORT=8761"
+      - "EUREKA_INSTANCE_HOSTNAME=discovery-service"
+      - "LOG_APP-NAME=discovery-service"
+    networks:
+      - ${GLOBAL_NETWORK:-services}
+  gateway-service:
+    image: ${GROUP_ID}/gateway.service:${SERVICE_VERSION:-latest}
+    ports:
+      - "9092:9092"
+    links:
+      - "redis-master:redis"
+    volumes:
+      - "./docker-logs:/workspace/gateway-service/logs"
+    environment:
+      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:9092 -Xms128m -Xmx256m"
+      - "LOGGING_LEVEL_COM_CHAT=info"
+      - "LOGGING_LEVEL_ROOT=info"
+      - "SERVER_PORT=9092"
+      - "SPRING_REDIS_HOST=redis"
+      - "LOG_APP-NAME=gateway-service"
+      - "EUREKA_CLIENT_SERVICE-URL_DEFAULT-ZONE=http://discovery-service:8761/eureka/"
+      - "SPRING_ZIPKIN_SENDER_TYPE=web"
+      - "SPRING_SLEUTH_SAMPLER_PROBABILITY=1.0"
+      - "SPRING_ZIPKIN_BASE-URL=http://zipkin:9411"
+    networks:
+      - ${GLOBAL_NETWORK:-services}
+    depends_on:
+      - discovery-service
+  chat-service:
+    image: ${GROUP_ID}/chat.service:${SERVICE_VERSION:-latest}
+    ports:
+      - "5005:5005"
+    volumes:
+      - "./docker-logs:/workspace/my-name/logs"
+    environment:
+      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -Xms128m -Xmx256m -Dspring.profiles.active=local"
+      - "LOGGING_LEVEL_COM_CHAT=info"
+      - "LOGGING_LEVEL_ROOT=info"
+      - "SPRING_ZIPKIN_BASE-URL=http://zipkin:9411"
+      - "EUREKA_CLIENT_SERVICE-URL_DEFAULT-ZONE=http://discovery-service:8761/eureka/"
+      - "SPRING_ZIPKIN_SENDER_TYPE=web"
+      - "SPRING_SLEUTH_SAMPLER_PROBABILITY=1.0"
+    networks:
+      - ${GLOBAL_NETWORK:-services}
+    depends_on:
+      - discovery-service
+      - gateway-service
+      - chat-db
+      - redis-master

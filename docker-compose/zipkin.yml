@@ -1,0 +1,23 @@
+version: '3.7'
+services:
+  storage:
+    image: openzipkin/zipkin-mysql:${ZIPKIN_VERSION-latest}
+    container_name: mysql
+    networks:
+      - ${GLOBAL_NETWORK:-zipkin}
+  zipkin:
+    image: openzipkin/zipkin:${ZIPKIN_VERSION-latest}
+    hostname: zipkin
+    container_name: zipkin
+    environment:
+      - STORAGE_TYPE=mysql
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASS=${MYSQL_PASS}
+      - JAVA_OPTS=-Dlogging.level.zipkin2=DEBUG
+    ports:
+      - 9411:9411
+    depends_on:
+      - storage
+    networks:
+      - ${GLOBAL_NETWORK:-zipkin}
