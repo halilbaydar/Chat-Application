@@ -3,7 +3,12 @@
 This is a simple chat application which is implemented through using the Spring Boot Framework and WebSocket library. This application provides real-time messaging capabilities and uses monitoring tools like Grafana and Prometheus to monitor the application's performance.
 
 * In the below image there is a detailed architecture including servers, message brokers, databases, load balancers, gate services and monitoring tools
+
 ![Chat-Application-Detailed-Architecture](https://user-images.githubusercontent.com/48048893/233482483-b18f278f-3564-41a0-91d6-acfdae8d48f4.jpeg)
+
+* Detailed Search Architecture
+
+![Chat-Application-Detailed-Serach-Architecture](https://user-images.githubusercontent.com/48048893/233488210-d908d499-994f-4ee4-9da7-4ff27e2469fd.jpeg)
 
 ### Features
 
