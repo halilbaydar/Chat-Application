@@ -18,6 +18,17 @@
         <module>gateway-service</module>
         <module>chat-service</module>
         <module>discovery-service</module>
+        <module>auth-service</module>
+        <module>user-service</module>
+        <module>notification-service</module>
+        <module>mdc-interceptor</module>
+        <module>search-service</module>
+        <module>kafka-to-elastic-service</module>
+        <module>kafka</module>
+        <module>kafka/kafka-model</module>
+        <module>kafka/kafka-admin</module>
+        <module>kafka/kafka-consumer</module>
+        <module>kafka/kafka-producer</module>
     </modules>
 
     <properties>
