@@ -9,8 +9,9 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static com.microservices.demo.mdc.Constants.CORRELATION_ID_HEADER;
-import static com.microservices.demo.mdc.Constants.CORRELATION_ID_KEY;
+import static com.chat.Constants.CORRELATION_ID_HEADER;
+import static com.chat.Constants.CORRELATION_ID_KEY;
+
 
 @Component
 public class MDCHandlerInterceptor implements HandlerInterceptor {

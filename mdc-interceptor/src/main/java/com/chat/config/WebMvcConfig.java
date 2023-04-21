@@ -1,6 +1,6 @@
 package com.chat.config;
 
-import com.microservices.demo.mdc.interceptor.MDCHandlerInterceptor;
+import com.chat.interceptor.MDCHandlerInterceptor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;

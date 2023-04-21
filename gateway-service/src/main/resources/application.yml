@@ -7,6 +7,9 @@ gateway-service:
   sliding-window-size: 10
   min-number-of-calls: 10
   wait-duration-in-open-state: 60000
+  defaultReplenishRate: 5
+  defaultBurstCapacity: 10
+  defaultRequestedTokens: 1
 
 server:
   port: 9092
@@ -21,27 +24,6 @@ spring:
         locator:
           enabled: false
           lowerCaseServiceId: true
-      routes:
-        - id: my-name
-          uri: lb://my-name
-          predicates:
-            - Path=/my-name/**
-          filters:
-            - RewritePath=/my-name/(?<path>.*), /$\{path}
-            - name: RequestRateLimiter
-              args:
-                redis-rate-limiter.replenishRate: 5
-                redis-rate-limiter.burstCapacity: 10
-                key-resolver: "#{@authHeaderResolver}"
-                redis-rate-limiter.requestedTokens: 1
-            - name: CircuitBreaker
-              args:
-                name: chatCircuitBreaker
-                fallbackUri: forward:/fallback/myname-fallback
-      filter:
-        request-rate-limiter:
-          deny-empty-key: false
-          empty-key-status-code: 403
   redis:
     host: 127.0.0.1
     port: 6379

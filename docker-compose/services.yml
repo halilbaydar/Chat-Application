@@ -42,7 +42,7 @@ services:
     ports:
       - "5005:5005"
     volumes:
-      - "./docker-logs:/workspace/my-name/logs"
+      - "./docker-logs:/workspace/chat-service/logs"
     environment:
       - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -Xms128m -Xmx256m -Dspring.profiles.active=local"
       - "LOGGING_LEVEL_COM_CHAT=info"
@@ -57,4 +57,117 @@ services:
       - discovery-service
       - gateway-service
       - chat-db
+      - redis-master
+  user-service:
+    image: ${GROUP_ID}/user.service:${SERVICE_VERSION:-latest}
+    ports:
+      - "5005:5005"
+    volumes:
+      - "./docker-logs:/workspace/user-service/logs"
+    environment:
+      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006 -Xms128m -Xmx256m -Dspring.profiles.active=local"
+      - "LOGGING_LEVEL_COM_CHAT=info"
+      - "LOGGING_LEVEL_ROOT=info"
+      - "SPRING_ZIPKIN_BASE-URL=http://zipkin:9411"
+      - "EUREKA_CLIENT_SERVICE-URL_DEFAULT-ZONE=http://discovery-service:8761/eureka/"
+      - "SPRING_ZIPKIN_SENDER_TYPE=web"
+      - "SPRING_SLEUTH_SAMPLER_PROBABILITY=1.0"
+      - "SPRING_DATASOURCE_URL=jdbc:postgresql://user-db:5432/users"
+      - "SPRING_DATASOURCE_USERNAME=postgres"
+      - "SPRING_DATASOURCE_PASSWORD=password"
+      - "SPRING_JPA_HIBERNATE_DDL_AUTO=update"
+    networks:
+      - ${GLOBAL_NETWORK:-services}
+    depends_on:
+      - discovery-service
+      - gateway-service
+      - user-db
+      - redis-master
+  notification-service:
+    image: ${GROUP_ID}/notification.service:${SERVICE_VERSION:-latest}
+    ports:
+      - "5005:5005"
+    volumes:
+      - "./docker-logs:/workspace/notification-service/logs"
+    environment:
+      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006 -Xms128m -Xmx256m -Dspring.profiles.active=local"
+      - "LOGGING_LEVEL_COM_CHAT=info"
+      - "LOGGING_LEVEL_ROOT=info"
+      - "SPRING_ZIPKIN_BASE-URL=http://zipkin:9411"
+      - "EUREKA_CLIENT_SERVICE-URL_DEFAULT-ZONE=http://discovery-service:8761/eureka/"
+      - "SPRING_ZIPKIN_SENDER_TYPE=web"
+      - "SPRING_SLEUTH_SAMPLER_PROBABILITY=1.0"
+      - "SPRING_DATASOURCE_URL=jdbc:postgresql://user-db:5432/users"
+      - "SPRING_DATASOURCE_USERNAME=postgres"
+      - "SPRING_DATASOURCE_PASSWORD=password"
+      - "SPRING_JPA_HIBERNATE_DDL_AUTO=update"
+    networks:
+      - ${GLOBAL_NETWORK:-services}
+    depends_on:
+      - discovery-service
+      - gateway-service
+      - user-db
+      - redis-master
+  auth-service:
+    image: ${GROUP_ID}/auth.service:${SERVICE_VERSION:-latest}
+    ports:
+      - "5005:5005"
+    volumes:
+      - "./docker-logs:/workspace/auth-service/logs"
+    environment:
+      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006 -Xms128m -Xmx256m -Dspring.profiles.active=local"
+      - "LOGGING_LEVEL_COM_CHAT=info"
+      - "LOGGING_LEVEL_ROOT=info"
+      - "SPRING_ZIPKIN_BASE-URL=http://zipkin:9411"
+      - "EUREKA_CLIENT_SERVICE-URL_DEFAULT-ZONE=http://discovery-service:8761/eureka/"
+      - "SPRING_ZIPKIN_SENDER_TYPE=web"
+      - "SPRING_SLEUTH_SAMPLER_PROBABILITY=1.0"
+    networks:
+      - ${GLOBAL_NETWORK:-services}
+    depends_on:
+      - discovery-service
+      - gateway-service
+      - user-db
+      - redis-master
+  search-service:
+    image: ${GROUP_ID}/search.service:${SERVICE_VERSION:-latest}
+    ports:
+      - "5005:5005"
+    volumes:
+      - "./docker-logs:/workspace/search-service/logs"
+    environment:
+      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006 -Xms128m -Xmx256m -Dspring.profiles.active=local"
+      - "LOGGING_LEVEL_COM_CHAT=info"
+      - "LOGGING_LEVEL_ROOT=info"
+      - "SPRING_ZIPKIN_BASE-URL=http://zipkin:9411"
+      - "EUREKA_CLIENT_SERVICE-URL_DEFAULT-ZONE=http://discovery-service:8761/eureka/"
+      - "SPRING_ZIPKIN_SENDER_TYPE=web"
+      - "SPRING_SLEUTH_SAMPLER_PROBABILITY=1.0"
+    networks:
+      - ${GLOBAL_NETWORK:-services}
+    depends_on:
+      - discovery-service
+      - gateway-service
+      - user-db
+      - redis-master
+  kafka-to-elastic-service:
+    image: ${GROUP_ID}/kafka.to.elastic.service:${SERVICE_VERSION:-latest}
+    ports:
+      - "5005:5005"
+    volumes:
+      - "./docker-logs:/workspace/search-service/logs"
+    environment:
+      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006 -Xms128m -Xmx256m -Dspring.profiles.active=local"
+      - "LOGGING_LEVEL_COM_CHAT=info"
+      - "LOGGING_LEVEL_ROOT=info"
+      - "SPRING_ZIPKIN_BASE-URL=http://zipkin:9411"
+      - "EUREKA_CLIENT_SERVICE-URL_DEFAULT-ZONE=http://discovery-service:8761/eureka/"
+      - "SPRING_ZIPKIN_SENDER_TYPE=web"
+      - "SPRING_SLEUTH_SAMPLER_PROBABILITY=1.0"
+    networks:
+      - ${GLOBAL_NETWORK:-services}
+    depends_on:
+      - discovery-service
+      - gateway-service
+      - user-db
       - redis-master

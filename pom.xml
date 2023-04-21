@@ -29,6 +29,7 @@
         <module>kafka/kafka-admin</module>
         <module>kafka/kafka-consumer</module>
         <module>kafka/kafka-producer</module>
+        <module>common</module>
     </modules>
 
     <properties>
@@ -294,6 +295,12 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
                 <version>${spring-boot.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.chat</groupId>
+                <artifactId>common</artifactId>
+                <version>${project.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

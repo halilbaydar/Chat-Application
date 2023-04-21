@@ -5,6 +5,7 @@ import com.chat.interfaces.service.JwtService;
 import com.chat.util.StringUtil;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -28,7 +29,7 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
     private final JwtConfig jwtConfig;
     private final JwtService jwtService;
 
-    //@SneakyThrows
+    @SneakyThrows
     @Override
     protected void doFilterInternal(final HttpServletRequest httpServletRequest, final HttpServletResponse response,
                                     final FilterChain filterChain) throws ServletException, IOException {

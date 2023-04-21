@@ -16,5 +16,8 @@ public class RateLimiterConfigData {
     private Integer slidingWindowSize;
     private Integer minNumberOfCalls;
     private Long waitDurationInOpenState;
+    private Integer defaultReplenishRate;
+    private Integer defaultBurstCapacity;
+    private Integer defaultRequestedTokens;
 }
 
