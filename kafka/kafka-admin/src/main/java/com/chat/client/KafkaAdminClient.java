@@ -1,8 +1,8 @@
 package com.chat.client;
 
-import com.microservices.demo.config.KafkaConfigData;
-import com.microservices.demo.config.RetryConfigData;
-import com.microservices.demo.kafka.admin.exception.KafkaClientException;
+import com.chat.config.KafkaConfigData;
+import com.chat.exception.KafkaClientException;
+import com.chat.retry.RetryConfigData;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.CreateTopicsResult;
 import org.apache.kafka.clients.admin.NewTopic;

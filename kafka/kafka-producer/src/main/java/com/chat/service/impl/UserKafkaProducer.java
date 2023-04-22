@@ -1,5 +1,6 @@
 package com.chat.service.impl;
 
+import com.chat.kafka.avro.model.UserAvroModel;
 import com.chat.service.KafkaProducer;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.slf4j.Logger;
