@@ -1,4 +1,4 @@
-package com.chat.property;
+package com.chat.redis;
 
 import lombok.Getter;
 import lombok.Setter;

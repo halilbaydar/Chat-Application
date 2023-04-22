@@ -48,6 +48,7 @@ public class AuthenticationFilter implements GatewayFilter {
         log.error(err);
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(httpStatus);
+        response.getHeaders().add("errorMessage", err);
         return response.setComplete();
     }
 

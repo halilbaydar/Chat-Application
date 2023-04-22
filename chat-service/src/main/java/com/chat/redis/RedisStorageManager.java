@@ -1,6 +1,5 @@
 package com.chat.redis;
 
-import com.chat.property.RedisProperties;
 import io.lettuce.core.ClientOptions;
 import io.lettuce.core.SocketOptions;
 import lombok.RequiredArgsConstructor;

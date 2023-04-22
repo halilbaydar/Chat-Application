@@ -75,7 +75,6 @@ public class GatewayConfig {
                 .route(p -> p
                         .path("/user/**")
                         .filters(gatewayFilterSpec -> getGatewayFilterSpec(gatewayFilterSpec, "user", "user")
-
                         )
                         .uri("lb://user-service")
                 )
