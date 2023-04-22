@@ -1,4 +1,4 @@
-package com.microservices.demo.common.util;
+package com.chat.util;
 
 import java.util.ArrayList;
 import java.util.List;

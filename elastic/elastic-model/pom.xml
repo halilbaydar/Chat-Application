@@ -27,5 +27,9 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.chat</groupId>
+            <artifactId>elastic-config</artifactId>
+        </dependency>
     </dependencies>
 </project>

@@ -41,3 +41,5 @@ build/
 ### ENV
 .env
 /docker-compose/.env
+
+.idea

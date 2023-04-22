@@ -30,6 +30,10 @@
         <module>kafka/kafka-consumer</module>
         <module>kafka/kafka-producer</module>
         <module>common</module>
+        <module>elastic</module>
+        <module>elastic/elastic-config</module>
+        <module>elastic/elastic-model</module>
+        <module>elastic/elastic-query</module>
     </modules>
 
     <properties>
@@ -52,6 +56,9 @@
         <spring-cloud-starter-circuitbreaker-reactor-resilience4j.version>2.1.5
         </spring-cloud-starter-circuitbreaker-reactor-resilience4j.version>
         <elastic.version>7.17.4</elastic.version>
+        <kafka-avro-serializer.version>7.3.0</kafka-avro-serializer.version>
+
+        <avro.version>1.11.1</avro.version>
     </properties>
 
     <dependencies>
@@ -300,6 +307,57 @@
             <dependency>
                 <groupId>com.chat</groupId>
                 <artifactId>common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>org.apache.avro</groupId>
+                <artifactId>avro</artifactId>
+                <version>${avro.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.confluent</groupId>
+                <artifactId>kafka-avro-serializer</artifactId>
+                <version>${kafka-avro-serializer.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-log4j12</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>io.swagger</groupId>
+                        <artifactId>swagger-annotations</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>io.swagger</groupId>
+                        <artifactId>swagger-core</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.chat</groupId>
+                <artifactId>kafka-model</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.chat</groupId>
+                <artifactId>elastic-config</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.chat</groupId>
+                <artifactId>elastic-model</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.chat</groupId>
+                <artifactId>elastic-query</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>

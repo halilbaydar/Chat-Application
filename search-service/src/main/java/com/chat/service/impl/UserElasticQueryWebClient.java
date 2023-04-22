@@ -1,10 +1,10 @@
 package com.chat.service.impl;
 
 import com.chat.config.ElasticQueryWebClientConfigData;
+import com.chat.exception.ElasticQueryClientException;
 import com.chat.model.request.SearchRequest;
 import com.chat.model.response.SearchResponse;
 import com.chat.service.ElasticQueryWebClient;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -20,18 +20,22 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
-@RequiredArgsConstructor
-public class TwitterElasticQueryWebClient implements ElasticQueryWebClient {
+public class UserElasticQueryWebClient implements ElasticQueryWebClient {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TwitterElasticQueryWebClient.class);
+    private static final Logger LOG = LoggerFactory.getLogger(UserElasticQueryWebClient.class);
 
-    @Qualifier("webClient")
     private final WebClient webClient;
     private final ElasticQueryWebClientConfigData elasticQueryWebClientConfig;
 
+    public UserElasticQueryWebClient(@Qualifier("webClient") WebClient webClient,
+                                     ElasticQueryWebClientConfigData elasticQueryWebClientConfig) {
+        this.webClient = webClient;
+        this.elasticQueryWebClientConfig = elasticQueryWebClientConfig;
+    }
+
     @Override
     public Flux<SearchResponse> getDataByText(SearchRequest searchRequest) {
-        LOG.info("Querying by text {}", searchRequest.getName());
+        LOG.info("Querying by text {}", searchRequest.getWord());
         return getWebClient(searchRequest)
                 .bodyToFlux(SearchResponse.class);
     }
@@ -49,7 +53,7 @@ public class TwitterElasticQueryWebClient implements ElasticQueryWebClient {
                 .onStatus(
                         HttpStatus::is4xxClientError,
                         clientResponse -> Mono.just(
-                                new ElasticQueryWebClientException(clientResponse.statusCode().getReasonPhrase())))
+                                new ElasticQueryClientException(clientResponse.statusCode().getReasonPhrase())))
                 .onStatus(
                         HttpStatus::is5xxServerError,
                         clientResponse -> Mono.just(new Exception(clientResponse.statusCode().getReasonPhrase())));

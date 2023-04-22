@@ -1,4 +1,4 @@
-package com.microservices.demo.kafka.admin.exception;
+package com.chat.exception;
 
 /**
  * Exception class for Kafka client error situations.

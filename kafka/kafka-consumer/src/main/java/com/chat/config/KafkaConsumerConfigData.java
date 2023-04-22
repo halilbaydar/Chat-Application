@@ -1,4 +1,4 @@
-package com.microservices.demo.config;
+package com.chat.config;
 
 
 import lombok.Data;

@@ -1,5 +1,6 @@
 package com.chat.service.impl;
 
+import com.chat.service.KafkaProducer;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,20 +13,20 @@ import org.springframework.util.concurrent.ListenableFutureCallback;
 import javax.annotation.PreDestroy;
 
 @Service
-public class TwitterKafkaProducer implements KafkaProducer<Long, UserAvroModel> {
+public class UserKafkaProducer implements KafkaProducer<Long, UserAvroModel> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TwitterKafkaProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(UserKafkaProducer.class);
 
-    private KafkaTemplate<Long, TwitterAvroModel> kafkaTemplate;
+    private final KafkaTemplate<Long, UserAvroModel> kafkaTemplate;
 
-    public TwitterKafkaProducer(KafkaTemplate<Long, TwitterAvroModel> template) {
+    public UserKafkaProducer(KafkaTemplate<Long, UserAvroModel> template) {
         this.kafkaTemplate = template;
     }
 
     @Override
-    public void send(String topicName, Long key, TwitterAvroModel message) {
+    public void send(String topicName, Long key, UserAvroModel message) {
         LOG.info("Sending message='{}' to topic='{}'", message, topicName);
-        ListenableFuture<SendResult<Long, TwitterAvroModel>> kafkaResultFuture =
+        ListenableFuture<SendResult<Long, UserAvroModel>> kafkaResultFuture =
                 kafkaTemplate.send(topicName, key, message);
         addCallback(topicName, message, kafkaResultFuture);
     }
@@ -38,8 +39,8 @@ public class TwitterKafkaProducer implements KafkaProducer<Long, UserAvroModel> 
         }
     }
 
-    private void addCallback(String topicName, TwitterAvroModel message,
-                             ListenableFuture<SendResult<Long, TwitterAvroModel>> kafkaResultFuture) {
+    private void addCallback(String topicName, UserAvroModel message,
+                             ListenableFuture<SendResult<Long, UserAvroModel>> kafkaResultFuture) {
         kafkaResultFuture.addCallback(new ListenableFutureCallback<>() {
             @Override
             public void onFailure(Throwable throwable) {
@@ -47,14 +48,14 @@ public class TwitterKafkaProducer implements KafkaProducer<Long, UserAvroModel> 
             }
 
             @Override
-            public void onSuccess(SendResult<Long, TwitterAvroModel> result) {
-                    RecordMetadata metadata = result.getRecordMetadata();
-                    LOG.debug("Received new metadata. Topic: {}; Partition {}; Offset {}; Timestamp {}, at time {}",
-                            metadata.topic(),
-                            metadata.partition(),
-                            metadata.offset(),
-                            metadata.timestamp(),
-                            System.nanoTime());
+            public void onSuccess(SendResult<Long, UserAvroModel> result) {
+                RecordMetadata metadata = result.getRecordMetadata();
+                LOG.debug("Received new metadata. Topic: {}; Partition {}; Offset {}; Timestamp {}, at time {}",
+                        metadata.topic(),
+                        metadata.partition(),
+                        metadata.offset(),
+                        metadata.timestamp(),
+                        System.nanoTime());
             }
         });
     }

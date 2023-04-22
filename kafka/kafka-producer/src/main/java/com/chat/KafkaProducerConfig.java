@@ -1,7 +1,7 @@
-package com.microservices.demo.kafka.producer.config;
+package com.chat;
 
-import com.microservices.demo.config.KafkaConfigData;
-import com.microservices.demo.config.KafkaProducerConfigData;
+import com.chat.config.KafkaConfigData;
+import com.chat.config.KafkaProducerConfigData;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.springframework.context.annotation.Bean;

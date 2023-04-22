@@ -1,10 +1,10 @@
 package com.chat.service;
 
-import com.microservices.demo.elastic.model.index.IndexModel;
+import com.chat.model.UserIndex;
 
 import java.util.List;
 
-public interface ElasticQueryClient<T extends IndexModel> {
+public interface ElasticQueryClient<T extends UserIndex> {
 
     T getIndexModelById(String id);
 

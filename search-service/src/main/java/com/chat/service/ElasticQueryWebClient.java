@@ -1,10 +1,10 @@
-package com.microservices.demo.reactive.elastic.query.web.client.service;
+package com.chat.service;
 
-import com.microservices.demo.elastic.query.web.client.common.model.ElasticQueryWebClientRequestModel;
-import com.microservices.demo.elastic.query.web.client.common.model.ElasticQueryWebClientResponseModel;
+import com.chat.model.request.SearchRequest;
+import com.chat.model.response.SearchResponse;
 import reactor.core.publisher.Flux;
 
 public interface ElasticQueryWebClient {
 
-    Flux<ElasticQueryWebClientResponseModel> getDataByText(ElasticQueryWebClientRequestModel request);
+    Flux<SearchResponse> getDataByText(SearchRequest request);
 }

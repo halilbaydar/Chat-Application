@@ -1,9 +1,9 @@
-package com.microservices.demo.reactive.elastic.query.web.client.config;
+package com.chat.config;
 
-import com.microservices.demo.config.ElasticQueryWebClientConfigData;
 import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -14,16 +14,13 @@ import reactor.netty.http.client.HttpClient;
 import java.util.concurrent.TimeUnit;
 
 @Configuration
+@RequiredArgsConstructor
 public class WebClientConfig {
 
     private final ElasticQueryWebClientConfigData.WebClient webClientConfig;
 
-    public WebClientConfig(ElasticQueryWebClientConfigData clientConfigData) {
-        this.webClientConfig = clientConfigData.getWebClient();
-    }
-
     @Bean("webClient")
-    WebClient webClient() {
+    public WebClient webClient() {
         return WebClient.builder()
                 .baseUrl(webClientConfig.getBaseUrl())
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, webClientConfig.getContentType())

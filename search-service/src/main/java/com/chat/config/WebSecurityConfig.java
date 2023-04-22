@@ -1,4 +1,4 @@
-package com.microservices.demo.reactive.elastic.query.web.client.config;
+package com.chat.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

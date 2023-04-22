@@ -1,12 +1,12 @@
 package com.chat.service.impl;
 
-import com.microservices.demo.config.ElasticConfigData;
-import com.microservices.demo.elastic.index.client.service.ElasticIndexClient;
-import com.microservices.demo.elastic.index.client.util.ElasticIndexUtil;
-import com.microservices.demo.elastic.model.index.impl.TwitterIndexModel;
+import com.chat.config.ElasticConfigData;
+import com.chat.model.UserIndex;
+import com.chat.service.ElasticIndexClient;
+import com.chat.util.ElasticIndexUtil;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.IndexedObjectInformation;
 import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
@@ -17,33 +17,25 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@ConditionalOnProperty(name = "elastic-config.is-repository", havingValue = "false")
-public class TwitterElasticIndexClient implements ElasticIndexClient<TwitterIndexModel> {
+@RequiredArgsConstructor
+public class UserElasticIndexClient implements ElasticIndexClient<UserIndex> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TwitterElasticIndexClient.class);
+    private static final Logger LOG = LoggerFactory.getLogger(UserElasticIndexClient.class);
 
     private final ElasticConfigData elasticConfigData;
 
     private final ElasticsearchOperations elasticsearchOperations;
 
-    private final ElasticIndexUtil<TwitterIndexModel> elasticIndexUtil;
-
-    public TwitterElasticIndexClient(ElasticConfigData configData,
-                                     ElasticsearchOperations elasticOperations,
-                                     ElasticIndexUtil<TwitterIndexModel> indexUtil) {
-        this.elasticConfigData = configData;
-        this.elasticsearchOperations = elasticOperations;
-        this.elasticIndexUtil = indexUtil;
-    }
+    private final ElasticIndexUtil<UserIndex> elasticIndexUtil;
 
     @Override
-    public List<String> save(List<TwitterIndexModel> documents) {
+    public List<String> save(List<UserIndex> documents) {
         List<IndexQuery> indexQueries = elasticIndexUtil.getIndexQueries(documents);
         List<String> documentIds = elasticsearchOperations.bulkIndex(
                 indexQueries,
                 IndexCoordinates.of(elasticConfigData.getIndexName())
         ).stream().map(IndexedObjectInformation::getId).collect(Collectors.toList());
-        LOG.info("Documents indexed successfully with type: {} and ids: {}", TwitterIndexModel.class.getName(),
+        LOG.info("Documents indexed successfully with type: {} and ids: {}", UserIndex.class.getName(),
                 documentIds);
         return documentIds;
     }

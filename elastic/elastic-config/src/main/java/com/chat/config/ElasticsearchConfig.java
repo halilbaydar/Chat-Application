@@ -15,7 +15,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.Objects;
 
 @Configuration
-@EnableElasticsearchRepositories(basePackages = "com.microservices.demo.elastic")
+@EnableElasticsearchRepositories(basePackages = "com.chat")
 public class ElasticsearchConfig extends AbstractElasticsearchConfiguration {
 
     private final ElasticConfigData elasticConfigData;

@@ -1,9 +1,9 @@
-package com.microservices.demo.elastic.index.client.service;
+package com.chat.service;
 
-import com.microservices.demo.elastic.model.index.IndexModel;
+import com.chat.model.UserIndex;
 
 import java.util.List;
 
-public interface ElasticIndexClient<T extends IndexModel> {
+public interface ElasticIndexClient<T extends UserIndex> {
     List<String> save(List<T> documents);
 }

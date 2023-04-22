@@ -1,60 +1,29 @@
-package com.chat.api;
+package com.chat.controller;
 
-import com.microservices.demo.elastic.query.web.client.common.model.ElasticQueryWebClientRequestModel;
-import com.microservices.demo.elastic.query.web.client.common.model.ElasticQueryWebClientResponseModel;
-import com.microservices.demo.reactive.elastic.query.web.client.service.ElasticQueryWebClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.chat.model.request.SearchRequest;
+import com.chat.model.response.SearchResponse;
+import com.chat.service.ElasticQueryWebClient;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.thymeleaf.spring5.context.webflux.IReactiveDataDriverContextVariable;
-import org.thymeleaf.spring5.context.webflux.ReactiveDataDriverContextVariable;
 import reactor.core.publisher.Flux;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 @Controller
+@RequiredArgsConstructor
 public class QueryController {
-
-    private static final Logger LOG = LoggerFactory.getLogger(QueryController.class);
 
     private final ElasticQueryWebClient elasticQueryWebClient;
 
-    public QueryController(ElasticQueryWebClient webClient) {
-        this.elasticQueryWebClient = webClient;
-    }
-
-    @GetMapping("")
-    public String index() {
-        return "index";
-    }
-
-    @GetMapping("/home")
-    public String home(Model model) {
-        model.addAttribute("elasticQueryClientRequestModel",
-                ElasticQueryWebClientRequestModel.builder().build());
-        return "home";
-    }
-
-    @GetMapping("/error")
-    public String error() {
-        return "error";
-    }
-
     @PostMapping(value = "/query-by-text")
-    public String queryByText(@Valid ElasticQueryWebClientRequestModel requestModel, Model model) {
-        Flux<ElasticQueryWebClientResponseModel> responseModel = elasticQueryWebClient.getDataByText(requestModel);
-        responseModel = responseModel.log();
-        IReactiveDataDriverContextVariable reactiveData =
-                new ReactiveDataDriverContextVariable(responseModel, 1);
-        model.addAttribute("elasticQueryClientResponseModels", reactiveData);
-        model.addAttribute("searchText", requestModel.getText());
-        model.addAttribute("elasticQueryClientResponseModel",
-                ElasticQueryWebClientRequestModel.builder().build());
-        LOG.info("Returning from reactive client controller for text {} !", requestModel.getText());
-        return "home";
+    public ResponseEntity<Flux<SearchResponse>> queryByText(@Valid SearchRequest searchRequest, Model model) {
+        return ResponseEntity.of(Optional.of(
+                elasticQueryWebClient.getDataByText(searchRequest)
+        ));
     }
 
 }

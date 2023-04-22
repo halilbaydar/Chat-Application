@@ -1,7 +1,5 @@
-package com.chat;
+package com.chat.config;
 
-import com.microservices.demo.config.KafkaConfigData;
-import com.microservices.demo.config.KafkaConsumerConfigData;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.springframework.context.annotation.Bean;
