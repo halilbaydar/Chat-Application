@@ -1,6 +1,6 @@
 package com.chat.util;
 
-import com.chat.aut.JwtService;
+import com.chat.aut.JwtSecretKey;
 import com.chat.payload.JwtPayload;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -17,7 +17,7 @@ import static com.chat.constant.HttpConstant.JWT_AUTH_SUBJECT;
 
 @Component
 @RequiredArgsConstructor
-public class JwtUtilImpl extends AuthUtil implements JwtService {
+public class JwtUtilImpl extends AuthUtil {
 
     private final JwtSecretKey jwtSecretKey;
 
@@ -35,12 +35,10 @@ public class JwtUtilImpl extends AuthUtil implements JwtService {
         return Jwts.parserBuilder().setSigningKey(getKey()).build().parseClaimsJws(token);
     }
 
-    @Override
     public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
         return claimsResolver.apply(extractClaims(token).getBody());
     }
 
-    @Override
     public String generateLoginJwtToken(String username, Collection<? extends GrantedAuthority> authorities, String tokenId, Date date) {
         return Jwts.builder()
                 .setSubject(username)
@@ -51,17 +49,14 @@ public class JwtUtilImpl extends AuthUtil implements JwtService {
                 .compact();
     }
 
-    @Override
     public String generateTokenForLogin(String name, Collection<? extends GrantedAuthority> authorities, String tokenId) {
         return this.generateLoginJwtToken(name, authorities, tokenId, new Date());
     }
 
-    @Override
     public String generateTokenForLogin(String name, Collection<? extends GrantedAuthority> authorities) {
         return this.generateTokenForLogin(name, authorities, UUID.randomUUID().toString());
     }
 
-    @Override
     public String getUsernameFromToken(String token) {
         return getBody(pickBearer(token)).getSubject();
     }
@@ -70,7 +65,6 @@ public class JwtUtilImpl extends AuthUtil implements JwtService {
         return token.replaceFirst("Bearer ", "");
     }
 
-    @Override
     public List<Map<String, String>> getAuthorities(String token) {
         return (List<Map<String, String>>) getBody(token).get("authorities");
 

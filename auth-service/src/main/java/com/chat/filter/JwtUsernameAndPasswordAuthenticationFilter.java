@@ -1,7 +1,7 @@
 package com.chat.filter;
 
-import com.chat.config.JwtConfig;
-import com.chat.interfaces.service.JwtService;
+import com.chat.aut.JwtConfig;
+import com.chat.util.JwtUtilImpl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -14,9 +14,9 @@ import javax.servlet.http.HttpServletResponse;
 public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final JwtConfig jwtConfig;
-    private final JwtService jwtService;
+    private final JwtUtilImpl jwtService;
 
-    public JwtUsernameAndPasswordAuthenticationFilter(final JwtConfig jwtConfig, final JwtService jwtService, AuthenticationManager authenticationManager) {
+    public JwtUsernameAndPasswordAuthenticationFilter(final JwtConfig jwtConfig, final JwtUtilImpl jwtService, AuthenticationManager authenticationManager) {
         super(authenticationManager);
         this.jwtConfig = jwtConfig;
         this.jwtService = jwtService;

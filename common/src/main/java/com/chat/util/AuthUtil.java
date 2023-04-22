@@ -22,8 +22,17 @@ public abstract class AuthUtil {
         return Jwts.parserBuilder().setSigningKey(getKey()).build().parseClaimsJws(token).getBody();
     }
 
+    private boolean isTokenExpired(Claims claims, Date date) {
+        return claims.getExpiration().before(date);
+
+    }
+
     private boolean isTokenExpired(String token, Date date) {
         return this.getAllClaimsFromToken(token).getExpiration().before(date);
+    }
+
+    public boolean isInvalid(Claims claims) {
+        return this.isTokenExpired(claims, new Date());
     }
 
     public boolean isInvalid(String token) {

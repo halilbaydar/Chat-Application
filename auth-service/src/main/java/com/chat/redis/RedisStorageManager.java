@@ -58,10 +58,8 @@ public class RedisStorageManager {
     }
 
     private RedisConfiguration getRedisConfiguration() {
-        if (profile.equals("local")) {
-            return getRedisStandaloneConfiguration();
-        }
-        return getRedisClusterConfiguration();
+        if (!profile.equals("local")) return getRedisClusterConfiguration();
+        return getRedisStandaloneConfiguration();
     }
 
     @Profile({"prod", "dev"})

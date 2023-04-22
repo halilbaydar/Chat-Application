@@ -137,6 +137,10 @@
             <artifactId>jjwt-jackson</artifactId> <!-- or jjwt-gson if Gson is preferred -->
         </dependency>
         <!--  END OF JWT  -->
+        <dependency>
+            <groupId>com.chat</groupId>
+            <artifactId>common</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

@@ -1,4 +1,4 @@
-package com.chat.util;
+package com.chat.aut;
 
 import com.chat.constant.HttpConstant;
 import lombok.Data;

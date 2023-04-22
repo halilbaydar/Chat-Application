@@ -85,6 +85,5 @@ public class JwtServiceImpl implements JwtService {
     public List<Map<String, String>> getAuthorities(String token) {
         if (isBlank(token)) throw new RuntimeException(INVALID_OPERATION);
         return (List<Map<String, String>>) getBody(token).get("authorities");
-
     }
 }
