@@ -52,4 +52,12 @@ public abstract class AuthUtil {
                 simpleGrantedAuthorities
         );
     }
+
+    public Authentication generateAuthentication(String username, List<SimpleGrantedAuthority> simpleGrantedAuthorities) {
+        return new UsernamePasswordAuthenticationToken(
+                username,
+                null,
+                simpleGrantedAuthorities
+        );
+    }
 }

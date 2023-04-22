@@ -46,7 +46,7 @@ public class JwtServiceImpl implements JwtService {
             return false;
         }
         List<SimpleGrantedAuthority> simpleGrantedAuthorities = activeUser.getRole().getGrantedAuthorities();
-        return simpleGrantedAuthorities.equals(authorities);
+        return Arrays.equals(authorities.toArray(), simpleGrantedAuthorities.toArray());
     }
 
     @Override

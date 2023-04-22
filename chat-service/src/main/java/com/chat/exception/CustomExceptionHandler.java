@@ -45,10 +45,10 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler imple
     }
 
     @SneakyThrows
-    public static void getExceptionResponse(HttpServletResponse response, String code) {
+    public static void getExceptionResponse(HttpServletResponse response, HttpStatus httpStatus) {
         response.setStatus(HttpStatus.FORBIDDEN.value());
         response.getWriter().write(String.valueOf(
-                new JSONObject().appendField("code", code)
+                new JSONObject().appendField("code", httpStatus)
                         .appendField("status", HttpStatus.FORBIDDEN)));
     }
 

@@ -67,7 +67,6 @@ public class JwtUtilImpl extends AuthUtil {
 
     public List<Map<String, String>> getAuthorities(String token) {
         return (List<Map<String, String>>) getBody(token).get("authorities");
-
     }
 
     public Optional<JwtPayload> verify(String token) {

@@ -1,7 +1,6 @@
 package com.chat.config;
 
-import com.chat.filter.JwtTokenVerifier;
-import com.chat.filter.JwtUsernameAndPasswordAuthenticationFilter;
+import com.chat.filter.JwtTokenVerifierKt;
 import com.chat.interfaces.service.JwtService;
 import com.chat.model.common.Role;
 import lombok.RequiredArgsConstructor;
@@ -10,23 +9,17 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.session.FindByIndexNameSessionRepository;
 import org.springframework.session.Session;
 import org.springframework.session.security.SpringSessionBackedSessionRegistry;
-import org.springframework.util.CollectionUtils;
 
 import java.util.EventListener;
 
@@ -36,7 +29,6 @@ import java.util.EventListener;
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 public class SecurityConfig {
 
-    private final JwtConfig jwtConfig;
     private final JwtService jwtService;
     private final FindByIndexNameSessionRepository<? extends Session> sessionRepository;
 
@@ -46,26 +38,18 @@ public class SecurityConfig {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
     @Bean
-    protected SecurityFilterChain configure(HttpSecurity http,
-                                            BCryptPasswordEncoder bCryptPasswordEncoder,
-                                            UserDetailsService userDetailService) throws Exception {
+    protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
         return http.cors()
                 .and()
                 .csrf().disable()// TODO: Enabeble this in production
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 .and()
-                .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(jwtConfig, jwtService, authenticationManager(http, bCryptPasswordEncoder, userDetailService)))
-                .addFilterBefore(new JwtTokenVerifier(jwtConfig, jwtService), BasicAuthenticationFilter.class)
+                .addFilterBefore(new JwtTokenVerifierKt(jwtService), BasicAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/v1/register/**", "/swagger-ui/**", "/ws/**", "/app/**", "/login/***").permitAll()
                 .antMatchers("/user/**").hasAnyRole(Role.USER.name())
@@ -83,25 +67,5 @@ public class SecurityConfig {
         return (web) -> web
                 .ignoring()
                 .antMatchers("/v1/register/**", "/ws/**", "/app/**");
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http,
-                                                       BCryptPasswordEncoder bCryptPasswordEncoder,
-                                                       UserDetailsService userDetailService)
-            throws Exception {
-        return http.getSharedObject(AuthenticationManagerBuilder.class)
-                .userDetailsService(userDetailService)
-                .passwordEncoder(bCryptPasswordEncoder)
-                .and()
-                .build();
-    }
-
-    @Bean
-    public DaoAuthenticationProvider daoAuthenticationProvider(PasswordEncoder passwordEncoder, UserDetailsService userDetailsService) {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setPasswordEncoder(passwordEncoder);
-        provider.setUserDetailsService(userDetailsService);
-        return provider;
     }
 }
