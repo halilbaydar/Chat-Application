@@ -12,10 +12,13 @@ import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 @Slf4j
 @Component
@@ -35,7 +38,6 @@ public class AuthenticationFilter implements GatewayFilter {
 
             final String token = this.getAuthHeader(request);
             Claims claims = jwtUtil.getAllClaimsFromToken(token);
-
             if (jwtUtil.isInvalid(claims))
                 return this.onError(exchange, "Authorization header is invalid", HttpStatus.UNAUTHORIZED);
 
@@ -61,9 +63,11 @@ public class AuthenticationFilter implements GatewayFilter {
     }
 
     private void populateRequestWithHeaders(ServerWebExchange exchange, Claims claims) {
+        List<SimpleGrantedAuthority> grantedAuthorities = jwtUtil.getGrantedAuthorities(claims);
+        String username = claims.getSubject();
         exchange.getRequest().mutate()
-                .header("id", String.valueOf(claims.get("id")))
-                .header("role", String.valueOf(claims.get("role")))
+                .header("username", username)
+                .header("authorities", grantedAuthorities.toString())
                 .build();
     }
 }

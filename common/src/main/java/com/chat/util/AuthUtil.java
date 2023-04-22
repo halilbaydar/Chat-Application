@@ -24,7 +24,6 @@ public abstract class AuthUtil {
 
     private boolean isTokenExpired(Claims claims, Date date) {
         return claims.getExpiration().before(date);
-
     }
 
     private boolean isTokenExpired(String token, Date date) {
@@ -39,12 +38,14 @@ public abstract class AuthUtil {
         return this.isTokenExpired(token, new Date());
     }
 
-    public Authentication generateAuthentication(String token, String username) {
-        List<Map<String, String>> authorities = (List<Map<String, String>>) getBody(token).get(HttpConstant.JWT_AUTH_SUBJECT);
-
-        List<SimpleGrantedAuthority> simpleGrantedAuthorities = authorities.stream()
+    public List<SimpleGrantedAuthority> getGrantedAuthorities(Claims body) {
+        List<Map<String, String>> authorities = (List<Map<String, String>>) body.get(HttpConstant.JWT_AUTH_SUBJECT);
+        return authorities.stream()
                 .map(m -> new SimpleGrantedAuthority(m.get("authority"))).collect(Collectors.toList());
+    }
 
+    public Authentication generateAuthentication(String token, String username) {
+        List<SimpleGrantedAuthority> simpleGrantedAuthorities = getGrantedAuthorities(getBody(token));
         return new UsernamePasswordAuthenticationToken(
                 username,
                 null,
