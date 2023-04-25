@@ -14,7 +14,7 @@ This is a simple chat application which is implemented in Spring Boot Framework 
 
 ### Functional Requirements
 * One to one chat
-* Support of messages which contains and image messages
+* Support of messages which contains text, location and image
 * Read/Receipt/Typing/Seen/Sent statuses of messages
 
 ### Features
