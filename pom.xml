@@ -25,20 +25,21 @@
         <module>search-service</module>
         <module>kafka-to-elastic-service</module>
         <module>kafka</module>
-        <module>kafka/kafka-model</module>
-        <module>kafka/kafka-admin</module>
-        <module>kafka/kafka-consumer</module>
-        <module>kafka/kafka-producer</module>
         <module>common</module>
         <module>elastic</module>
         <module>elastic/elastic-config</module>
         <module>elastic/elastic-model</module>
         <module>elastic/elastic-query</module>
-    </modules>
 
+    </modules>
+    <repositories>
+        <repository>
+            <id>confluent</id>
+            <url>https://packages.confluent.io/maven/</url>
+        </repository>
+    </repositories>
     <properties>
         <org.mapstruct.version>1.4.2.Final</org.mapstruct.version>
-        <org.projectlombok.version>1.18.20</org.projectlombok.version>
         <java.version>17</java.version>
 
         <spring-boot.version>2.7.10</spring-boot.version>
@@ -56,9 +57,12 @@
         <spring-cloud-starter-circuitbreaker-reactor-resilience4j.version>2.1.5
         </spring-cloud-starter-circuitbreaker-reactor-resilience4j.version>
         <elastic.version>7.17.4</elastic.version>
-        <kafka-avro-serializer.version>7.3.0</kafka-avro-serializer.version>
+        <kafka-avro-serializer.version>5.3.0</kafka-avro-serializer.version>
 
         <avro.version>1.11.1</avro.version>
+
+        <kotlin.version>1.8.20</kotlin.version>
+
     </properties>
 
     <dependencies>
@@ -89,11 +93,6 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-web</artifactId>
                 <version>${spring-boot.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-                <optional>true</optional>
             </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -310,17 +309,16 @@
                 <version>${project.version}</version>
             </dependency>
 
-
             <dependency>
                 <groupId>org.apache.avro</groupId>
                 <artifactId>avro</artifactId>
                 <version>${avro.version}</version>
             </dependency>
-
+            <!-- https://mvnrepository.com/artifact/io.confluent/kafka-avro-serializer -->
             <dependency>
                 <groupId>io.confluent</groupId>
                 <artifactId>kafka-avro-serializer</artifactId>
-                <version>${kafka-avro-serializer.version}</version>
+                <version>5.3.0</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.slf4j</groupId>
@@ -340,6 +338,7 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+
             <dependency>
                 <groupId>com.chat</groupId>
                 <artifactId>kafka-model</artifactId>
@@ -360,10 +359,32 @@
                 <artifactId>elastic-query</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <!-- KOTLIN SUPPORT -->
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-stdlib-jdk8</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-test</artifactId>
+                <version>${kotlin.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <!-- KOTLIN SUPPORT -->
         </dependencies>
     </dependencyManagement>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>${spring-boot.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -374,15 +395,6 @@
                 </configuration>
             </plugin>
         </plugins>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-maven-plugin</artifactId>
-                    <version>${spring-boot.version}</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
     </build>
 
 </project>

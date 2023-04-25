@@ -18,6 +18,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -67,7 +68,7 @@ public class AuthenticationFilter implements GatewayFilter {
         String username = claims.getSubject();
         exchange.getRequest().mutate()
                 .header("username", username)
-                .header("authorities", grantedAuthorities.toString())
+                .header("authorities", Arrays.toString(grantedAuthorities.toArray()))
                 .build();
     }
 }

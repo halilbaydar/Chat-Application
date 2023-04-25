@@ -8,16 +8,42 @@
         <artifactId>chat-application</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-
+    <packaging>pom</packaging>
     <artifactId>kafka</artifactId>
 
     <modules>
         <module>kafka-model</module>
+        <module>kafka-consumer</module>
+        <module>kafka-admin</module>
+        <module>kafka-producer</module>
     </modules>
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.chat</groupId>
+            <artifactId>kafka-model</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.chat</groupId>
+            <artifactId>kafka-admin</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.chat</groupId>
+            <artifactId>kafka-producer</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.chat</groupId>
+            <artifactId>kafka-consumer</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
 
 </project>

@@ -1,6 +1,6 @@
 package com.chat.config;
 
-import com.chat.filter.JwtTokenVerifierKt;
+import com.chat.filter.JwtTokenVerifier;
 import com.chat.interfaces.service.JwtService;
 import com.chat.model.common.Role;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +49,7 @@ public class SecurityConfig {
                 .csrf().disable()// TODO: Enabeble this in production
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 .and()
-                .addFilterBefore(new JwtTokenVerifierKt(jwtService), BasicAuthenticationFilter.class)
+                .addFilterBefore(new JwtTokenVerifier(jwtService), BasicAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/v1/register/**", "/swagger-ui/**", "/ws/**", "/app/**", "/login/***").permitAll()
                 .antMatchers("/user/**").hasAnyRole(Role.USER.name())

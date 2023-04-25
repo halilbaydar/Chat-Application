@@ -1,8 +1,6 @@
 package com.chat.filter;
 
-import com.chat.config.JwtConfig;
 import com.chat.interfaces.service.JwtService;
-import com.chat.util.ArraysUtilKt;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
@@ -13,24 +11,20 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 import static com.chat.exception.CustomExceptionHandler.getExceptionResponse;
 
 @RequiredArgsConstructor
 public class JwtTokenVerifier extends OncePerRequestFilter {
-    private final JwtConfig jwtConfig;
     private final JwtService jwtService;
 
     @SneakyThrows
     @Override
     protected void doFilterInternal(final HttpServletRequest httpServletRequest, final HttpServletResponse response,
-                                    final FilterChain filterChain) throws ServletException, IOException {
+                                    final FilterChain filterChain) {
         try {
 
             Authentication authentication = generateAuthentication(httpServletRequest);
