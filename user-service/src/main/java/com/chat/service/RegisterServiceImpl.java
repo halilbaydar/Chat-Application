@@ -2,7 +2,7 @@ package com.chat.service;
 
 import com.chat.aut.Role;
 import com.chat.exception.CustomException;
-import com.chat.interfaces.RegisterService;
+import com.chat.interfaces.service.RegisterService;
 import com.chat.interfaces.repository.UserRepository;
 import com.chat.model.entity.User;
 import com.chat.model.entity.UserEntity;

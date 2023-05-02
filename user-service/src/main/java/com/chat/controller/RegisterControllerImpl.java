@@ -1,7 +1,7 @@
 package com.chat.controller;
 
-import com.chat.interfaces.RegisterController;
-import com.chat.interfaces.RegisterService;
+import com.chat.interfaces.controller.RegisterController;
+import com.chat.interfaces.service.RegisterService;
 import com.chat.model.request.RegisterRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RestController;
