@@ -22,7 +22,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public <R> R getUsers() {
-        UserEntity activeUser = SessionUtil.getActiveUser();
         return (R) userRepository.findAll();
     }
 }

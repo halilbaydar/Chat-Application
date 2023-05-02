@@ -30,8 +30,8 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler implements ErrorController {
 
-    public static Object prepareErrorJSON(final HttpStatus status, final Exception ex) {
-        Map respond = new HashMap();
+    public static Map<String, Object> prepareErrorJSON(final HttpStatus status, final Exception ex) {
+        Map<String, Object> respond = new HashMap();
         respond.put("status", status.value());
         respond.put("error", status.getReasonPhrase());
         respond.put("code", ex.getMessage());
