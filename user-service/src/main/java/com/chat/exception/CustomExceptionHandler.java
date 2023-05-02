@@ -1,7 +1,7 @@
 package com.chat.exception;
 
 import lombok.SneakyThrows;
-import net.minidev.json.JSONObject;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
@@ -21,8 +21,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -46,10 +44,11 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler imple
 
     @SneakyThrows
     public static void getExceptionResponse(HttpServletResponse response, HttpStatus httpStatus) {
+        Map<String, Object> responseMap = new HashMap<>();
+        responseMap.put("code", httpStatus);
+        responseMap.put("status", HttpStatus.FORBIDDEN);
         response.setStatus(HttpStatus.FORBIDDEN.value());
-        response.getWriter().write(String.valueOf(
-                new JSONObject().appendField("code", httpStatus)
-                        .appendField("status", HttpStatus.FORBIDDEN)));
+        response.getWriter().write(responseMap.toString());
     }
 
     @RequestMapping("/error")
@@ -133,10 +132,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler imple
     public ResponseEntity<Object> handleConstraintViolation(
             ConstraintViolationException ex, WebRequest request) {
         List<String> errors = new ArrayList<String>();
-        for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
-            errors.add(violation.getRootBeanClass().getName() + " " +
-                    violation.getPropertyPath() + ": " + violation.getMessage());
-        }
+        errors.add(ex.getCause().getMessage());
 
         return new ResponseEntity<>(prepareErrorJSON(HttpStatus.BAD_REQUEST, ex), HttpStatus.BAD_REQUEST);
     }
