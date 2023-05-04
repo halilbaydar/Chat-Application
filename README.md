@@ -45,3 +45,7 @@ This is a simple chat application which is implemented in Spring Boot Framework 
 * zipkin port: 9411
 * gateway service port: 9092
 * discovery service port: 8761
+
+### Backlog
+* Kafka streams, analytics
+* Group messaging
