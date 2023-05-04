@@ -13,6 +13,8 @@ import java.io.Serializable;
 import java.util.List;
 
 import static com.chat.constant.ErrorConstant.ErrorMessage.USER_NOT_EXIST;
+import static com.chat.constant.RedisKeyConstant.USERS;
+import static com.chat.util.SHA256Utils.toSHA512;
 
 
 @Service
@@ -24,7 +26,7 @@ public class UserDetailsServiceImp implements UserDetailsService, Serializable {
     public final UserDetails loadUserByUsername(final String username)
             throws UsernameNotFoundException {
 
-        UserEntity attemptedUser = (UserEntity) redisStorageManager.map.get("users", username);
+        UserEntity attemptedUser = (UserEntity) redisStorageManager.map.get(USERS, toSHA512(username));
 
         if (attemptedUser == null) {
             throw new RuntimeException(USER_NOT_EXIST);

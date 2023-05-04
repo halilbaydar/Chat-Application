@@ -2,22 +2,21 @@ package com.chat;
 
 import com.chat.client.KafkaAdminClient;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import javax.annotation.PostConstruct;
-
 @RequiredArgsConstructor
 @SpringBootApplication(scanBasePackages = "com.chat")
-public class UserServiceApplication {
+public class UserServiceApplication implements CommandLineRunner {
     private KafkaAdminClient kafkaAdminClient;
 
     public static void main(String[] args) {
         SpringApplication.run(UserServiceApplication.class, args);
     }
 
-    @PostConstruct
-    public void checkKafkaUserServiceTopics() {
+    @Override
+    public void run(String... args) {
         kafkaAdminClient.createTopics();
         kafkaAdminClient.checkSchemaRegistry();
     }

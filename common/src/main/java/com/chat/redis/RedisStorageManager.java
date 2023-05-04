@@ -32,10 +32,10 @@ public class RedisStorageManager {
 
     private final RedisProperties redisProperties;
 
-    public HashOperations map;
-    public ListOperations list;
-    public SetOperations set;
-    public ValueOperations value;
+    public HashOperations<Object, Object, Object> map;
+    public ListOperations<Object, Object> list;
+    public SetOperations<Object, Object> set;
+    public ValueOperations<Object, Object> value;
     public RedisConnection conn;
     public RedisTemplate<Object, Object> redisTemplate;
 

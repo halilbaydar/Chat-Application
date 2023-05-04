@@ -7,6 +7,7 @@ import com.chat.interfaces.service.RegisterService;
 import com.chat.kafka.avro.model.UserAvroModel;
 import com.chat.model.entity.UserEntity;
 import com.chat.model.request.RegisterRequest;
+import com.chat.redis.RedisStorageManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -16,7 +17,9 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 
 import static com.chat.constant.ErrorConstant.ErrorMessage.USERNAME_IN_USE;
+import static com.chat.constant.RedisKeyConstant.USERS;
 import static com.chat.constant.SuccessConstant.SUCCESS;
+import static com.chat.util.SHA256Utils.toSHA512;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +27,7 @@ public class RegisterServiceImpl implements RegisterService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final KafkaProducer<String, UserAvroModel> kafkaProducer;
+    private final RedisStorageManager redisStorageManager;
 
     @Value("${topic::user}")
     private String userTopic;
@@ -49,6 +53,8 @@ public class RegisterServiceImpl implements RegisterService {
                 .setCreatedDate(userEntity.getCreatedDate().getTime())
                 .setId(userEntity.getId())
                 .build());
+
+        redisStorageManager.map.put(USERS, toSHA512(userEntity.getUsername()), userEntity);
         return (R) SUCCESS;
     }
 }
