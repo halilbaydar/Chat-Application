@@ -4,7 +4,7 @@ This is a simple chat application which is implemented in Spring Boot Framework 
 
 * In the below image there is a general architecture including servers, message brokers, databases, load balancers, gate services and monitoring tools
 
-![ChatApplicationArchitecture](https://user-images.githubusercontent.com/48048893/235621458-3c5d5eff-8e07-4f18-906f-1a1cba93ac72.jpeg)
+![ChatApplicationArchitecture](https://user-images.githubusercontent.com/48048893/236375735-f51c187e-d7ce-4256-9dfd-4acbdb7364f4.jpeg)
 
 ### Non-functional requirements:
 
@@ -12,6 +12,9 @@ This is a simple chat application which is implemented in Spring Boot Framework 
 * Security: the application should ensure the confidentiality, integrity, and availability of messages and user data.
 * Reliability: the application should be available and responsive at all times, with minimal downtime or errors.
 * Performance: the application should be fast and responsive, with low latency and high throughput.
+* Responsive: Customer shouldn't wait for the whole data too much time
+* Resilient: One failure of a server shouldn't break down whole system
+* Message Driven: The application should be loosely coupled and should rely on asynchronous message passing
 
 ### Functional requirements:
 
@@ -40,7 +43,6 @@ This is a simple chat application which is implemented in Spring Boot Framework 
 ### Apis
 * rabbitmq port: 15672
 * grafana port: 3000
-
 * kibana port: 5601
 * zipkin port: 9411
 * gateway service port: 9092
@@ -49,3 +51,4 @@ This is a simple chat application which is implemented in Spring Boot Framework 
 ### Backlog
 * Kafka streams, analytics
 * Group messaging
+* Video messaging with FTP server
