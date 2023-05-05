@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler implements ErrorController {
 
-    public static Object prepareErrorJSON(final HttpStatus status, final Exception ex) {
+    public static Map<String, Object> prepareErrorJSON(final HttpStatus status, final Exception ex) {
         Map respond = new HashMap();
         respond.put("status", status.value());
         respond.put("error", status.getReasonPhrase());
@@ -64,7 +64,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler imple
 
     @ExceptionHandler({CustomException.class})
     public ResponseEntity<Object> applicationException(CustomException exception, WebRequest request) {
-        return new ResponseEntity<>(prepareErrorJSON((HttpStatus) exception.getStatus(), exception), (HttpStatus) exception.getStatus());
+        return ResponseEntity.badRequest().body(prepareErrorJSON((HttpStatus) exception.getStatus(), exception));
     }
 
     @Override
@@ -83,8 +83,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler imple
                 .collect(Collectors.toList());
         body.put("errors", errors);
 
-        return new ResponseEntity<>(body, headers, status);
-
+        return ResponseEntity.status(status).headers(headers).body(body);
     }
 
     @Override
@@ -103,7 +102,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler imple
             errors = getAllErrorsIfFieldErrorsIsEmpty(ex);
         body.put("errors", errors);
 
-        return new ResponseEntity<>(body, headers, status);
+        return ResponseEntity.status(status).headers(headers).body(body);
     }
 
     private List<String> getAllErrorsIfFieldErrorsIsEmpty(BindException ex) {
@@ -126,7 +125,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler imple
 
         body.put("errors", ex.getMessage());
 
-        return new ResponseEntity<>(body, headers, status);
+        return ResponseEntity.status(status).headers(headers).body(body);
     }
 
     @ExceptionHandler({ConstraintViolationException.class})
@@ -137,8 +136,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler imple
             errors.add(violation.getRootBeanClass().getName() + " " +
                     violation.getPropertyPath() + ": " + violation.getMessage());
         }
-
-        return new ResponseEntity<>(prepareErrorJSON(HttpStatus.BAD_REQUEST, ex), HttpStatus.BAD_REQUEST);
+        return ResponseEntity.badRequest().body(prepareErrorJSON(HttpStatus.BAD_REQUEST, ex));
     }
 
     @ExceptionHandler({MethodArgumentTypeMismatchException.class})
@@ -147,7 +145,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler imple
         String error =
                 ex.getName() + " should be of type " + ex.getRequiredType().getName();
 
-        return new ResponseEntity<>(prepareErrorJSON(HttpStatus.BAD_REQUEST, ex), HttpStatus.BAD_REQUEST);
+        return ResponseEntity.badRequest().body(prepareErrorJSON(HttpStatus.BAD_REQUEST, ex));
     }
 
     @Override
@@ -162,7 +160,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler imple
                 " method is not supported for this request. Supported methods are ");
         ex.getSupportedHttpMethods().forEach(t -> builder.append(t + " "));
 
-        return new ResponseEntity<>(prepareErrorJSON(HttpStatus.BAD_REQUEST, ex), HttpStatus.BAD_REQUEST);
+        return ResponseEntity.badRequest().body(prepareErrorJSON(HttpStatus.BAD_REQUEST, ex));
 
     }
 
@@ -177,12 +175,11 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler imple
         builder.append(" media type is not supported. Supported media types are ");
         ex.getSupportedMediaTypes().forEach(t -> builder.append(t).append(", "));
 
-        return new ResponseEntity<>(prepareErrorJSON(HttpStatus.UNSUPPORTED_MEDIA_TYPE, ex), HttpStatus.UNSUPPORTED_MEDIA_TYPE);
-
+        return ResponseEntity.badRequest().body(prepareErrorJSON(HttpStatus.UNSUPPORTED_MEDIA_TYPE, ex));
     }
 
     @ExceptionHandler({Exception.class})
     public ResponseEntity<Object> handleAll(Exception ex, WebRequest request) {
-        return new ResponseEntity<>(prepareErrorJSON(HttpStatus.BAD_REQUEST, ex), HttpStatus.BAD_REQUEST);
+        return ResponseEntity.badRequest().body(prepareErrorJSON(HttpStatus.BAD_REQUEST, ex));
     }
 }
