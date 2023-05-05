@@ -3,14 +3,15 @@ package com.chat.util.impl
 import com.chat.exception.CustomException
 import com.chat.exception.constant.ExceptionConstants
 import com.chat.util.ImageProcessor
+import org.springframework.stereotype.Component
 import org.springframework.web.multipart.MultipartFile
 import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import javax.imageio.ImageIO
 
-
-open class ImageProcessorImpl : FileProcessorImpl(), ImageProcessor {
+@Component
+class ImageProcessorImpl : FileProcessorImpl(), ImageProcessor {
     private val IMAGE_MAX_RESOLUTION_RATIO = 1.0
 
     override fun resizeImage(image: MultipartFile, width: Int, height: Int): BufferedImage {

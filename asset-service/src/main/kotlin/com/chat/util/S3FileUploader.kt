@@ -3,7 +3,7 @@ package com.chat.util
 import org.springframework.web.multipart.MultipartFile
 
 interface S3FileUploader {
-    fun downloadFileAsJPG(keyName: String): MultipartFile
+    fun downloadFileAsX(keyName: String, type: String): MultipartFile?
 
     fun uploadFile(file: MultipartFile, folder: String): Boolean
 
