@@ -398,6 +398,13 @@
             </dependency>
             <!--	KAFKA	-->
 
+            <!--  AWS  -->
+            <dependency>
+                <groupId>com.amazonaws</groupId>
+                <artifactId>aws-java-sdk-s3</artifactId>
+                <version>1.12.183</version>
+            </dependency>
+            <!--  END OF AWS  -->
         </dependencies>
     </dependencyManagement>
 
