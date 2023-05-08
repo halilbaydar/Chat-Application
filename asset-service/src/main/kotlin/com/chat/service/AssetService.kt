@@ -31,4 +31,11 @@ class AssetService(private val s3ProcessorImpl: S3ProcessorImpl) {
     fun downloadFile(fileKey: String): Mono<ResponseEntity<Flux<ByteBuffer?>?>?>? {
         return this.s3ProcessorImpl.downloadFile(fileKey)
     }
+
+    fun assetUploadByParts(
+        headers: HttpHeaders,
+        uploadRequest: Mono<UploadFileRequest>
+    ): Mono<ResponseEntity<List<UploadResult>>> {
+        return this.s3ProcessorImpl.uploadFileByParts(headers, uploadRequest)
+    }
 }

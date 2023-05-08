@@ -24,7 +24,7 @@ interface S3FileUploader {
 
     fun uploadFileByParts(
         headers: HttpHeaders,
-        fileUploadFileRequest: UploadFileRequest
+        fileUploadFileRequest: Mono<UploadFileRequest>
     ): Mono<ResponseEntity<List<UploadResult>>>
 
     fun deleteFile(url: Mono<DeleteFileRequest>): Mono<DeleteObjectResponse>

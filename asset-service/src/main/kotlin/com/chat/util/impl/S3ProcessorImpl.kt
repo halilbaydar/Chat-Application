@@ -292,22 +292,23 @@ class S3ProcessorImpl(
 
     override fun uploadFileByParts(
         headers: HttpHeaders,
-        fileUploadFileRequest: UploadFileRequest
+        fileUploadFileRequest: Mono<UploadFileRequest>
     ): Mono<ResponseEntity<List<UploadResult>>> {
-        return fileUploadFileRequest
-            .parts
-            .ofType(FilePart::class.java)
-            .flatMap { part -> saveFile(headers, part) }
-            .collect(Collectors.toList())
-            .map {
-                val keys = it.stream().map {
-                    val result = UploadResult()
-                    result.key = it
-                    result.bucketName = this.s3Properties.bucketName
-                    return@map result
-                }.collect(Collectors.toList())
-                ResponseEntity.status(HttpStatus.CREATED).body(keys)
-            }
+        return fileUploadFileRequest.flatMap { uploadFileRequest ->
+            uploadFileRequest.parts
+                .ofType(FilePart::class.java)
+                .flatMap { part -> saveFile(headers, part) }
+                .collect(Collectors.toList())
+                .map {
+                    val keys = it.stream().map {
+                        val result = UploadResult()
+                        result.key = it
+                        result.bucketName = this.s3Properties.bucketName
+                        return@map result
+                    }.collect(Collectors.toList())
+                    ResponseEntity.status(HttpStatus.CREATED).body(keys)
+                }
+        }
     }
 
     override fun copyFileInS3Bucket(sourceKey: String, destinationKey: String): Boolean {
