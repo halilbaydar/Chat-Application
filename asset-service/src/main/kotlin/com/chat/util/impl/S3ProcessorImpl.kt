@@ -316,7 +316,7 @@ class S3ProcessorImpl(
 
     override fun deleteFile(deleteFileRequest: Mono<DeleteFileRequest>): Mono<DeleteObjectResponse> {
         return deleteFileRequest.flatMap {
-            val key = this.getFileKeyFromUrl(it.url)
+            val key = this.getFileKeyFromUrl(it.key)
             return@flatMap this.s3Client.deleteObject(
                 DeleteObjectRequest.builder()
                     .bucket(this.s3Properties.bucketName)
