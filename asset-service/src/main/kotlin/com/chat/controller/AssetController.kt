@@ -28,7 +28,7 @@ class AssetController(private val assetService: AssetService) {
         return this.assetService.assetUpload(headers, uploadRequest)
     }
 
-    @PostMapping(consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
+    @PostMapping(path = ["parts"], consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     fun assetUploadByParts(
         @RequestHeader headers: HttpHeaders,
         @RequestBody uploadRequest: Mono<UploadFileRequest>
