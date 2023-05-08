@@ -19,13 +19,16 @@ import org.springframework.stereotype.Component
 import org.springframework.web.multipart.MultipartFile
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import reactor.core.scheduler.Schedulers
 import reactor.kotlin.core.publisher.toMono
 import software.amazon.awssdk.core.SdkResponse
 import software.amazon.awssdk.core.async.AsyncRequestBody
 import software.amazon.awssdk.core.async.AsyncResponseTransformer
 import software.amazon.awssdk.services.s3.S3AsyncClient
 import software.amazon.awssdk.services.s3.model.*
+import java.net.URLEncoder
 import java.nio.ByteBuffer
+import java.nio.charset.StandardCharsets
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
@@ -312,19 +315,35 @@ class S3ProcessorImpl(
     }
 
     override fun deleteFile(deleteFileRequest: Mono<DeleteFileRequest>): Mono<DeleteObjectResponse> {
-        return deleteFileRequest.map {
+        return deleteFileRequest.flatMap {
             val key = this.getFileKeyFromUrl(it.url)
-            return@map this.s3Client.deleteObject(
+            return@flatMap this.s3Client.deleteObject(
                 DeleteObjectRequest.builder()
                     .bucket(this.s3Properties.bucketName)
                     .key(key)
                     .build()
             ).toMono()
-        }.flatMap { it }
+        }
     }
 
-    override fun softDeleteFile(deleteFileRequest: Mono<DeleteFileRequest>): Mono<Boolean> {
-        TODO("Not yet implemented")
+    override fun softDeleteFile(deleteFileRequest: Mono<DeleteFileRequest>): Mono<CopyObjectResponse> {
+        return deleteFileRequest.map { deleteFile ->
+            val decodedSource = URLEncoder.encode(
+                "${this.s3Properties.bucketName}/${deleteFile.key}",
+                StandardCharsets.UTF_8.toString()
+            )
+            CopyObjectRequest.builder()
+                .copySource(decodedSource)
+                .bucket(deleteFile.destinationBucket)
+                .key(deleteFile.destinationKey)
+                .build()
+        }
+            .flatMap { copyRequest ->
+                this.s3Client.copyObject(
+                    copyRequest
+                ).toMono()
+            }
+            .subscribeOn(Schedulers.boundedElastic())
     }
 
     override fun uploadFiles(files: Array<MultipartFile>, folder: String): Boolean {

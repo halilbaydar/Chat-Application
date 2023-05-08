@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.multipart.MultipartFile
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import software.amazon.awssdk.services.s3.model.CopyObjectResponse
 import software.amazon.awssdk.services.s3.model.DeleteObjectResponse
 import java.nio.ByteBuffer
 
@@ -28,7 +29,7 @@ interface S3FileUploader {
 
     fun deleteFile(url: Mono<DeleteFileRequest>): Mono<DeleteObjectResponse>
 
-    fun softDeleteFile(deleteFileRequest: Mono<DeleteFileRequest>): Mono<Boolean>
+    fun softDeleteFile(deleteFileRequest: Mono<DeleteFileRequest>): Mono<CopyObjectResponse>
 
     fun uploadFiles(files: Array<MultipartFile>, folder: String): Boolean
 }

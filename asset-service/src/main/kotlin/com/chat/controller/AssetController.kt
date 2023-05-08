@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import software.amazon.awssdk.services.s3.model.CopyObjectResponse
 import software.amazon.awssdk.services.s3.model.DeleteObjectResponse
 import java.nio.ByteBuffer
 import javax.validation.constraints.NotBlank
@@ -33,7 +34,7 @@ class AssetController(private val assetService: AssetService) {
     }
 
     @DeleteMapping("/soft")
-    fun assetSoftDelete(@ModelAttribute deleteFileRequest: Mono<DeleteFileRequest>): Mono<Boolean> {
+    fun assetSoftDelete(@ModelAttribute deleteFileRequest: Mono<DeleteFileRequest>): Mono<CopyObjectResponse> {
         return this.assetService.assetSoftDelete(deleteFileRequest)
     }
 

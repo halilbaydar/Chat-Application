@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import software.amazon.awssdk.services.s3.model.CopyObjectResponse
 import software.amazon.awssdk.services.s3.model.DeleteObjectResponse
 import java.nio.ByteBuffer
 
@@ -23,7 +24,7 @@ class AssetService(private val s3ProcessorImpl: S3ProcessorImpl) {
         return this.s3ProcessorImpl.deleteFile(deleteFileRequest)
     }
 
-    fun assetSoftDelete(deleteFileRequest: Mono<DeleteFileRequest>): Mono<Boolean> {
+    fun assetSoftDelete(deleteFileRequest: Mono<DeleteFileRequest>): Mono<CopyObjectResponse> {
         return this.s3ProcessorImpl.softDeleteFile(deleteFileRequest)
     }
 
