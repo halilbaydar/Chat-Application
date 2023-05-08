@@ -31,7 +31,6 @@ import java.nio.ByteBuffer
 import java.nio.charset.StandardCharsets
 import java.util.*
 import java.util.concurrent.CompletableFuture
-import java.util.function.Consumer
 import java.util.stream.Collectors
 
 @Component
@@ -215,7 +214,7 @@ class S3ProcessorImpl(
             state.fileKey,
             state.completedParts.size
         )
-        val multipartUpload: CompletedMultipartUpload = CompletedMultipartUpload.builder()
+        val multipartUpload = CompletedMultipartUpload.builder()
             .parts(state.completedParts.values)
             .build()
         return Mono.fromFuture(
@@ -236,12 +235,12 @@ class S3ProcessorImpl(
         for (b in buffers) {
             partSize += b.readableByteCount()
         }
-        val partData: ByteBuffer = ByteBuffer.allocate(partSize)
-        buffers.forEach(Consumer { buffer: DataBuffer ->
+        val partData = ByteBuffer.allocate(partSize)
+        buffers.forEach { buffer ->
             partData.put(
                 buffer.asByteBuffer()
             )
-        })
+        }
 
         // Reset read pointer to first byte
         partData.rewind()
