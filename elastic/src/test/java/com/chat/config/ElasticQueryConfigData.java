@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Data
 @Configuration
-@ConfigurationProperties(prefix = "elastic-query-config")
+@ConfigurationProperties(prefix = "elastic-index")
 public class ElasticQueryConfigData {
-    private String textField;
+    private String userIndex;
 }

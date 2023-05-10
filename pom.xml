@@ -27,9 +27,6 @@
         <module>kafka</module>
         <module>common</module>
         <module>elastic</module>
-        <module>elastic/elastic-config</module>
-        <module>elastic/elastic-model</module>
-        <module>elastic/elastic-query</module>
         <module>asset-service</module>
 
     </modules>
@@ -307,17 +304,7 @@
 
             <dependency>
                 <groupId>com.chat</groupId>
-                <artifactId>elastic-config</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.chat</groupId>
-                <artifactId>elastic-model</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.chat</groupId>
-                <artifactId>elastic-query</artifactId>
+                <artifactId>elastic</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!-- KOTLIN SUPPORT -->

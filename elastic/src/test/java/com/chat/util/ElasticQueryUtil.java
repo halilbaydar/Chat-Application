@@ -1,6 +1,6 @@
 package com.chat.util;
 
-import com.chat.model.UserIndex;
+import com.chat.model.ElasticIndexModel;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.data.domain.PageRequest;
@@ -9,14 +9,15 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.data.elasticsearch.core.query.Query;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
 import java.util.Collections;
 
 @Component
-public class ElasticQueryUtil<T extends UserIndex> {
+public class ElasticQueryUtil<ID extends Serializable, T extends ElasticIndexModel<ID>> {
 
-    public Query getSearchQueryById(String id) {
+    public Query getSearchQueryById(ID id) {
         return new NativeSearchQueryBuilder()
-                .withIds(Collections.singleton(id))
+                .withIds(Collections.singleton(id.toString()))
                 .build();
     }
 

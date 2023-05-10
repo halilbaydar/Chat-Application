@@ -12,6 +12,5 @@ public class ElasticQueryClientException extends RuntimeException {
 
     public ElasticQueryClientException(String message, Throwable t) {
         super(message, t);
-
     }
 }

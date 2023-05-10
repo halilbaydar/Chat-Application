@@ -6,5 +6,5 @@ import reactor.core.publisher.Flux;
 
 public interface ElasticQueryWebClient {
 
-    Flux<SearchResponse> getDataByText(SearchRequest request);
+    Flux<SearchResponse> searchByName(SearchRequest request);
 }

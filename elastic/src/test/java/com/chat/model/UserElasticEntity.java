@@ -12,12 +12,14 @@ import java.time.ZonedDateTime;
 
 @Data
 @Builder
-@Document(indexName = "#{@elasticConfigData.indexName}")
-public class UserIndex {
+@Document(indexName = "#{@elasticConfigData.userIndex}")
+public class UserElasticEntity implements ElasticIndexModel<String> {
     @JsonProperty
     private String id;
+
     @JsonProperty
     private String username;
+
     @JsonProperty
     private String name;
 

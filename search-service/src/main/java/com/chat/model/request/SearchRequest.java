@@ -9,5 +9,5 @@ import javax.validation.constraints.NotBlank;
 @Setter
 public class SearchRequest {
     @NotBlank(message = "0000")
-    private String word;
+    private String keyword;
 }
