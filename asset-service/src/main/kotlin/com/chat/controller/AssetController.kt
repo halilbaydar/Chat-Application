@@ -1,6 +1,7 @@
 package com.chat.controller
 
 import com.amazonaws.services.s3.transfer.model.UploadResult
+import com.chat.model.request.CopyFileRequest
 import com.chat.model.request.DeleteFileRequest
 import com.chat.model.request.UploadFileRequest
 import com.chat.service.AssetService
@@ -42,8 +43,13 @@ class AssetController(private val assetService: AssetService) {
     }
 
     @DeleteMapping("/soft")
-    fun assetSoftDelete(@ModelAttribute deleteFileRequest: Mono<DeleteFileRequest>): Mono<CopyObjectResponse> {
-        return this.assetService.assetSoftDelete(deleteFileRequest)
+    fun assetSoftDelete(@ModelAttribute copyFileRequest: Mono<CopyFileRequest>): Mono<CopyObjectResponse> {
+        return this.assetService.assetSoftDelete(copyFileRequest)
+    }
+
+    @PutMapping("/soft")
+    fun assetCopy(@ModelAttribute copyFileRequest: Mono<CopyFileRequest>): Mono<CopyObjectResponse> {
+        return this.assetService.assetCopy(copyFileRequest)
     }
 
     @GetMapping(path = ["/{fileKey}"])

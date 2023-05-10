@@ -1,6 +1,7 @@
 package com.chat.util
 
 import com.amazonaws.services.s3.transfer.model.UploadResult
+import com.chat.model.request.CopyFileRequest
 import com.chat.model.request.DeleteFileRequest
 import com.chat.model.request.UploadFileRequest
 import org.springframework.http.HttpHeaders
@@ -20,16 +21,16 @@ interface S3FileUploader {
         filUploadFileRequest: Mono<UploadFileRequest>
     ): Mono<ResponseEntity<UploadResult>>
 
-    fun copyFileInS3Bucket(sourceKey: String, destinationKey: String): Boolean
+    fun copyFileInS3Bucket(copyFileRequest: Mono<CopyFileRequest>): Mono<CopyObjectResponse>
 
     fun uploadFileByParts(
         headers: HttpHeaders,
         fileUploadFileRequest: Mono<UploadFileRequest>
     ): Mono<ResponseEntity<List<UploadResult>>>
 
-    fun deleteFile(url: Mono<DeleteFileRequest>): Mono<DeleteObjectResponse>
+    fun deleteFile(deleteFileRequest: Mono<DeleteFileRequest>): Mono<DeleteObjectResponse>
 
-    fun softDeleteFile(deleteFileRequest: Mono<DeleteFileRequest>): Mono<CopyObjectResponse>
+    fun softDeleteFile(copyFileRequest: Mono<CopyFileRequest>): Mono<CopyObjectResponse>
 
     fun uploadFiles(files: Array<MultipartFile>, folder: String): Boolean
 }

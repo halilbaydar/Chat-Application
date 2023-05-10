@@ -4,6 +4,7 @@ import com.amazonaws.services.s3.transfer.model.UploadResult
 import com.chat.config.LoggingConfig
 import com.chat.exception.constant.FileDownloadFailedException
 import com.chat.exception.constant.FileUploadFailedException
+import com.chat.model.request.CopyFileRequest
 import com.chat.model.request.DeleteFileRequest
 import com.chat.model.request.UploadFileRequest
 import com.chat.property.S3Properties
@@ -310,8 +311,24 @@ class S3ProcessorImpl(
         }
     }
 
-    override fun copyFileInS3Bucket(sourceKey: String, destinationKey: String): Boolean {
-        TODO("Not yet implemented")
+    override fun copyFileInS3Bucket(copyFileRequest: Mono<CopyFileRequest>): Mono<CopyObjectResponse> {
+        return copyFileRequest.map { copyReq ->
+            val decodedSource = URLEncoder.encode(
+                "${this.s3Properties.bucketName}/${copyReq.key}",
+                StandardCharsets.UTF_8.toString()
+            )
+            CopyObjectRequest.builder()
+                .copySource(decodedSource)
+                .bucket(this.s3Properties.deleteFileDestinationBucket)
+                .key(this.s3Properties.deleteFileDestinationKey)
+                .build()
+        }
+            .flatMap { copyRequest ->
+                this.s3Client.copyObject(
+                    copyRequest
+                ).toMono()
+            }
+            .subscribeOn(Schedulers.boundedElastic())
     }
 
     override fun deleteFile(deleteFileRequest: Mono<DeleteFileRequest>): Mono<DeleteObjectResponse> {
@@ -326,8 +343,8 @@ class S3ProcessorImpl(
         }
     }
 
-    override fun softDeleteFile(deleteFileRequest: Mono<DeleteFileRequest>): Mono<CopyObjectResponse> {
-        return deleteFileRequest.map { deleteFile ->
+    override fun softDeleteFile(copyFileRequest: Mono<CopyFileRequest>): Mono<CopyObjectResponse> {
+        return copyFileRequest.map { deleteFile ->
             val decodedSource = URLEncoder.encode(
                 "${this.s3Properties.bucketName}/${deleteFile.key}",
                 StandardCharsets.UTF_8.toString()

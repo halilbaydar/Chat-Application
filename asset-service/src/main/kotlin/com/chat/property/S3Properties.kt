@@ -13,5 +13,7 @@ class S3Properties {
     lateinit var region: String
     lateinit var awsId: String
     lateinit var awsKey: String
+    lateinit var deleteFileDestinationKey: String
+    lateinit var deleteFileDestinationBucket: String
 }
 

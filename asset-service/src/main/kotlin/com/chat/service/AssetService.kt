@@ -1,6 +1,7 @@
 package com.chat.service
 
 import com.amazonaws.services.s3.transfer.model.UploadResult
+import com.chat.model.request.CopyFileRequest
 import com.chat.model.request.DeleteFileRequest
 import com.chat.model.request.UploadFileRequest
 import com.chat.util.impl.S3ProcessorImpl
@@ -24,8 +25,8 @@ class AssetService(private val s3ProcessorImpl: S3ProcessorImpl) {
         return this.s3ProcessorImpl.deleteFile(deleteFileRequest)
     }
 
-    fun assetSoftDelete(deleteFileRequest: Mono<DeleteFileRequest>): Mono<CopyObjectResponse> {
-        return this.s3ProcessorImpl.softDeleteFile(deleteFileRequest)
+    fun assetSoftDelete(copyFileRequest: Mono<CopyFileRequest>): Mono<CopyObjectResponse> {
+        return this.s3ProcessorImpl.softDeleteFile(copyFileRequest)
     }
 
     fun downloadFile(fileKey: String): Mono<ResponseEntity<Flux<ByteBuffer?>?>?>? {
@@ -37,5 +38,9 @@ class AssetService(private val s3ProcessorImpl: S3ProcessorImpl) {
         uploadRequest: Mono<UploadFileRequest>
     ): Mono<ResponseEntity<List<UploadResult>>> {
         return this.s3ProcessorImpl.uploadFileByParts(headers, uploadRequest)
+    }
+
+    fun assetCopy(copyFileRequest: Mono<CopyFileRequest>): Mono<CopyObjectResponse> {
+        return this.s3ProcessorImpl.copyFileInS3Bucket(copyFileRequest)
     }
 }
