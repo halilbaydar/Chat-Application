@@ -25,7 +25,7 @@ export class NotificationEntity extends ParentEntity<NotificationEntity> {
         type: DataType.STRING
     })
     provider: string
-,
+
 
     @Column({
         type: DataType.STRING
