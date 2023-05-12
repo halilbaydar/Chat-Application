@@ -6,16 +6,19 @@ import {createRedisConnection} from "./modules/caching/redis.utils";
 import {BullModule} from "@nestjs/bullmq";
 import ModuleDatabase from "./modules/database/module.database";
 import {NotificationModule} from "./modules/notification/notification.module";
+import {OnesignalModule} from "./modules/onesignal/onesignal.module";
 
 @Module({
-    imports: [...ModuleDatabase, NotificationModule, ModuleWorkflow, BullModule.forRoot({
-        defaultJobOptions: {
-            backoff: 5,
-        },
-        sharedConnection: true,
-        connection: createRedisConnection({config: null, bullmq: true}),
-        blockingConnection: true,
-    })],
+    imports: [...ModuleDatabase,
+        OnesignalModule.register(),
+        NotificationModule, ModuleWorkflow, BullModule.forRoot({
+            defaultJobOptions: {
+                backoff: 5,
+            },
+            sharedConnection: true,
+            connection: createRedisConnection({config: null, bullmq: true}),
+            blockingConnection: true,
+        })],
     controllers: [AppController],
     providers: [AppService],
 })
