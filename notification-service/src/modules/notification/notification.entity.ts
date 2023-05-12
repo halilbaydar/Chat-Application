@@ -1,5 +1,6 @@
 import {ParentEntity} from "../database/parent.entity";
 import {Column, DataType, Table} from "sequelize-typescript";
+import {NotificationType} from "./index";
 
 export const NOTIFICATION_REPOSITORY = 'NOTIFICATION_REPOSITORY'
 
@@ -24,4 +25,10 @@ export class NotificationEntity extends ParentEntity<NotificationEntity> {
         type: DataType.STRING
     })
     provider: string
+,
+
+    @Column({
+        type: DataType.STRING
+    })
+    type: NotificationType
 }

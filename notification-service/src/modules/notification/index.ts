@@ -37,3 +37,11 @@ export enum NotificationResult {
     SUCCESS,
     ERROR,
 }
+
+export enum NotificationType {
+    MOBILE, WEB, DESKTOP, SMS, MAIL
+}
+
+export enum NotificationReason {
+    MENTION, DIRECT_MESSAGE
+}
