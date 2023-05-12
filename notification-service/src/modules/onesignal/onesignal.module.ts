@@ -3,7 +3,7 @@ import {NotificationSenderService} from "./notification.sender";
 import * as OneSignal from '@onesignal/node-onesignal';
 import {PromiseDefaultApi} from "@onesignal/node-onesignal/types/PromiseAPI";
 
-export const ONE_SIGNAL = "ONE_SIGNAL";
+export const NOTIFICATION_SENDER_TOKEN = "ONE_SIGNAL";
 
 @Module({})
 export class OnesignalModule {
@@ -11,7 +11,7 @@ export class OnesignalModule {
         return {
             module: OnesignalModule,
             providers: [NotificationSenderService, {
-                provide: ONE_SIGNAL,
+                provide: NOTIFICATION_SENDER_TOKEN,
                 useFactory: () => {
                     const configuration = OneSignal.createConfiguration({
                         authMethods: {

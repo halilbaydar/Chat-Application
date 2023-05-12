@@ -1,12 +1,12 @@
 import {Inject, Injectable} from "@nestjs/common";
-import {ONE_SIGNAL} from "./onesignal.module";
+import {NOTIFICATION_SENDER_TOKEN} from "./onesignal.module";
 import {PromiseDefaultApi} from "@onesignal/node-onesignal/types/PromiseAPI";
 import * as OneSignal from '@onesignal/node-onesignal';
 import * as process from "process";
 
 @Injectable()
 export class NotificationSenderService {
-    constructor(@Inject(ONE_SIGNAL) private readonly oneSignalClient: PromiseDefaultApi) {
+    constructor(@Inject(NOTIFICATION_SENDER_TOKEN) private readonly oneSignalClient: PromiseDefaultApi) {
     }
 
     public async send(data: any): Promise<string> {

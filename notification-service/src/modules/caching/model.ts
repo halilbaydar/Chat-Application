@@ -7,4 +7,6 @@ export interface UserCacheModel {
     username: string,
     notificationId: string,
     status: UserStatus
+    language: string,
+    timezone: string
 }

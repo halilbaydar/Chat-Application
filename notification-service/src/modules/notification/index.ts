@@ -16,19 +16,20 @@ export interface NotificationSettings {
         SMS_NOTIFICATION_ENABLED: boolean
         CHAT_NOTIFICATION: boolean
     },
-    dontDisturbMe: {
+    dontDisturbMe: [{
         startDay: number,
         endDay: number
         startTime: number,
         endTime: number,
-    },
+    }],
     mentionNotification: {
         enabled: boolean
     },
     groupNotifications: {
         enabled: boolean,
         groups: [{
-            name: string
+            name: string,
+            muted: boolean
         }]
     }
 }
@@ -43,5 +44,5 @@ export enum NotificationType {
 }
 
 export enum NotificationReason {
-    MENTION, DIRECT_MESSAGE
+    MENTION, DIRECT_MESSAGE, GROUP
 }
