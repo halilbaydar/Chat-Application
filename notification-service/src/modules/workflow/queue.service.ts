@@ -1,9 +1,11 @@
 import {Injectable} from "@nestjs/common";
 import {InjectQueue, QueueEventsHost} from "@nestjs/bullmq";
 import {QueueName} from "./core/queue.name";
-import {JobsOptions, Queue} from "bullmq";
+import {Job, JobsOptions, Queue} from "bullmq";
 import TraceQueueConfig from "./core/job.config";
 import {WorkerImportance} from "./worker/worker.importance";
+import {JobData} from "./core/job.data";
+import {INotification} from "./notification.consumer/model";
 
 @Injectable()
 export class QueueService extends QueueEventsHost {
@@ -12,7 +14,7 @@ export class QueueService extends QueueEventsHost {
     }
 
     @TraceQueueConfig(WorkerImportance.LOW)
-    async addLogCriteriaQueue<T>(data: T, options?: JobsOptions) {
+    async addQueueUserNotificationSettings(data: JobData<INotification>, options?: JobsOptions): Promise<Job<JobData<INotification>>> {
         return await this.queueUserNotificationSettings.add(QueueName.USER_NOTIFICATION_SETTINGS, data, {...this.queueUserNotificationSettings.jobsOpts, ...options});
     }
 }

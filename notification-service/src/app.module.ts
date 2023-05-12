@@ -4,9 +4,11 @@ import {AppService} from './app.service';
 import {ModuleWorkflow} from "./modules/workflow/module.workflow";
 import {createRedisConnection} from "./modules/caching/redis.utils";
 import {BullModule} from "@nestjs/bullmq";
+import ModuleDatabase from "./modules/database/module.database";
+import {NotificationModule} from "./modules/notification/notification.module";
 
 @Module({
-    imports: [ModuleWorkflow, BullModule.forRoot({
+    imports: [...ModuleDatabase, NotificationModule, ModuleWorkflow, BullModule.forRoot({
         defaultJobOptions: {
             backoff: 5,
         },
