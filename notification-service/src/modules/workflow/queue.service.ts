@@ -6,7 +6,7 @@ import TraceQueueConfig from "./core/job.config";
 import {WorkerImportance} from "./worker/worker.importance";
 import {JobData} from "./core/job.data";
 import {INotification} from "./notification.consumer/model";
-import * as OneSignal from "@onesignal/node-onesignal";
+import {INotification as OneSignalNotification} from "onesignal-api-client-core/lib/dto/notifications";
 
 @Injectable()
 export class QueueService extends QueueEventsHost {
@@ -30,7 +30,7 @@ export class QueueService extends QueueEventsHost {
     }
 
     @TraceQueueConfig(WorkerImportance.LOW)
-    async addQueueUserNotificationSender(data: JobData<OneSignal.Notification>, options?: JobsOptions): Promise<Job<JobData<INotification>>> {
+    async addQueueUserNotificationSender(data: JobData<OneSignalNotification>, options?: JobsOptions): Promise<Job<JobData<INotification>>> {
         return await this.queueUserNotificationSender.add(QueueName.INSTANT_NOTIFICATION_SENDER, data, {...this.queueUserNotificationSettings.jobsOpts, ...options});
     }
 }

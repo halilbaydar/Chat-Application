@@ -2,7 +2,7 @@ import type { DynamicModule, Provider } from '@nestjs/common';
 import { Module, Global } from '@nestjs/common';
 import type { RedisModuleAsyncOptions, RedisModuleOptions, RedisModuleOptionsFactory } from './redis.interfaces';
 import { createRedisConnection, getRedisOptionsToken, getRedisConnectionToken } from './redis.utils';
-import redisConfig from './redis.config';
+import {getRedisConfig} from "./redis.config";
 
 @Global()
 @Module({})
@@ -10,7 +10,7 @@ export class RedisCoreModule {
   static forRoot(options?: RedisModuleOptions, connection?: string): DynamicModule {
     const redisOptionsProvider: Provider = {
       provide: getRedisOptionsToken(connection),
-      useValue: options ?? redisConfig[0],
+      useValue: options ?? getRedisConfig(),
     };
 
     const redisConnectionProvider: Provider = {

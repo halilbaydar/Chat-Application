@@ -1,13 +1,13 @@
 import type {RedisModuleOptions} from './redis.interfaces';
 import IORedis from 'ioredis';
 import {REDIS_MODULE_CONNECTION, REDIS_MODULE_CONNECTION_TOKEN, REDIS_MODULE_OPTIONS_TOKEN} from './redis.constants';
-import redisConfig, {getBullRedisPermConfig} from './redis.config';
+import {getRedisConfig, getBullRedisPermConfig} from './redis.config';
 
 export class RedisClient extends IORedis {
     dummyCommand: (...args: any[]) => any
 }
 
-export const IOREDIS = new RedisClient({...redisConfig[0], maxRetriesPerRequest: null, enableReadyCheck: false});
+export const IOREDIS = new RedisClient({...getRedisConfig(), maxRetriesPerRequest: null, enableReadyCheck: false});
 export const IOREDIS_BULLMQ = new RedisClient({
     ...getBullRedisPermConfig(),
     maxRetriesPerRequest: null,

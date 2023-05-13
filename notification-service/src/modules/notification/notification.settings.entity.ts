@@ -1,5 +1,5 @@
 import {ParentEntity} from "../database/parent.entity";
-import {Column, DataType, ForeignKey, HasOne, Table} from "sequelize-typescript";
+import {BelongsTo, Column, DataType, ForeignKey, HasOne, Table} from "sequelize-typescript";
 import {NotificationEntity} from "./notification.entity";
 import {NotificationSettings} from "./index";
 
@@ -23,7 +23,7 @@ export class NotificationSettingsEntity extends ParentEntity<NotificationSetting
     @ForeignKey(() => NotificationEntity)
     notificationId: string
 
-    @HasOne(() => NotificationEntity)
+    @BelongsTo(() => NotificationEntity)
     notification: NotificationEntity
 
     @Column({

@@ -1,33 +1,27 @@
 import {DynamicModule, Module} from "@nestjs/common";
-import {NotificationSenderService} from "./notification.sender";
-import * as OneSignal from '@onesignal/node-onesignal';
-import {PromiseDefaultApi} from "@onesignal/node-onesignal/types/PromiseAPI";
+import {OneSignalService} from "./one.signal.ervice";
+import {IOneSignalModuleOptions} from "./interfaces";
 
-export const NOTIFICATION_SENDER_TOKEN = "ONE_SIGNAL";
+export const ONESIGNAL_MODULE_OPTIONS = "ONESIGNAL_MODULE_OPTIONS";
 
-@Module({})
+@Module({
+    providers: [OneSignalService],
+    exports: [OneSignalService]
+})
 export class OnesignalModule {
-    public static register(): DynamicModule {
+    public static register(options: IOneSignalModuleOptions): DynamicModule {
         return {
             module: OnesignalModule,
-            providers: [NotificationSenderService, {
-                provide: NOTIFICATION_SENDER_TOKEN,
-                useFactory: () => {
-                    const configuration = OneSignal.createConfiguration({
-                        authMethods: {
-                            app_key: {
-                                tokenProvider: {
-                                    getToken(): Promise<string> | string {
-                                        return process.env.INSTANT_NOTIFICATON_SENDER_TOKEN
-                                    }
-                                }
-                            }
-                        }
-                    });
-                    return new OneSignal.DefaultApi(configuration)
-                }
-            }],
-            exports: [NotificationSenderService, PromiseDefaultApi]
-        }
+            providers: this.createOneSignalProvider(options),
+        };
+    }
+
+    private static createOneSignalProvider(options: IOneSignalModuleOptions) {
+        return [
+            {
+                provide: ONESIGNAL_MODULE_OPTIONS,
+                useValue: options || {},
+            },
+        ];
     }
 }

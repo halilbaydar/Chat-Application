@@ -4,11 +4,11 @@ import {QueueName} from "../core/queue.name";
 import {WorkerImportance} from "../worker/worker.importance";
 import {NotificationSenderService} from "../../onesignal/notification.sender";
 import {JobData} from "./model";
-import * as OneSignal from "@onesignal/node-onesignal";
 import {Job} from "bullmq";
 import {OnQueueEvent, QueueEventsHost} from "@nestjs/bullmq";
 import {QueueEvent} from "../event/event.handler";
 import {QueueService} from "../queue.service";
+import {INotification} from "onesignal-api-client-core/lib/dto/notifications";
 
 @Worker({name: QueueName.INSTANT_NOTIFICATION_SENDER, importance: WorkerImportance.DEFAULT})
 export class NotificationSenderConsumer extends ParentConsumer {
@@ -16,7 +16,7 @@ export class NotificationSenderConsumer extends ParentConsumer {
         super();
     }
 
-    async process(job: Job<JobData<OneSignal.Notification>>, token: string | undefined): Promise<any> {
+    async process(job: Job<JobData<INotification>>, token: string | undefined): Promise<any> {
         try {
             await this.notificationSender.send(job.data.data)
             return Promise.resolve(undefined);

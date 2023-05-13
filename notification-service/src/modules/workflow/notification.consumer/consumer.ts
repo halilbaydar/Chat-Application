@@ -40,44 +40,7 @@ export class UserNotificationSettingsConsumer extends ParentConsumer {
         if (!this.dontDisturbMe(settings.settings.dontDisturbMe, user.timezone)) {
             switch (type) {
                 case NotificationType.MOBILE: {
-                    if (settings.settings.check.instantNotification.mobileNotification.enabled) {
-                        switch (reason) {
-                            case NotificationReason.DIRECT_MESSAGE: {
-                                switch (notification.provider) {
-                                    case 'onesignal': {
-                                        await this.doSend(user, title, subTitle, notification, message);
-                                    }
-                                        break
-                                }
-                            }
-                                break
-                            case NotificationReason.MENTION: {
-                                if (settings.settings.mentionNotification.enabled) {
-                                    switch (notification.provider) {
-                                        case 'onesignal': {
-                                            await this.doSend(user, title, subTitle, notification, message);
-                                        }
-                                            break
-                                    }
-                                }
-                            }
-                                break
-                            case NotificationReason.GROUP: {
-                                if (settings.settings.groupNotifications.enabled) {
-                                    const group = settings.settings.groupNotifications
-                                        .groups.find(({name}) => name === groupName)
-                                    if (!group.muted) {
-                                        switch (notification.provider) {
-                                            case 'onesignal': {
-                                                await this.doSend(user, title, subTitle, notification, message);
-                                            }
-                                                break
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    await this.handleMobileNotification(settings, reason, notification, user, title, subTitle, message, groupName);
                 }
                     break
                 case NotificationType.DESKTOP:
@@ -114,6 +77,47 @@ export class UserNotificationSettingsConsumer extends ParentConsumer {
         return Promise.resolve(undefined);
     }
 
+    private async handleMobileNotification(settings: NotificationSettingsEntity, reason: NotificationReason, notification: NotificationEntity, user: UserCacheModel, title: string, subTitle: string, message: string, groupName: string) {
+        if (settings.settings.check.instantNotification.mobileNotification.enabled) {
+            switch (reason) {
+                case NotificationReason.DIRECT_MESSAGE: {
+                    switch (notification.provider) {
+                        case 'onesignal': {
+                            await this.doSend(user, title, subTitle, notification, message);
+                        }
+                            break
+                    }
+                }
+                    break
+                case NotificationReason.MENTION: {
+                    if (settings.settings.mentionNotification.enabled) {
+                        switch (notification.provider) {
+                            case 'onesignal': {
+                                await this.doSend(user, title, subTitle, notification, message);
+                            }
+                                break
+                        }
+                    }
+                }
+                    break
+                case NotificationReason.GROUP: {
+                    if (settings.settings.groupNotifications.enabled) {
+                        const group = settings.settings.groupNotifications
+                            .groups.find(({name}) => name === groupName)
+                        if (!group.muted) {
+                            switch (notification.provider) {
+                                case 'onesignal': {
+                                    await this.doSend(user, title, subTitle, notification, message);
+                                }
+                                    break
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private async doSend(user: UserCacheModel, title: string, subTitle: string, notification: NotificationEntity, message: string) {
         await this.queueManagerService.addQueueUserNotificationSender({
             data: {
@@ -123,7 +127,6 @@ export class UserNotificationSettingsConsumer extends ParentConsumer {
                 subtitle: {
                     [user.language]: subTitle
                 },
-                app_id: process.env.NOTIFICATION_APP_ID,
                 include_player_ids: [notification.externalNotificationId],
                 android_channel_id: process.env.ANDROID_CHANNEL_ID,
                 contents: {
