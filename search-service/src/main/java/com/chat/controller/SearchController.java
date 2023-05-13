@@ -4,8 +4,8 @@ import com.chat.model.UserElasticEntity;
 import com.chat.model.request.SearchRequest;
 import com.chat.service.ElasticQueryWebClient;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.elasticsearch.core.ReactiveSearchHits;
 import org.springframework.data.elasticsearch.core.SearchHit;
+import org.springframework.data.elasticsearch.core.suggest.response.Suggest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +27,7 @@ public class SearchController {
     }
 
     @GetMapping(value = "/name/hit")
-    public Mono<ReactiveSearchHits<UserElasticEntity>> searchByNameForHit(@Valid SearchRequest searchRequest) {
-        return elasticQueryWebClient.searchByNameForHit(searchRequest);
+    public Mono<Suggest> searchSuggest(@Valid SearchRequest searchRequest) {
+        return elasticQueryWebClient.searchSuggest(searchRequest);
     }
 }

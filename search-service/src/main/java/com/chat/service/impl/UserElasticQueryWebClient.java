@@ -10,7 +10,9 @@ import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.ReactiveElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.ReactiveSearchHits;
 import org.springframework.data.elasticsearch.core.SearchHit;
+import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.data.elasticsearch.core.query.Query;
+import org.springframework.data.elasticsearch.core.suggest.response.Suggest;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -31,9 +33,9 @@ public class UserElasticQueryWebClient implements ElasticQueryWebClient {
     }
 
     @Override
-    public Mono<ReactiveSearchHits<UserElasticEntity>> searchByNameForHit(SearchRequest searchRequest) {
+    public Mono<Suggest> searchSuggest(SearchRequest searchRequest) {
         LOG.search.info("Querying by name {}", searchRequest.getKeyword());
         Query query = elasticQueryUtil.getSearchQueryByFieldTextAndShould("name", searchRequest.getKeyword(), searchRequest);
-        return reactiveElasticsearchOperations.searchForHits(query, UserElasticEntity.class);
+        return reactiveElasticsearchOperations.suggest(query, UserElasticEntity.class, IndexCoordinates.of("#{@elasticConfigData.userIndex"));
     }
 }
