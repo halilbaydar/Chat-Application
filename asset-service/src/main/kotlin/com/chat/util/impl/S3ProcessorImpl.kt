@@ -192,7 +192,7 @@ class S3ProcessorImpl(
                 )
             }
             .onBackpressureBuffer()
-            .reduce(uploadState) { state: UploadState, completedPart ->
+            .reduce(uploadState) { state: UploadState, completedPart: CompletedPart ->
                 log.s3.info(
                     "[I188] completed: partNumber={}, etag={}",
                     completedPart.partNumber(),

@@ -1,5 +1,6 @@
 package com.chat.config;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.springframework.context.annotation.Bean;
@@ -10,13 +11,10 @@ import java.util.Map;
 
 @EnableRetry
 @Configuration
+@RequiredArgsConstructor
 public class KafkaAdminConfig {
 
     private final KafkaConfigData kafkaConfigData;
-
-    public KafkaAdminConfig(KafkaConfigData configData) {
-        this.kafkaConfigData = configData;
-    }
 
     @Bean
     public AdminClient adminClient() {

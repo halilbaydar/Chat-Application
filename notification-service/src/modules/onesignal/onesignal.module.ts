@@ -12,16 +12,10 @@ export class OnesignalModule {
     public static register(options: IOneSignalModuleOptions): DynamicModule {
         return {
             module: OnesignalModule,
-            providers: this.createOneSignalProvider(options),
-        };
-    }
-
-    private static createOneSignalProvider(options: IOneSignalModuleOptions) {
-        return [
-            {
+            providers: [{
                 provide: ONESIGNAL_MODULE_OPTIONS,
                 useValue: options || {},
-            },
-        ];
+            }]
+        };
     }
 }
