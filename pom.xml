@@ -35,6 +35,7 @@
             <url>https://packages.confluent.io/maven/</url>
         </repository>
     </repositories>
+
     <properties>
         <org.mapstruct.version>1.4.2.Final</org.mapstruct.version>
         <java.version>17</java.version>
@@ -59,6 +60,7 @@
         <avro.version>1.11.1</avro.version>
 
         <kotlin.version>1.8.20</kotlin.version>
+        <springdoc-openapi-ui.version>1.6.12</springdoc-openapi-ui.version>
 
     </properties>
 
@@ -71,6 +73,11 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-ui</artifactId>
+                <version>${springdoc-openapi-ui.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-reactor-netty</artifactId>

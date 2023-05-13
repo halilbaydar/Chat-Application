@@ -82,6 +82,10 @@
             <artifactId>kafka-consumer</artifactId>
         </dependency>
         <!--	KAFKA	-->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

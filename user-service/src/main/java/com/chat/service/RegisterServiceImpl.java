@@ -68,7 +68,7 @@ public class RegisterServiceImpl implements RegisterService {
                     redisStorageManager.map.put(USERS, toSHA512(userEntity.getUsername()), userEntity);
                     return Mono.just(registerContextRequest);
                 }).map(registerContextRequest -> SUCCESS)
-                .onErrorResume(err -> Mono.error(err))
+                .onErrorResume(Mono::error)
                 .subscribeOn(Schedulers.boundedElastic());
     }
 }
