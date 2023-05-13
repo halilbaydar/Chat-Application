@@ -17,4 +17,9 @@ public class CustomException extends RuntimeException {
         super(message);
         this.status = null;
     }
+
+    public CustomException(Object err) {
+        super(err.toString());
+        this.status = null;
+    }
 }

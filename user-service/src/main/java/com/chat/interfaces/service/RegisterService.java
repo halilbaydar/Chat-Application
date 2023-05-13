@@ -1,7 +1,8 @@
 package com.chat.interfaces.service;
 
 import com.chat.model.request.RegisterRequest;
+import reactor.core.publisher.Mono;
 
 public interface RegisterService {
-    <R> R register(RegisterRequest registerRequest);
+    Mono<String> register(Mono<RegisterRequest> registerRequest);
 }

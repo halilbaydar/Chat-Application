@@ -4,16 +4,15 @@ import com.chat.aut.Role;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
-import javax.persistence.*;
 import java.util.Date;
 
 @Getter
 @Setter
-@Entity(name = "users")
-@Table(name = "users", indexes = {
-        @Index(name = "username", columnList = "username", unique = true)
-})
+@Table(name = "users")
 public class UserEntity {
     @Id
     private String id;
@@ -33,4 +32,7 @@ public class UserEntity {
 
     @Column
     private Role role;
+
+    @Column
+    private String status;
 }

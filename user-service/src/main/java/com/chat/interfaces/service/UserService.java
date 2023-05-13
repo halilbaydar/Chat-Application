@@ -1,7 +1,11 @@
 package com.chat.interfaces.service;
 
-public interface UserService {
-    <R> R getUser();
+import com.chat.model.entity.UserResponse;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-    <R> R getUsers();
+public interface UserService {
+    Mono<UserResponse> getUser();
+
+    Flux<UserResponse> getUsers();
 }

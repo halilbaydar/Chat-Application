@@ -20,7 +20,6 @@
         <module>discovery-service</module>
         <module>auth-service</module>
         <module>user-service</module>
-        <module>notification-service</module>
         <module>mdc-interceptor</module>
         <module>search-service</module>
         <module>kafka-to-elastic-service</module>

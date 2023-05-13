@@ -2,6 +2,7 @@ package com.chat;
 
 import com.chat.config.KafkaConfigData;
 import com.chat.config.KafkaProducerConfigData;
+import lombok.RequiredArgsConstructor;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.springframework.context.annotation.Bean;
@@ -15,16 +16,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
+@RequiredArgsConstructor
 public class KafkaProducerConfig<K extends Serializable, V extends SpecificRecordBase> {
 
     private final KafkaConfigData kafkaConfigData;
-
     private final KafkaProducerConfigData kafkaProducerConfigData;
-
-    public KafkaProducerConfig(KafkaConfigData configData, KafkaProducerConfigData producerConfigData) {
-        this.kafkaConfigData = configData;
-        this.kafkaProducerConfigData = producerConfigData;
-    }
 
     @Bean
     public Map<String, Object> producerConfig() {

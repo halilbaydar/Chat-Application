@@ -5,6 +5,7 @@ import com.chat.interfaces.service.RegisterService;
 import com.chat.model.request.RegisterRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,7 +18,7 @@ public class RegisterControllerImpl implements RegisterController {
     }
 
     @Override
-    public <R> R register(RegisterRequest registerRequest) {
+    public Mono<String> register(Mono<RegisterRequest> registerRequest) {
         return getService().register(registerRequest);
     }
 }

@@ -2,12 +2,17 @@ package com.chat.interfaces.repository;
 
 import com.chat.model.entity.User;
 import com.chat.model.entity.UserEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.chat.model.entity.UserResponse;
+import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Repository
-public interface UserRepository extends JpaRepository<UserEntity, String> {
-    User findByUsername(String username);
+public interface UserRepository extends ReactiveCrudRepository<UserEntity, String> {
+    Mono<User> findByUsername(String username);
 
-    boolean existsByUsername(String username);
+    Mono<Boolean> existsByUsername(String username);
+
+    Flux<UserResponse> findAllByStatus(String status);
 }
