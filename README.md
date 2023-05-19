@@ -33,22 +33,10 @@ This is a simple chat application which is implemented in Spring Boot Reactive, 
 * Tracing and debugging using Zipkin
 
 ### Setup
-* Clone the repository
-* Open terminal in the project directory
-* Put .env file into the docker-compose directory
-* Run ``` mvn clean install -DskipTests ``` command to create images of the services
-* Open docker-compose directory in terminal
-* Run ````docker-compose up ```` command
-
-### Apis
-* rabbitmq port: 15672
-* grafana port: 3000
-* kibana port: 5601
-* zipkin port: 9411
-* gateway service port: 9092
-* discovery service port: 8761
+* Project is still under development so it's not ready to run
 
 ### Backlog
-* Kafka streams, analytics
+* Kafka streams, analytics and kraft mode
+* Golang support with one service
 * Group messaging
 * Video messaging with FTP server
