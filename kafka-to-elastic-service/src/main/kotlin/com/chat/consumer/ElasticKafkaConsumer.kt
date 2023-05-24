@@ -23,6 +23,9 @@ class ElasticKafkaConsumer(@Qualifier("user-to-elastic") private val kafkaConsum
                     LOG.kafkaToElastic.info("Message from user service. key: {}, user: {}", message.key(), message.value())
                 }
                 .doOnNext {
+                    it.receiverOffset().acknowledge()
+                }
+                .flatMap {
                     this.reactiveElasticsearchTemplate.save(UserElasticEntity
                             .builder()
                             .username(it.value().username.toString())
@@ -32,8 +35,9 @@ class ElasticKafkaConsumer(@Qualifier("user-to-elastic") private val kafkaConsum
                             .build()
                     )
                 }
-                .doOnNext {
-                    it.receiverOffset().acknowledge()
-                }.subscribe()
+                .doOnError {
+                    LOG.kafkaToElastic.error("Error while saving user to elastic with message: ${it.message}")
+                }
+                .subscribe()
     }
 }
