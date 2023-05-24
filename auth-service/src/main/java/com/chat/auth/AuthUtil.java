@@ -1,4 +1,4 @@
-package com.chat.util;
+package com.chat.auth;
 
 import com.chat.constant.HttpConstant;
 import io.jsonwebtoken.Claims;

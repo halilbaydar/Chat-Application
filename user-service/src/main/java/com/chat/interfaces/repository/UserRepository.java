@@ -1,6 +1,5 @@
 package com.chat.interfaces.repository;
 
-import com.chat.model.entity.User;
 import com.chat.model.entity.UserEntity;
 import com.chat.model.entity.UserResponse;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
@@ -10,7 +9,7 @@ import reactor.core.publisher.Mono;
 
 @Repository
 public interface UserRepository extends ReactiveCrudRepository<UserEntity, String> {
-    Mono<User> findByUsername(String username);
+    Mono<UserEntity> findByUsername(String username);
 
     Mono<Boolean> existsByUsername(String username);
 

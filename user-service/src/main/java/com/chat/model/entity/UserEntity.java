@@ -1,6 +1,5 @@
 package com.chat.model.entity;
 
-import com.chat.aut.Role;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -31,7 +30,7 @@ public class UserEntity {
     private String password;
 
     @Column
-    private Role role;
+    private String role;
 
     @Column
     private String status;

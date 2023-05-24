@@ -1,0 +1,28 @@
+server:
+  port: 83
+
+log:
+  app-name: kafka-to-elastic-service
+
+kafka-to-elastic-service:
+  consumer:
+    topic:
+      user: 'user-to-elastic'
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: kafka-to-elasticsearch-service
+  kafka:
+    bootstrap-servers: http://localhost:19092
+#    producer:
+#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+#      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+    consumer:
+      group-id: kafka-to-elastic-service
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+    properties:
+      schema.registry.url: http://localhost:8081

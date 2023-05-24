@@ -1,9 +1,11 @@
 package com.chat
 
+import lombok.RequiredArgsConstructor
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
-@SpringBootApplication
+@RequiredArgsConstructor
+@SpringBootApplication(scanBasePackages = ["com.chat"])
 class KafkaToElasticServiceApplication
 
 fun main(args: Array<String>) {

@@ -1,4 +1,4 @@
-package com.chat.aut;
+package com.chat.auth;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 

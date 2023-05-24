@@ -1,6 +1,9 @@
 package com.chat;
 
+//import com.chat.client.KafkaAdminClient;
+//import com.chat.kafka.producer.ElasticKafkaProducer;
 import com.chat.client.KafkaAdminClient;
+import com.chat.kafka.producer.ElasticKafkaProducer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -9,7 +12,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @RequiredArgsConstructor
 @SpringBootApplication(scanBasePackages = "com.chat")
 public class UserServiceApplication implements CommandLineRunner {
-    private KafkaAdminClient kafkaAdminClient;
+    private final KafkaAdminClient kafkaAdminClient;
+    private final ElasticKafkaProducer elasticKafkaProducer;
 
     public static void main(String[] args) {
         SpringApplication.run(UserServiceApplication.class, args);
@@ -19,5 +23,6 @@ public class UserServiceApplication implements CommandLineRunner {
     public void run(String... args) {
         kafkaAdminClient.createTopics();
         kafkaAdminClient.checkSchemaRegistry();
+        elasticKafkaProducer.run();
     }
 }

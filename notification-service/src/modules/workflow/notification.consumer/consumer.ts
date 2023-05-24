@@ -104,7 +104,7 @@ export class UserNotificationSettingsConsumer extends ParentConsumer {
                     if (settings.settings.groupNotifications.enabled) {
                         const group = settings.settings.groupNotifications
                             .groups.find(({name}) => name === groupName)
-                        if (!group.muted) {
+                        if (!group?.muted) {
                             switch (notification.provider) {
                                 case 'onesignal': {
                                     await this.doSend(user, title, subTitle, notification, message);

@@ -27,8 +27,8 @@
         <module>common</module>
         <module>elastic</module>
         <module>asset-service</module>
-
     </modules>
+
     <repositories>
         <repository>
             <id>confluent</id>

@@ -1,6 +1,5 @@
-package com.chat.util;
+package com.chat.auth;
 
-import com.chat.aut.JwtSecretKey;
 import com.chat.payload.JwtPayload;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -12,8 +11,6 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.util.*;
 import java.util.function.Function;
-
-import static com.chat.constant.HttpConstant.JWT_AUTH_SUBJECT;
 
 @Component
 @RequiredArgsConstructor
@@ -42,7 +39,7 @@ public class JwtUtilImpl extends AuthUtil {
     public String generateLoginJwtToken(String username, Collection<? extends GrantedAuthority> authorities, String tokenId, Date date) {
         return Jwts.builder()
                 .setSubject(username)
-                .claim(JWT_AUTH_SUBJECT, authorities)
+                .claim(HttpConstant.JWT_AUTH_SUBJECT, authorities)
                 .setIssuedAt(date)
                 .setId(tokenId)
                 .signWith(getKey())

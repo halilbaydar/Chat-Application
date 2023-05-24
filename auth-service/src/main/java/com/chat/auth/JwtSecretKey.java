@@ -1,4 +1,4 @@
-package com.chat.aut;
+package com.chat.auth;
 
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;

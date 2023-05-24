@@ -1,6 +1,6 @@
 package com.chat.model;
 
-import com.chat.aut.Role;
+import com.chat.auth.Role;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;

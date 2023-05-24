@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <springProperty name="log.app-name" source="log.app-name"/>
+
+    <property name="DEV_HOME" value="./kafka-to-elastic-service/logs"/>
+    <property name="APP_NAME" value="${log.app-name}"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>
+                %d{yyyy-MM-dd HH:mm:ss} [%thread] [%X{traceId:-},%X{spanId:-}] %-5level %logger{36} -
+                %msg%n
+            </Pattern>
+        </layout>
+    </appender>
+
+<!--    <appender name="STASH" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+<!--        <file>${DEV_HOME}/logstash/${APP_NAME}.log</file>-->
+<!--        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">-->
+<!--            &lt;!&ndash; rollover daily &ndash;&gt;-->
+<!--            <fileNamePattern>${DEV_HOME}/logstash/archived/${APP_NAME}-log.%d{yyyy-MM-dd}.%i.log-->
+<!--            </fileNamePattern>-->
+<!--            <maxFileSize>10MB</maxFileSize>-->
+<!--            <maxHistory>60</maxHistory>-->
+<!--            <totalSizeCap>20GB</totalSizeCap>-->
+<!--        </rollingPolicy>-->
+<!--        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>-->
+<!--    </appender>-->
+
+    <logger name="com.chat" level="info" additivity="false">
+        <appender-ref ref="STDOUT"/>
+<!--        <appender-ref ref="STASH"/>-->
+    </logger>
+
+    <root level="info">
+        <appender-ref ref="STDOUT"/>
+<!--        <appender-ref ref="STASH"/>-->
+    </root>
+</configuration>
