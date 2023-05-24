@@ -19,9 +19,9 @@ services:
     hostname: schema-registry
     depends_on:
       - zookeeper
+      - kafka-broker-3
       - kafka-broker-1
       - kafka-broker-2
-      - kafka-broker-3
     ports:
       - "8081:8081"
     environment:

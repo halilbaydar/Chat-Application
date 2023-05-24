@@ -26,9 +26,7 @@ public class ElasticsearchConfig {
                 .connectedTo(elasticConfigData.getConnectionUrl())
                 .withClientConfigurer(webClient -> ExchangeStrategies.builder()
                         .codecs(configurer -> configurer.defaultCodecs()
-                                .maxInMemorySize(-1))
-                        .build()
-                )
+                                .maxInMemorySize(-1)).build())
                 .build();
 
         return ReactiveRestClients.create(clientConfiguration);
@@ -44,8 +42,8 @@ public class ElasticsearchConfig {
         return new SimpleElasticsearchMappingContext();
     }
 
-    @Bean
-    public ReactiveElasticsearchTemplate reactiveElasticsearchOperations() {
+    @Bean("elasticsearchOperations")
+    public ReactiveElasticsearchTemplate elasticsearchOperations() {
         return new ReactiveElasticsearchTemplate(reactiveElasticsearchClient(), elasticsearchConverter());
     }
 
