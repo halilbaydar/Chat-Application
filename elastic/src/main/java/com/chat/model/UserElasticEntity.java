@@ -11,10 +11,11 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 import org.springframework.data.elasticsearch.annotations.Setting;
 
 import java.time.ZonedDateTime;
+import java.util.Date;
 
 @Data
 @Builder
-@Document(indexName = "#{@elasticConfigData.userIndex}", createIndex = false)
+@Document(indexName = "#{@elasticConfigData.userIndex}", createIndex = true)
 @Setting(
         sortFields = {"name", "username"},
         sortModes = {Setting.SortMode.max, Setting.SortMode.min},
@@ -40,5 +41,5 @@ public class UserElasticEntity implements ElasticIndexModel<String> {
     @Field(type = FieldType.Date, format = {}, pattern = "uuuu-MM-dd'T'HH:mm:ssZZ")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "uuuu-MM-dd'T'HH:mm:ssZZ")
     @JsonProperty
-    private ZonedDateTime createdDate;
+    private Date createdDate;
 }

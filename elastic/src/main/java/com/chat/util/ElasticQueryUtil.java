@@ -4,6 +4,7 @@ import com.chat.model.ElasticIndexModel;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.Query;
 import org.springframework.stereotype.Component;
@@ -27,7 +28,7 @@ public class ElasticQueryUtil<ID extends Serializable, T extends ElasticIndexMod
                 .withQuery(new BoolQueryBuilder()
                         .must(QueryBuilders.matchQuery(field, text))
                 )
-                .withPageable(PageRequest.of(pageRequest.getPage(), DEFAULT_PAGE_SIZE, pageRequest.getDirection()))
+                .withPageable(PageRequest.of(pageRequest.getPage(), DEFAULT_PAGE_SIZE, Sort.Direction.valueOf(pageRequest.getDirection())))
                 .build();
     }
 
@@ -35,13 +36,13 @@ public class ElasticQueryUtil<ID extends Serializable, T extends ElasticIndexMod
         return new NativeSearchQueryBuilder()
                 .withQuery(new BoolQueryBuilder()
                         .should(QueryBuilders.matchQuery(field, text)))
-                .withPageable(PageRequest.of(pageRequest.getPage(), DEFAULT_PAGE_SIZE, pageRequest.getDirection()))
+                .withPageable(PageRequest.of(pageRequest.getPage(), DEFAULT_PAGE_SIZE, Sort.Direction.valueOf(pageRequest.getDirection())))
                 .build();
     }
 
     public Query getSearchQueryForAll(com.chat.request.PageRequest pageRequest) {
         return new NativeSearchQueryBuilder()
-                .withPageable(PageRequest.of(pageRequest.getPage(), DEFAULT_PAGE_SIZE, pageRequest.getDirection()))
+                .withPageable(PageRequest.of(pageRequest.getPage(), DEFAULT_PAGE_SIZE, Sort.Direction.valueOf(pageRequest.getDirection())))
                 .withQuery(new BoolQueryBuilder()
                         .must(QueryBuilders.matchAllQuery()))
                 .build();

@@ -9,6 +9,14 @@ kafka-to-elastic-service:
     topic:
       user: 'user-to-elastic'
 
+elastic-index:
+  userIndex: users
+
+elastic-config:
+  connectionUrl: http://localhost:9200
+  connectionTimeoutMs: 5000
+  socketTimeoutMs: 30000
+
 spring:
   main:
     allow-bean-definition-overriding: true
@@ -16,9 +24,6 @@ spring:
     name: kafka-to-elasticsearch-service
   kafka:
     bootstrap-servers: http://localhost:19092
-#    producer:
-#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-#      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
     consumer:
       group-id: kafka-to-elastic-service
       auto-offset-reset: earliest
