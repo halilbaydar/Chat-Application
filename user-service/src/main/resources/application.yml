@@ -11,6 +11,9 @@ kafka-config:
   topic-name: 'user-to-elastic'
   topic-names-to-create:
     - 'user-to-elastic'
+redis:
+  host: http://localhost
+  port: 6379
 
 spring:
   data:
@@ -19,7 +22,7 @@ spring:
         enabled: true
 
   r2dbc:
-    url: r2dbc:postgresql://postgres:password@localhost:5432/users
+    url: r2dbc:postgresql://user:password@localhost:5432/users
   main:
     allow-bean-definition-overriding: true
   application:
@@ -36,3 +39,10 @@ spring:
 #      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
     properties:
       schema.registry.url: http://localhost:8081
+
+retry-config:
+  initialIntervalMs: 1000
+  maxIntervalMs: 10000
+  multiplier: 2.0
+  maxAttempts: 3
+  sleepTimeMs: 2000

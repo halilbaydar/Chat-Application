@@ -1,4 +1,4 @@
-package com.chat.aut;
+package com.chat.auth;
 
 import com.chat.constant.HttpConstant;
 import lombok.Data;
