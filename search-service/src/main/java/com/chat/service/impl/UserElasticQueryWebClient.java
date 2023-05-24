@@ -1,6 +1,6 @@
 package com.chat.service.impl;
 
-import com.chat.log.ChatLogger;
+import com.chat.config.ChatLogger;
 import com.chat.model.UserElasticEntity;
 import com.chat.model.request.SearchRequest;
 import com.chat.service.ElasticQueryWebClient;
@@ -8,7 +8,6 @@ import com.chat.util.ElasticQueryUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.ReactiveElasticsearchOperations;
-import org.springframework.data.elasticsearch.core.ReactiveSearchHits;
 import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.data.elasticsearch.core.query.Query;

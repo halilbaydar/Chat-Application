@@ -1,7 +1,7 @@
 package com.chat.service;
 
+import com.chat.config.ChatLogger;
 import com.chat.index.ElasticIndexClient;
-import com.chat.log.ChatLogger;
 import com.chat.model.ElasticIndexModel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.elasticsearch.core.ReactiveElasticsearchOperations;

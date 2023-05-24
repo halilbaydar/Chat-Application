@@ -27,6 +27,7 @@
         <module>common</module>
         <module>elastic</module>
         <module>asset-service</module>
+        <module>CommonSecurity</module>
 
     </modules>
     <repositories>

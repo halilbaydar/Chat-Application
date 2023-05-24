@@ -1,0 +1,38 @@
+server:
+  port: 84
+
+log:
+  app-name: kafka-to-elastic-service
+
+kafka-config:
+  bootstrap-servers: localhost:19092, localhost:29092, localhost:39092
+  schema-registry-url-key: schema.registry.url
+  schema-registry-url: http://localhost:8081
+  topic-name: 'user-to-elastic'
+  topic-names-to-create:
+    - 'user-to-elastic'
+
+spring:
+  data:
+    r2dbc:
+      repositories:
+        enabled: true
+
+  r2dbc:
+    url: r2dbc:postgresql://postgres:password@localhost:5432/users
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: kafka-to-elasticsearch-service
+  kafka:
+    bootstrap-servers: http://localhost:19092, http://localhost:29092, http://localhost:39092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+#    consumer:
+#      group-id: kafka-to-elastic-service
+#      auto-offset-reset: earliest
+#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+    properties:
+      schema.registry.url: http://localhost:8081

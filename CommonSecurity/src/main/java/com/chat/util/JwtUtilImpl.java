@@ -42,7 +42,7 @@ public class JwtUtilImpl extends AuthUtil {
     public String generateLoginJwtToken(String username, Collection<? extends GrantedAuthority> authorities, String tokenId, Date date) {
         return Jwts.builder()
                 .setSubject(username)
-                .claim(JWT_AUTH_SUBJECT, authorities)
+                .claim(HttpConstant.JWT_AUTH_SUBJECT, authorities)
                 .setIssuedAt(date)
                 .setId(tokenId)
                 .signWith(getKey())
