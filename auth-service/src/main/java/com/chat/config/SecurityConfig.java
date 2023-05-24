@@ -1,9 +1,8 @@
 package com.chat.config;
 
-import com.chat.aut.JwtConfig;
-import com.chat.aut.Role;
+import com.chat.auth.JwtConfig;
+import com.chat.auth.JwtUtilImpl;
 import com.chat.filter.JwtUsernameAndPasswordAuthenticationFilter;
-import com.chat.util.JwtUtilImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -54,20 +53,9 @@ public class SecurityConfig {
     }
 
     @Bean
-    protected SecurityFilterChain configure(HttpSecurity http,
-                                            BCryptPasswordEncoder bCryptPasswordEncoder,
-                                            UserDetailsService userDetailService) throws Exception {
-        return http.cors()
-                .and()
-                .csrf().disable()// TODO: Enabeble this in production
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-                .and()
-                .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(jwtConfig, jwtService, authenticationManager(http, bCryptPasswordEncoder, userDetailService)))
-                .authorizeRequests()
-                .antMatchers("/v1/register/**", "/swagger-ui/**", "/ws/**", "/app/**", "/login/***").permitAll()
-                .antMatchers("/user/**").hasAnyRole(Role.USER.name())
-                .anyRequest().fullyAuthenticated()
-                .and().build();
+    protected SecurityFilterChain configure(HttpSecurity http, BCryptPasswordEncoder bCryptPasswordEncoder, UserDetailsService userDetailService) throws Exception {
+        return http.cors().and().csrf().disable()// TODO: Enabeble this in production
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED).and().addFilter(new JwtUsernameAndPasswordAuthenticationFilter(jwtConfig, jwtService, authenticationManager(http, bCryptPasswordEncoder, userDetailService))).authorizeRequests().antMatchers("/v1/register/**", "/swagger-ui/**", "/ws/**", "/app/**", "/login/***").permitAll().antMatchers("/user/**").hasAnyRole(Role.USER.name()).anyRequest().fullyAuthenticated().and().build();
     }
 
     @Bean
@@ -77,21 +65,12 @@ public class SecurityConfig {
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web
-                .ignoring()
-                .antMatchers("/v1/register/**", "/ws/**", "/app/**");
+        return (web) -> web.ignoring().antMatchers("/v1/register/**", "/ws/**", "/app/**");
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http,
-                                                       BCryptPasswordEncoder bCryptPasswordEncoder,
-                                                       UserDetailsService userDetailService)
-            throws Exception {
-        return http.getSharedObject(AuthenticationManagerBuilder.class)
-                .userDetailsService(userDetailService)
-                .passwordEncoder(bCryptPasswordEncoder)
-                .and()
-                .build();
+    public AuthenticationManager authenticationManager(HttpSecurity http, BCryptPasswordEncoder bCryptPasswordEncoder, UserDetailsService userDetailService) throws Exception {
+        return http.getSharedObject(AuthenticationManagerBuilder.class).userDetailsService(userDetailService).passwordEncoder(bCryptPasswordEncoder).and().build();
     }
 
     @Bean

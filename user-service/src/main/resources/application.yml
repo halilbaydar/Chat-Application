@@ -11,6 +11,8 @@ kafka-config:
   topic-name: 'user-to-elastic'
   topic-names-to-create:
     - 'user-to-elastic'
+  numOfPartitions: 2
+  replicationFactor: 3
 redis:
   host: http://localhost
   port: 6379

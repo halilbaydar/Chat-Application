@@ -8,19 +8,13 @@ import org.springframework.stereotype.Component
 import javax.annotation.PostConstruct
 
 @Component
-class ElasticKafkaConsumer(
-        @Qualifier("user-to-elastic")
-        private val kafkaConsumerTemplate: ReactiveKafkaConsumerTemplate<String, UserAvroModel>,
-        private val LOG: LoggingConfig
-) {
-
+class ElasticKafkaConsumer(@Qualifier("user-to-elastic") private val kafkaConsumerTemplate: ReactiveKafkaConsumerTemplate<String, UserAvroModel>,
+                           private val LOG: LoggingConfig) {
 
     @PostConstruct
     fun receiver() {
-        this.kafkaConsumerTemplate
-                .receive()
-                .doOnNext { message ->
-                    LOG.kafkaToElastic.info("Message from user service. key: {}, user: {}", message.key(), message.value())
-                }.subscribe()
+        this.kafkaConsumerTemplate.receive().doOnNext { message ->
+            LOG.kafkaToElastic.info("Message from user service. key: {}, user: {}", message.key(), message.value())
+        }.doOnNext { it.receiverOffset().acknowledge() }.subscribe()
     }
 }

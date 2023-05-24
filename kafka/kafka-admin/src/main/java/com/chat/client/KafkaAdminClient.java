@@ -78,7 +78,7 @@ public class KafkaAdminClient {
 
     public List<String> filterExistingTopics(List<String> checkTopics) {
         Collection<TopicListing> topics = getTopics();
-        return checkTopics.stream().filter(topic -> isTopicCreated(topics, topic)).collect(Collectors.toList());
+        return checkTopics.stream().filter(topic -> !isTopicCreated(topics, topic)).collect(Collectors.toList());
     }
 
     public void checkSchemaRegistry() {

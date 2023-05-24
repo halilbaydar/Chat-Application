@@ -1,13 +1,13 @@
 package com.chat.producer
 
-import com.chat.kafka.avro.model.UserAvroModel
-import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.CommandLineRunner
-import org.springframework.kafka.core.reactive.ReactiveKafkaProducerTemplate
-import org.springframework.stereotype.Service
-import reactor.core.publisher.Flux
-import java.util.*
+//import com.chat.kafka.avro.model.UserAvroModel
+//import org.springframework.beans.factory.annotation.Qualifier
+//import org.springframework.beans.factory.annotation.Value
+//import org.springframework.boot.CommandLineRunner
+//import org.springframework.kafka.core.reactive.ReactiveKafkaProducerTemplate
+//import org.springframework.stereotype.Service
+//import reactor.core.publisher.Flux
+//import java.util.*
 
 //@Service
 //class ProducerRunner(

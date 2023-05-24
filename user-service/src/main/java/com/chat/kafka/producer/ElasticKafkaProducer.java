@@ -36,7 +36,7 @@ public class ElasticKafkaProducer {
                 .doOnNext(it -> System.out.println("Data: $it"))
                 .flatMap(it -> this.reactiveKafkaProducerTemplate.send(kafkaConfigData.getTopicName(), it.getId(), it))
                 .doOnError(it -> System.out.printf("Error: %s%n", it.getMessage()))
-                .doOnNext(it -> System.out.printf("Result:  %s%n", it.recordMetadata()))
+                .doOnNext(it -> System.out.printf("Result:  %s%n", it.recordMetadata().toString()))
                 .subscribe();
     }
 }
