@@ -8,7 +8,6 @@ import java.lang.invoke.MethodHandles;
 
 @Component
 public class LoggingConfig {
-    public final Logger s3 = getLogger("s3");
     public final Logger service = getLogger("service");
     public final Logger performance = getLogger("performance");
     public final Logger kafkaToElastic = getLogger("kafkaToElastic");

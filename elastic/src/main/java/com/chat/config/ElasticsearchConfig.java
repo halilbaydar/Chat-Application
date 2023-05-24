@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.elasticsearch.client.ClientConfiguration;
 import org.springframework.data.elasticsearch.client.reactive.ReactiveElasticsearchClient;
 import org.springframework.data.elasticsearch.client.reactive.ReactiveRestClients;
-import org.springframework.data.elasticsearch.core.ReactiveElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.ReactiveElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.convert.ElasticsearchConverter;
 import org.springframework.data.elasticsearch.core.convert.MappingElasticsearchConverter;
@@ -46,7 +45,7 @@ public class ElasticsearchConfig {
     }
 
     @Bean
-    public ReactiveElasticsearchOperations reactiveElasticsearchOperations() {
+    public ReactiveElasticsearchTemplate reactiveElasticsearchOperations() {
         return new ReactiveElasticsearchTemplate(reactiveElasticsearchClient(), elasticsearchConverter());
     }
 
