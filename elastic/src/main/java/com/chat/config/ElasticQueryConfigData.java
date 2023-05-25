@@ -8,5 +8,5 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = "elastic-index")
 public class ElasticQueryConfigData {
-    private String userIndex;
+    public String userIndex;
 }

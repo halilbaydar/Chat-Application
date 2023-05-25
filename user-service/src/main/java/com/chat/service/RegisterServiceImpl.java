@@ -1,16 +1,17 @@
 package com.chat.service;
 
+import com.chat.config.KafkaConfigData;
 import com.chat.exception.CustomException;
 import com.chat.interfaces.repository.UserRepository;
 import com.chat.interfaces.service.RegisterService;
+import com.chat.kafka.avro.model.UserAvroModel;
 import com.chat.model.Role;
 import com.chat.model.entity.UserEntity;
 import com.chat.model.request.RegisterContextRequest;
 import com.chat.model.request.RegisterRequest;
-//import com.chat.redis.RedisStorageManager;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
+import org.springframework.kafka.core.reactive.ReactiveKafkaProducerTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,12 +24,21 @@ import static com.chat.constant.SuccessConstant.SUCCESS;
 import static com.chat.util.SHA256Utils.toSHA512;
 
 @Service
-@RequiredArgsConstructor
 public class RegisterServiceImpl implements RegisterService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    //    private final KafkaProducer<String, UserAvroModel> kafkaProducer;
-//    private final RedisStorageManager redisStorageManager;
+    private final ReactiveKafkaProducerTemplate<String, UserAvroModel> reactiveKafkaProducerTemplate;
+    private final KafkaConfigData kafkaConfigData;
+
+    public RegisterServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
+                               @Qualifier("user-to-elastic-producer-template")
+                               ReactiveKafkaProducerTemplate<String, UserAvroModel> reactiveKafkaProducerTemplate, KafkaConfigData kafkaConfigData) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.reactiveKafkaProducerTemplate = reactiveKafkaProducerTemplate;
+        this.kafkaConfigData = kafkaConfigData;
+    }
+    //    private final RedisStorageManager redisStorageManager;
 
 //    @Value("${topic.user}")
 //    private String userTopic;
@@ -53,14 +63,13 @@ public class RegisterServiceImpl implements RegisterService {
             }
         }).flatMap(registerContextRequest -> {
             UserEntity userEntity = registerContextRequest.getNewUser();
-//                    kafkaProducer.send(userTopic, userEntity.getId(), UserAvroModel.newBuilder()
-//                            .setUsername(userEntity.getUsername())
-//                            .setName(userEntity.getName())
-//                            .setCreatedDate(userEntity.getCreatedDate().getTime())
-//                            .setId(userEntity.getId())
-//                            .build());
+            return this.reactiveKafkaProducerTemplate.send(kafkaConfigData.getTopicName(), userEntity.getId(), UserAvroModel.newBuilder()
+                    .setUsername(userEntity.getUsername())
+                    .setName(userEntity.getName())
+                    .setCreatedDate(userEntity.getCreatedDate().getTime())
+                    .setId(userEntity.getId())
+                    .build());
 //            redisStorageManager.map.put(USERS, toSHA512(userEntity.getUsername()), userEntity);
-            return Mono.just(registerContextRequest);
-        }).map(registerContextRequest -> SUCCESS).onErrorResume(Mono::error).subscribeOn(Schedulers.boundedElastic());
+        }).map(senderResult -> SUCCESS).onErrorResume(Mono::error).subscribeOn(Schedulers.boundedElastic());
     }
 }

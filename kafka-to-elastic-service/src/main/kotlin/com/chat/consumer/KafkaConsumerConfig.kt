@@ -1,6 +1,7 @@
 package com.chat.consumer
 
 import com.chat.kafka.avro.model.UserAvroModel
+import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
@@ -22,6 +23,7 @@ class KafkaConsumerConfig {
         return ReceiverOptions.create<String?, UserAvroModel?>(kafkaProperties.buildConsumerProperties())
             .consumerProperty(ConsumerConfig.GROUP_INSTANCE_ID_CONFIG, UUID.randomUUID().toString())
             .consumerProperty(ConsumerConfig.ALLOW_AUTO_CREATE_TOPICS_CONFIG, "false")
+            .consumerProperty(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, "true")
             .subscription(listOf(userTopic))
     }
 

@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "elastic-config")
 public class ElasticConfigData {
     private String connectionUrl;
+    private String username;
+    private String password;
     private Integer connectTimeoutMs;
     private Integer socketTimeoutMs;
 }

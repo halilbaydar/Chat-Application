@@ -23,7 +23,7 @@ public class ElasticKafkaProducer {
     }
 
     public void run() {
-        Flux.range(0, 10)
+        Flux.range(0, 1)
                 .map(
                         index -> UserAvroModel
                                 .newBuilder()

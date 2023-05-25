@@ -16,6 +16,8 @@ elastic-config:
   connectionUrl: http://localhost:9200
   connectionTimeoutMs: 5000
   socketTimeoutMs: 30000
+  password: password
+  username: elastic
 
 spring:
   main:
@@ -31,3 +33,28 @@ spring:
       value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
     properties:
       schema.registry.url: http://localhost:8081
+  data:
+    elasticsearch:
+      repositories:
+        enabled: true
+  elasticsearch:
+#    uris: http://localhost:9200
+    password: password
+    username: elastic
+
+kafka-config:
+  bootstrap-servers: localhost:19092, localhost:29092, localhost:39092
+  schema-registry-url-key: schema.registry.url
+  schema-registry-url: http://localhost:8081
+  topic-name: 'user-to-elastic'
+  topic-names-to-create:
+    - 'user-to-elastic'
+  numOfPartitions: 2
+  replicationFactor: 3
+
+retry-config:
+  initialIntervalMs: 1000
+  maxIntervalMs: 10000
+  multiplier: 2.0
+  maxAttempts: 3
+  sleepTimeMs: 2000

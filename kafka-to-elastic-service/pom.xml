@@ -101,6 +101,10 @@
             <groupId>com.chat</groupId>
             <artifactId>elastic</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.chat</groupId>
+            <artifactId>kafka-admin</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

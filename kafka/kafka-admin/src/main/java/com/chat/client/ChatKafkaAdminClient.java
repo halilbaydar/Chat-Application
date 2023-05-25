@@ -25,15 +25,26 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-public class KafkaAdminClient {
+public class ChatKafkaAdminClient {
 
-    private static final Logger LOG = LoggerFactory.getLogger(KafkaAdminClient.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ChatKafkaAdminClient.class);
 
     private final KafkaConfigData kafkaConfigData;
     private final RetryConfigData retryConfigData;
     private final AdminClient adminClient;
     private final RetryTemplate retryTemplate;
     private final WebClient webClient;
+
+    public synchronized void close() {
+        try {
+            retryTemplate.execute(retryContext -> {
+                adminClient.close();
+                return null;
+            });
+        } catch (Exception e) {
+            LOG.error("Error : {}", e.getMessage());
+        }
+    }
 
     public synchronized void createTopics() {
         CreateTopicsResult createTopicsResult;

@@ -15,7 +15,8 @@ import java.util.Date;
 
 @Data
 @Builder
-@Document(indexName = "#{@elasticConfigData.userIndex}", createIndex = true)
+//@Document(indexName = "#{@elasticConfigData.userIndex}", createIndex = true)
+@Document(indexName = "users", createIndex = true)
 @Setting(
         sortFields = {"name", "username"},
         sortModes = {Setting.SortMode.max, Setting.SortMode.min},
