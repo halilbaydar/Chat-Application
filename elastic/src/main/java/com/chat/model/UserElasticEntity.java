@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.domain.Persistable;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
@@ -23,17 +24,18 @@ import java.util.Date;
         shards = 1,
         replicas = 1,
         refreshInterval = "1s",
-        indexStoreType = "fs")
-public class UserElasticEntity implements ElasticIndexModel<String> {
+        indexStoreType = "fs"
+)
+public class UserElasticEntity implements ElasticIndexModel<String>, Persistable<String> {
     @Id
     @JsonProperty
     private String id;
 
-    @Field(type = FieldType.Keyword)
+    @Field(type = FieldType.Keyword, analyzer = "completion")
     @JsonProperty
     private String username;
 
-    @Field(type = FieldType.Keyword)
+    @Field(type = FieldType.Keyword, analyzer = "completion")
     @JsonProperty
     private String name;
 
@@ -41,4 +43,9 @@ public class UserElasticEntity implements ElasticIndexModel<String> {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "uuuu-MM-dd'T'HH:mm:ssZZ")
     @JsonProperty
     private Date createdDate;
+
+    @Override
+    public boolean isNew() {
+        return id == null || createdDate == null;
+    }
 }

@@ -21,6 +21,6 @@ public class UserServiceApplication implements CommandLineRunner {
     public void run(String... args) {
         chatKafkaAdminClient.createTopics();
         chatKafkaAdminClient.checkSchemaRegistry();
-        elasticKafkaProducer.run();
+//        elasticKafkaProducer.run();
     }
 }

@@ -13,7 +13,7 @@ elastic-index:
   userIndex: users
 
 elastic-config:
-  connectionUrl: http://localhost:9200
+  connectionUrl: localhost:9200
   connectionTimeoutMs: 5000
   socketTimeoutMs: 30000
   password: password

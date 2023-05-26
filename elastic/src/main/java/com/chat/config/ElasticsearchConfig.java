@@ -20,8 +20,7 @@ public class ElasticsearchConfig extends AbstractReactiveElasticsearchConfigurat
     @Bean
     public ReactiveElasticsearchClient reactiveElasticsearchClient() {
         ClientConfiguration clientConfiguration = ClientConfiguration.builder()
-//                .connectedTo(elasticConfigData.getConnectionUrl())
-                .connectedToLocalhost()
+                .connectedTo(elasticConfigData.getConnectionUrl())
                 .withClientConfigurer(webClient -> ExchangeStrategies.builder()
                         .codecs(configurer -> configurer.defaultCodecs()
                                 .maxInMemorySize(-1)).build())

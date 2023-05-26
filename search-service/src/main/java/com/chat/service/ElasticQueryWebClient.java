@@ -9,7 +9,7 @@ import reactor.core.publisher.Mono;
 
 public interface ElasticQueryWebClient {
 
-    Flux<SearchHit<UserElasticEntity>> searchByName(SearchRequest request);
+    Flux<SearchHit<UserElasticEntity>> searchByName(Mono<SearchRequest> request);
 
-    Mono<Suggest> searchSuggest(SearchRequest searchRequest);
+    Mono<Suggest> searchSuggest(Mono<SearchRequest> searchRequest);
 }

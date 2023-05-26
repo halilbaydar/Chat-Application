@@ -1,45 +1,45 @@
 package com.chat.config;
-
-import io.netty.channel.ChannelOption;
-import io.netty.handler.timeout.ReadTimeoutHandler;
-import io.netty.handler.timeout.WriteTimeoutHandler;
-import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.client.reactive.ReactorClientHttpConnector;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.netty.http.client.HttpClient;
-
-import java.util.concurrent.TimeUnit;
-
-@Configuration
-@RequiredArgsConstructor
-public class WebClientConfig {
-
-    private final ElasticQueryWebClientConfigData.WebClient webClientConfig;
-
-    @Bean("webClient")
-    public WebClient webClient() {
-        return WebClient.builder()
-                .baseUrl(webClientConfig.getBaseUrl())
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, webClientConfig.getContentType())
-                .clientConnector(new ReactorClientHttpConnector(getHttpClient()))
-                .codecs(configurer -> configurer
-                        .defaultCodecs()
-                        .maxInMemorySize(webClientConfig.getMaxInMemorySize()))
-                .build();
-    }
-
-    private HttpClient getHttpClient() {
-        return HttpClient.create()
-                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, webClientConfig.getConnectTimeoutMs())
-                .doOnConnected(connection -> {
-                    connection.addHandlerLast(new ReadTimeoutHandler(webClientConfig.getReadTimeoutMs(),
-                            TimeUnit.MILLISECONDS));
-                    connection.addHandlerLast(new WriteTimeoutHandler(webClientConfig.getWriteTimeoutMs(),
-                            TimeUnit.MILLISECONDS));
-                });
-    }
-
-}
+//
+//import io.netty.channel.ChannelOption;
+//import io.netty.handler.timeout.ReadTimeoutHandler;
+//import io.netty.handler.timeout.WriteTimeoutHandler;
+//import lombok.RequiredArgsConstructor;
+//import org.springframework.context.annotation.Bean;
+//import org.springframework.context.annotation.Configuration;
+//import org.springframework.http.HttpHeaders;
+//import org.springframework.http.client.reactive.ReactorClientHttpConnector;
+//import org.springframework.web.reactive.function.client.WebClient;
+//import reactor.netty.http.client.HttpClient;
+//
+//import java.util.concurrent.TimeUnit;
+//
+//@Configuration
+//@RequiredArgsConstructor
+//public class WebClientConfig {
+//
+//    private final ElasticQueryWebClientConfigData.WebClient webClientConfig;
+//
+//    @Bean("webClient")
+//    public WebClient webClient() {
+//        return WebClient.builder()
+//                .baseUrl(webClientConfig.getBaseUrl())
+//                .defaultHeader(HttpHeaders.CONTENT_TYPE, webClientConfig.getContentType())
+//                .clientConnector(new ReactorClientHttpConnector(getHttpClient()))
+//                .codecs(configurer -> configurer
+//                        .defaultCodecs()
+//                        .maxInMemorySize(webClientConfig.getMaxInMemorySize()))
+//                .build();
+//    }
+//
+//    private HttpClient getHttpClient() {
+//        return HttpClient.create()
+//                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, webClientConfig.getConnectTimeoutMs())
+//                .doOnConnected(connection -> {
+//                    connection.addHandlerLast(new ReadTimeoutHandler(webClientConfig.getReadTimeoutMs(),
+//                            TimeUnit.MILLISECONDS));
+//                    connection.addHandlerLast(new WriteTimeoutHandler(webClientConfig.getWriteTimeoutMs(),
+//                            TimeUnit.MILLISECONDS));
+//                });
+//    }
+//
+//}

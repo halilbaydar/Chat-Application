@@ -1,0 +1,9 @@
+server:
+  port: 85
+
+elastic-config:
+  connectionUrl: localhost:9200
+  connectionTimeoutMs: 5000
+  socketTimeoutMs: 30000
+  password: password
+  username: elastic
