@@ -45,7 +45,10 @@ public class ElasticQueryUtil<ID extends Serializable, T extends ElasticIndexMod
                 .withQuery(new BoolQueryBuilder()
                         .should(QueryBuilders.matchQuery(field, text)
                                 .fuzziness(Fuzziness.TWO)))
-//                .withPageable(PageRequest.of(pageRequest.getPage(), DEFAULT_PAGE_SIZE, Sort.Direction.ASC, pageRequest.getSort()))
+                .withQuery(new BoolQueryBuilder()
+                        .should(QueryBuilders.prefixQuery(field, text)
+                                .caseInsensitive(true)))
+                .withPageable(PageRequest.of(pageRequest.getPage(), DEFAULT_PAGE_SIZE, Sort.Direction.ASC, pageRequest.getSort()))
                 .build();
     }
 
