@@ -70,12 +70,12 @@ class ElasticKafkaReceiver {
 //                .flatMap({ batchProcess(it) }, 10)
 
                 ///PARALLEL BATCH PROCESSING WITHOUT RECORD ORDERING
-                //.receiveAutoAck()
-                //.flatMap({ batchProcess(it) }, 10)
+                .receiveAutoAck()
+                .flatMap({ batchProcess(it) }, 10)
 
                 ///SEQUENTIAL BATCH PROCESSING WITHOUT RECORD ORDERING AND PROCESSING IN DIFFERENT STREAM
-                .receive()
-                .concatMap { process(it) }
+//                .receive()
+//                .concatMap { process(it) }
                 .subscribe()
         }
 

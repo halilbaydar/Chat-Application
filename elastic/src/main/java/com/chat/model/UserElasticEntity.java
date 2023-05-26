@@ -10,12 +10,10 @@ import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 import org.springframework.data.elasticsearch.annotations.Setting;
 
-import java.time.ZonedDateTime;
 import java.util.Date;
 
 @Data
 @Builder
-//@Document(indexName = "#{@elasticConfigData.userIndex}", createIndex = true)
 @Document(indexName = "users", createIndex = true)
 @Setting(
         sortFields = {"name", "username"},
