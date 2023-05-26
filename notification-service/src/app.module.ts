@@ -8,6 +8,7 @@ import ModuleDatabase from "./modules/database/module.database";
 import {NotificationModule} from "./modules/notification/notification.module";
 import {OnesignalModule} from "./modules/onesignal/onesignal.module";
 import {RedisModule} from "./modules/caching/io.redis.module";
+import {EurekaModule} from "nestjs-eureka";
 
 @Module({
     imports: [...ModuleDatabase,
@@ -23,7 +24,21 @@ import {RedisModule} from "./modules/caching/io.redis.module";
             sharedConnection: true,
             connection: createRedisConnection({config: null, bullmq: true}),
             blockingConnection: true,
-        })],
+        }),
+        EurekaModule.forRoot({
+            eureka: {
+                host: 'localhost',
+                port: 80,
+                registryFetchInterval:  60 * 1000,
+                servicePath: '/eureka/apps',
+                maxRetries: 3,
+            },
+            service: {
+                name: process.env.APPLICATION_NAME,
+                port: Number(process.env.PORT || 90),
+            },
+        }),
+    ],
     controllers: [AppController],
     providers: [AppService],
 })

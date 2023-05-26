@@ -7,3 +7,14 @@ elastic-config:
   socketTimeoutMs: 30000
   password: password
   username: elastic
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:80/eureka/
+  instance:
+    lease-expiration-duration-in-seconds: 5
+    lease-renewal-interval-in-seconds: 2
+spring:
+  application:
+    name: search-service

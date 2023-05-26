@@ -2,6 +2,7 @@ package com.chat.config;
 
 import com.chat.auth.JwtConfig;
 import com.chat.auth.JwtUtilImpl;
+import com.chat.auth.Role;
 import com.chat.filter.JwtUsernameAndPasswordAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
@@ -21,9 +22,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
-import org.springframework.session.FindByIndexNameSessionRepository;
-import org.springframework.session.Session;
-import org.springframework.session.security.SpringSessionBackedSessionRegistry;
+//import org.springframework.session.FindByIndexNameSessionRepository;
+//import org.springframework.session.Session;
+//import org.springframework.session.security.SpringSessionBackedSessionRegistry;
 
 import java.util.EventListener;
 
@@ -35,7 +36,7 @@ public class SecurityConfig {
 
     private final JwtConfig jwtConfig;
     private final JwtUtilImpl jwtService;
-    private final FindByIndexNameSessionRepository<? extends Session> sessionRepository;
+//    private final FindByIndexNameSessionRepository<? extends Session> sessionRepository;
 
     @Bean
     public static <T extends EventListener> ServletListenerRegistrationBean<T> httpSessionEventPublisher() {
@@ -58,10 +59,10 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED).and().addFilter(new JwtUsernameAndPasswordAuthenticationFilter(jwtConfig, jwtService, authenticationManager(http, bCryptPasswordEncoder, userDetailService))).authorizeRequests().antMatchers("/v1/register/**", "/swagger-ui/**", "/ws/**", "/app/**", "/login/***").permitAll().antMatchers("/user/**").hasAnyRole(Role.USER.name()).anyRequest().fullyAuthenticated().and().build();
     }
 
-    @Bean
-    public SpringSessionBackedSessionRegistry<? extends Session> sessionRegistry() {
-        return new SpringSessionBackedSessionRegistry<>(sessionRepository);
-    }
+//    @Bean
+//    public SpringSessionBackedSessionRegistry<? extends Session> sessionRegistry() {
+//        return new SpringSessionBackedSessionRegistry<>(sessionRepository);
+//    }
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {

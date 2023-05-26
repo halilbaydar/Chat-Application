@@ -2,7 +2,7 @@ server:
   port: 84
 
 log:
-  app-name: kafka-to-elastic-service
+  app-name: user-service
 
 kafka-config:
   bootstrap-servers: localhost:19092, localhost:29092, localhost:39092
@@ -28,7 +28,7 @@ spring:
   main:
     allow-bean-definition-overriding: true
   application:
-    name: kafka-to-elasticsearch-service
+    name: user-service
   kafka:
     bootstrap-servers: http://localhost:19092, http://localhost:29092, http://localhost:39092
     producer:
@@ -48,3 +48,25 @@ retry-config:
   multiplier: 2.0
   maxAttempts: 3
   sleepTimeMs: 2000
+
+management:
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure.include: health, prometheus, gateway
+      path-mapping.prometheus: metrics
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      cache.time-to-live: 1ms
+    gateway:
+      enabled: true
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:80/eureka/
+  instance:
+    lease-expiration-duration-in-seconds: 5
+    lease-renewal-interval-in-seconds: 2

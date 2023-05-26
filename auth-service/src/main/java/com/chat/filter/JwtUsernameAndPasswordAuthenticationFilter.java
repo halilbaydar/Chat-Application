@@ -1,7 +1,7 @@
 package com.chat.filter;
 
-import com.chat.aut.JwtConfig;
-import com.chat.util.JwtUtilImpl;
+import com.chat.auth.JwtConfig;
+import com.chat.auth.JwtUtilImpl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;

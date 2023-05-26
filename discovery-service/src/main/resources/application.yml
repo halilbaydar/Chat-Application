@@ -12,7 +12,7 @@ eureka:
     eviction-interval-timer-in-ms: 2000
 
 server:
-  port: 8761
+  port: 80
 
 spring:
   application:

@@ -1,7 +1,7 @@
 package com.chat.filter;
 
+import com.chat.auth.JwtUtilImpl;
 import com.chat.constant.HttpConstant;
-import com.chat.util.AuthUtil;
 import com.chat.util.RouterValidator;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ import java.util.List;
 @RefreshScope
 @RequiredArgsConstructor
 public class AuthenticationFilter implements GatewayFilter {
-    private final AuthUtil jwtUtil;
+    private final JwtUtilImpl jwtUtil;
     private final RouterValidator routerValidator;
 
     @Override

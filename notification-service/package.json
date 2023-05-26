@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@nestjs/bullmq": "^1.1.0",
+    "@nestjs/cli": "^9.5.0",
     "@nestjs/common": "^9.4.0",
     "@nestjs/core": "^9.4.0",
     "@nestjs/microservices": "^9.4.0",
@@ -20,6 +21,7 @@
     "ioredis": "^5.3.2",
     "kafkajs": "^2.2.4",
     "moment-timezone": "^0.5.43",
+    "nestjs-eureka": "^2.0.0",
     "onesignal-api-client-core": "^1.2.2",
     "pg": "^8.10.0",
     "rxjs": "^7.8.1",
