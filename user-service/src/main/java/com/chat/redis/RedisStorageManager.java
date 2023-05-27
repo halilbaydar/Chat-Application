@@ -1,5 +1,6 @@
 package com.chat.redis;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.lettuce.core.ClientOptions;
 import io.lettuce.core.SocketOptions;
 import lombok.RequiredArgsConstructor;
@@ -16,11 +17,13 @@ import org.springframework.data.redis.connection.lettuce.LettuceClientConfigurat
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.*;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.session.data.redis.config.ConfigureRedisAction;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
 import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
@@ -33,12 +36,13 @@ public class RedisStorageManager {
 
     private final RedisProperties redisProperties;
 
-    public HashOperations<Object, Object, Object> map;
+    public HashOperations<Object, Object, Serializable> map;
     public ListOperations<Object, Object> list;
     public SetOperations<Object, Object> set;
     public ValueOperations<Object, Object> value;
     public RedisConnection conn;
     public RedisTemplate<Object, Object> redisTemplate;
+    private final ObjectMapper objectMapper;
 
     @Value("${spring.profiles.active}")
     private String profile;
@@ -85,7 +89,9 @@ public class RedisStorageManager {
         redisTemplate.setConnectionFactory(redisConnectionFactory());
 
         redisTemplate.setHashKeySerializer(new StringRedisSerializer());
-        redisTemplate.setHashValueSerializer(new StringRedisSerializer());
+        RedisSerializer<Object> jsonSerializer = new Jackson2JsonRedisSerializer<>(Object.class);
+        ((Jackson2JsonRedisSerializer<?>) jsonSerializer).setObjectMapper(objectMapper);
+        redisTemplate.setHashValueSerializer(jsonSerializer);
 
         redisTemplate.setStringSerializer(new StringRedisSerializer());
 

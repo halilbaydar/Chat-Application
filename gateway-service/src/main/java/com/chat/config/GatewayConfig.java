@@ -14,7 +14,6 @@ import org.springframework.cloud.gateway.route.builder.GatewayFilterSpec;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpHeaders;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
@@ -29,8 +28,8 @@ public class GatewayConfig {
 
     @Bean(name = "authHeaderResolver")
     public KeyResolver userKeyResolver() {
-        return exchange -> Mono.just(Objects.requireNonNull(exchange
-                .getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION)));
+        return exchange -> Mono.just(Objects.requireNonNull(Objects.requireNonNull(exchange
+                .getRequest().getRemoteAddress()).getAddress().getHostAddress()));
     }
 
     @Bean
@@ -92,16 +91,21 @@ public class GatewayConfig {
     }
 
     private GatewayFilterSpec getGatewayFilterSpec(GatewayFilterSpec gatewayFilterSpec, String fallback, String pathReplace) {
-        return gatewayFilterSpec.filter(authenticationFilter)
-                .circuitBreaker(config -> {
-                    config.setFallbackUri(String.format("/fallback/%s-fallback", fallback));
-                    config.setName("chatCircuitBreaker");
-                }).requestRateLimiter(config -> {
+        return gatewayFilterSpec
+                .filter(authenticationFilter)
+                .requestRateLimiter(config -> {
                     config.setDenyEmptyKey(false);
                     config.setKeyResolver(userKeyResolver());
                     config.setRateLimiter(redisRateLimiter());
-                }).retry(retryConfig -> {
+                })
+                .retry(retryConfig -> {
                     retryConfig.setBackoff(Duration.ofMillis(100), Duration.ofMillis(1000), 2, Boolean.TRUE);
-                }).saveSession().rewritePath(String.format("/%s(?<segment>/?.*)", pathReplace), "$\\{segment}");
+                }).saveSession()
+                .saveSession()
+                .rewritePath(String.format("/%s(?<segment>/?.*)", pathReplace), "$\\{segment}")
+                .circuitBreaker(config -> {
+                    config.setFallbackUri(String.format("/fallback/%s-fallback", fallback));
+                    config.setName("chatCircuitBreaker");
+                });
     }
 }
