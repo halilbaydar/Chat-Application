@@ -74,7 +74,8 @@ public class RegisterServiceImpl implements RegisterService {
                 })
                 .doOnNext((registerContextRequest) -> {
                     UserEntity userEntity = registerContextRequest.getNewUser();
-                    redisStorageManager.map.put(USERS, toSHA512(userEntity.getUsername()), userEntity);
+                    userEntity.setPassword(null);
+                    redisStorageManager.map.put(USERS, userEntity.getUsername(), userEntity);
                 })
                 .flatMap(registerContextRequest -> {
                     UserEntity userEntity = registerContextRequest.getNewUser();
