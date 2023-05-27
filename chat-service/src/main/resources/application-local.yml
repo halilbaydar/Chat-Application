@@ -18,8 +18,8 @@ spring:
     username: guest
     password: guest
     template:
-      routing-key: #{ T(java.util.UUID).randomUUID().toString().replace('-', '') }
-      default-receive-queue: #{ T(java.util.UUID).randomUUID().toString().replace('-', '') }
+      routing-key: ${random.int(1000000)}
+      default-receive-queue: ${random.int(1000000)}
       exchange: messageExchange
   data:
     mongodb:

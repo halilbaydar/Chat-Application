@@ -8,14 +8,12 @@ import com.chat.model.request.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
 import static com.chat.constant.PrefixConstant.*;
 import static java.util.concurrent.CompletableFuture.runAsync;
 
-@Lazy
 @Component
 @RequiredArgsConstructor
 public class MessageConsumer implements Consumer {

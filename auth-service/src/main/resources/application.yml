@@ -1,8 +1,20 @@
 server:
   port: 88
+
 spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    template:
+      routing-key: ${random.int(1000000)}
+      default-receive-queue: "auth-user"
+      exchange: userExchange
   application:
     name: auth-service
+  profiles:
+    active: local
 
 eureka:
   client:
@@ -12,12 +24,6 @@ eureka:
     lease-expiration-duration-in-seconds: 5
     lease-renewal-interval-in-seconds: 2
 
-
-redis:
-  host: localhost
-  port: 6379
-  username: redis
-  password: password
 
 jwt:
   secretKey: 1231231231231231231231231231231231231231231231231231231231231231

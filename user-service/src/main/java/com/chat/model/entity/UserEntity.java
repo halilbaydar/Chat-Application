@@ -10,6 +10,7 @@ import org.springframework.data.relational.core.mapping.Table;
 
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Getter
@@ -19,16 +20,16 @@ public class UserEntity implements Serializable {
     @Id
     private BigInteger id;
 
-    @Column
+    @Column("created_at")
     @CreatedDate
-    private Date createdAt;
+    private LocalDate createdAt;
 
-    @Column
-    private Date deletedAt;
+    @Column("deleted_at")
+    private LocalDate deletedAt;
 
-    @Column
+    @Column("updated_at")
     @LastModifiedDate
-    private Date updatedAt;
+    private LocalDate updatedAt;
 
     @Column
     private String username;

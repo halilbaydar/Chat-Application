@@ -54,6 +54,10 @@ public class ChatSocketServiceImpl implements ChatSocketService {
             BroadCastNotification<MessageRequest> broadCastNotification = new BroadCastNotification<>();
             broadCastNotification.setNotificationType(NotificationType.MESSAGE);
             broadCastNotification.setPayload(messageRequest);
+            this.rabbitTemplate.convertAndSend("", "", "", message -> {
+                message.getMessageProperties().setReplyTo("responseQueue");
+                return message;
+            });
             runAsync(() -> rabbitTemplate.convertAndSend(rabbitProperties.getTemplate().getExchange(), routingKey, broadCastNotification));
         } else {
             //TODO send this message via notification

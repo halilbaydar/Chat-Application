@@ -26,7 +26,6 @@ import static com.chat.constant.ErrorConstant.ErrorMessage.USERNAME_IN_USE;
 import static com.chat.constant.RedisKeyConstant.USERS;
 import static com.chat.constant.SuccessConstant.FAILED;
 import static com.chat.constant.SuccessConstant.SUCCESS;
-import static com.chat.util.SHA256Utils.toSHA512;
 
 @Service
 public class RegisterServiceImpl implements RegisterService {
@@ -79,12 +78,15 @@ public class RegisterServiceImpl implements RegisterService {
                 })
                 .flatMap(registerContextRequest -> {
                     UserEntity userEntity = registerContextRequest.getNewUser();
-                    return this.reactiveKafkaProducerTemplate.send(kafkaConfigData.getTopicName(), userEntity.getId().toString(), UserAvroModel.newBuilder()
-                            .setUsername(userEntity.getUsername())
-                            .setName(userEntity.getName())
-                            .setCreatedDate(userEntity.getCreatedAt() != null ? userEntity.getCreatedAt().getTime() : new Date().getTime())
-                            .setId(userEntity.getId().toString())
-                            .build());
+                    return this.reactiveKafkaProducerTemplate.send(
+                            kafkaConfigData.getTopicName(),
+                            userEntity.getId().toString(),
+                            UserAvroModel.newBuilder()
+                                    .setUsername(userEntity.getUsername())
+                                    .setName(userEntity.getName())
+                                    .setCreatedDate(new Date().getTime())
+                                    .setId(userEntity.getId().toString())
+                                    .build());
                 }).map(senderResult -> SUCCESS)
                 .onErrorResume(Mono::error)
                 .switchIfEmpty(Mono.just(FAILED))

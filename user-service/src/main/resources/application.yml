@@ -1,7 +1,6 @@
 server:
   port: 84
 
-
 log:
   app-name: user-service
 
@@ -16,6 +15,15 @@ kafka-config:
   replicationFactor: 3
 
 spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    template:
+      exchange: userExchange
+      routing-key: "routing-user"
+      default-receive-queue: "queue-user"
   redis:
     host: localhost
     port: 6379
@@ -35,11 +43,11 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
-#    consumer:
-#      group-id: kafka-to-elastic-service
-#      auto-offset-reset: earliest
-#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-#      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+    #    consumer:
+    #      group-id: kafka-to-elastic-service
+    #      auto-offset-reset: earliest
+    #      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    #      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
     properties:
       schema.registry.url: http://localhost:8081
   profiles:

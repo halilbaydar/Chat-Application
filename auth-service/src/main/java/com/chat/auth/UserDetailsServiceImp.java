@@ -1,7 +1,10 @@
 package com.chat.auth;
 
-import com.chat.model.UserEntity;
+import com.chat.model.message.message.RabbitUserEntity;
 import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.boot.autoconfigure.amqp.RabbitProperties;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -10,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 
 import static com.chat.constant.ErrorConstant.ErrorMessage.USER_NOT_EXIST;
 
@@ -17,13 +21,27 @@ import static com.chat.constant.ErrorConstant.ErrorMessage.USER_NOT_EXIST;
 @Service
 @RequiredArgsConstructor
 public class UserDetailsServiceImp implements UserDetailsService, Serializable {
-//    private final RedisStorageManager redisStorageManager;
+    private final RabbitTemplate rabbitTemplate;
+    private final RabbitProperties rabbitProperties;
 
     @Override
     public final UserDetails loadUserByUsername(final String username)
             throws UsernameNotFoundException {
 
-        UserEntity attemptedUser = null;//(UserEntity) redisStorageManager.map.get(USERS, toSHA512(username));
+        RabbitUserEntity attemptedUser = this.rabbitTemplate.convertSendAndReceiveAsType(
+                rabbitProperties.getTemplate().getExchange(),
+                "routing-user",
+                username,
+                message -> {
+                    message.getMessageProperties().setReplyTo(this.rabbitProperties.getTemplate().getRoutingKey());
+                    String corrId = UUID.randomUUID().toString().replace("-", "");
+                    message.getMessageProperties().setCorrelationId(corrId);
+                    message.getMessageProperties().setHeader("correlationId", corrId);
+                    message.getMessageProperties().setHeader("replayTo", this.rabbitProperties.getTemplate().getRoutingKey());
+                    return message;
+                },
+                ParameterizedTypeReference.forType(RabbitUserEntity.class)
+        );
 
         if (attemptedUser == null) {
             throw new RuntimeException(USER_NOT_EXIST);
@@ -33,7 +51,7 @@ public class UserDetailsServiceImp implements UserDetailsService, Serializable {
             throw new RuntimeException(USER_NOT_EXIST);
         }
 
-        List<SimpleGrantedAuthority> authorities = attemptedUser.getRole().getGrantedAuthorities();
+        List<SimpleGrantedAuthority> authorities = Role.valueOf(attemptedUser.getRole()).getGrantedAuthorities();
 
         return new UserDetailsImp(
                 authorities,
