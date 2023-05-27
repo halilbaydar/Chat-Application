@@ -25,7 +25,6 @@ public class MessageConsumer implements Consumer {
     private final SessionService sessionService;
     private final ChatSocketService chatSocketService;
 
-
     @Override
     @RabbitListener(queues = "${spring.rabbitmq.template.default-receive-queue}")
     public <T> void consumeMessage(BroadCastNotification<T> broadCastNotification) {

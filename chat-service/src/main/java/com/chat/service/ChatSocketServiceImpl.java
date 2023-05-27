@@ -48,9 +48,7 @@ public class ChatSocketServiceImpl implements ChatSocketService {
         runAsync(() -> saveMessageOperations(messageRequest));
 
         if (isUserConnected(messageRequest.getRecipientId())) {
-            runAsync(() ->
-                    simpMessagingTemplate.convertAndSend(
-                            MESSAGE_DESTINATION_PREFIX + messageRequest.getRecipientId(), messageRequest));
+            runAsync(() -> simpMessagingTemplate.convertAndSend(MESSAGE_DESTINATION_PREFIX + messageRequest.getRecipientId(), messageRequest));
         } else if (Boolean.TRUE.equals(redisStorageManager.redisTemplate.hasKey(messageRequest.getRecipientId()))) {
             var routingKey = (String) this.redisStorageManager.map.get(chatRedisProperties.getOnlineUsersMap(), messageRequest.getRecipientId());
             BroadCastNotification<MessageRequest> broadCastNotification = new BroadCastNotification<>();
@@ -64,15 +62,7 @@ public class ChatSocketServiceImpl implements ChatSocketService {
 
     @Override
     public void saveMessageOperations(MessageRequest messageRequest) {
-        MessageEntity message = MessageEntity
-                .builder()
-                .chatId(messageRequest.getChatId())
-                .message(messageRequest.getMessage())
-                .messageStatus(MessageStatus.SENT)
-                .recipientId(messageRequest.getRecipientId())
-                .senderId(messageRequest.getSenderId())
-                .id(messageRequest.getId())
-                .build();
+        MessageEntity message = MessageEntity.builder().chatId(messageRequest.getChatId()).message(messageRequest.getMessage()).messageStatus(MessageStatus.SENT).recipientId(messageRequest.getRecipientId()).senderId(messageRequest.getSenderId()).id(messageRequest.getId()).build();
         Query validationQuery = new Query();
         validationQuery.addCriteria(Criteria.where("id").is(messageRequest.getChatId()));
         Update update = new Update();
@@ -84,8 +74,7 @@ public class ChatSocketServiceImpl implements ChatSocketService {
     public void seenMessage(SeenRequest seenRequest) {
         runAsync(() -> seenMessageOperations(seenRequest));
         if (isUserConnected(seenRequest.getRecipientId())) {
-            runAsync(() -> simpMessagingTemplate.convertAndSend(String.format("%s%s",
-                    MESSAGE_SEEN_DESTINATION_PREFIX, seenRequest.getChatId()), true));
+            runAsync(() -> simpMessagingTemplate.convertAndSend(String.format("%s%s", MESSAGE_SEEN_DESTINATION_PREFIX, seenRequest.getChatId()), true));
         } else if (Boolean.TRUE.equals(this.redisStorageManager.map.hasKey(chatRedisProperties.getOnlineUsersMap(), seenRequest.getRecipientId()))) {
             var routingKey = (String) this.redisStorageManager.map.get(chatRedisProperties.getOnlineUsersMap(), seenRequest.getRecipientId());
             BroadCastNotification<SeenRequest> broadCastNotification = new BroadCastNotification<>();
@@ -101,18 +90,14 @@ public class ChatSocketServiceImpl implements ChatSocketService {
     public void seenMessageOperations(SeenRequest seenRequest) {
         Query validationQuery = new Query();
         validationQuery.addCriteria(Criteria.where("id").is(seenRequest.getChatId()));
-        Update update = new Update()
-                .filterArray(Criteria.where("x.recipientId").is(seenRequest.getRecipientId())
-                        .and("x.messageStatus").is(MessageStatus.DELIVERED.toString()))
-                .set("messages.$[x].messageStatus", MessageStatus.SEEN.name());
+        Update update = new Update().filterArray(Criteria.where("x.recipientId").is(seenRequest.getRecipientId()).and("x.messageStatus").is(MessageStatus.DELIVERED.toString())).set("messages.$[x].messageStatus", MessageStatus.SEEN.name());
         mongoTemplate.updateFirst(validationQuery, update, ChatEntity.class);
     }
 
     @Override
     public void typing(TypingRequest typingRequest) {
         if (isUserConnected(typingRequest.getReceiverName())) {
-            simpMessagingTemplate.convertAndSend(String.format("%s%s/%s", CHAT_TYPING_DESTINATION_PREFIX,
-                    typingRequest.getChatId(), typingRequest.getRecipientId()), true);
+            simpMessagingTemplate.convertAndSend(String.format("%s%s/%s", CHAT_TYPING_DESTINATION_PREFIX, typingRequest.getChatId(), typingRequest.getRecipientId()), true);
         } else if (Boolean.TRUE.equals(redisStorageManager.map.hasKey(chatRedisProperties.getOnlineUsersMap(), typingRequest.getRecipientId()))) {
             var routingKey = (String) this.redisStorageManager.map.get(chatRedisProperties.getOnlineUsersMap(), typingRequest.getRecipientId());
             BroadCastNotification<TypingRequest> broadCastNotification = new BroadCastNotification<>();
@@ -137,10 +122,7 @@ public class ChatSocketServiceImpl implements ChatSocketService {
     public void deliverMessageOperations(DeliverRequest deliverRequest) {
         Query validationQuery = new Query();
         validationQuery.addCriteria(new Criteria().andOperator(Criteria.where("id").is(deliverRequest.getChatId())));
-        Update update = new Update()
-                .filterArray(Criteria.where("x.recipientId").is(deliverRequest.getRecipientId())
-                        .and("x.messageStatus").is(MessageStatus.SENT.toString()))
-                .set("messages.$[x].messageStatus", MessageStatus.DELIVERED.toString());
+        Update update = new Update().filterArray(Criteria.where("x.recipientId").is(deliverRequest.getRecipientId()).and("x.messageStatus").is(MessageStatus.SENT.toString())).set("messages.$[x].messageStatus", MessageStatus.DELIVERED.toString());
         mongoTemplate.updateFirst(validationQuery, update, ChatEntity.class);
     }
 }
