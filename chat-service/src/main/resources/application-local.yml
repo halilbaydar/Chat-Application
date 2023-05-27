@@ -1,16 +1,26 @@
 server:
-  port: 80
+  port: 91
+
+#amqp:
+#  queue: "#{ T(java.util.UUID).randomUUID().toString().replace('-', '') }"
+#  exchange: messageExchange
+#  routingKey: messageRoutingKey
 
 redis:
-  redisHost: localhost
-  redisPort: 6379
-
-amqp:
-  queue: queue
-  exchange: messageExchange
-  routingKey: messageRoutingKey
+  online-users-map: chat
 
 spring:
+  main:
+    allow-bean-definition-overriding: true
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    template:
+      routing-key: #{ T(java.util.UUID).randomUUID().toString().replace('-', '') }
+      default-receive-queue: #{ T(java.util.UUID).randomUUID().toString().replace('-', '') }
+      exchange: messageExchange
   data:
     mongodb:
       database: chatdb
@@ -19,16 +29,18 @@ spring:
       port: 27017
       host: localhost
       uri: mongodb://user:password@localhost:27017
-    #rabbitmq:
-    # host: localhost
-    # port: 5672
-    # username: guest
-    # password: guest
   session:
     store-type: redis
     redis:
       flush-mode: on_save
       namespace: spring:session
+  redis:
+    password: password
+    username: user
+    host: localhost
+    port: 6379
+  application:
+    name: chat-service
 
 jwt:
   secretKey: 1231231231231231231231231231231231231231231231231231231231231231
@@ -49,3 +61,25 @@ cors:
     Set-Cookie, Cookie
   exposedHeaders:
     Authorization, set-cookie
+
+management:
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure.include: health, prometheus, gateway
+      path-mapping.prometheus: metrics
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      cache.time-to-live: 1ms
+    gateway:
+      enabled: true
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:80/eureka/
+  instance:
+    lease-expiration-duration-in-seconds: 5
+    lease-renewal-interval-in-seconds: 2

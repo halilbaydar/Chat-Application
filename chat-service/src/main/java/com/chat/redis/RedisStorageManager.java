@@ -2,8 +2,10 @@ package com.chat.redis;
 
 import io.lettuce.core.ClientOptions;
 import io.lettuce.core.SocketOptions;
+import io.lettuce.core.protocol.ProtocolVersion;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -18,6 +20,7 @@ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.session.data.redis.config.ConfigureRedisAction;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
+import org.springframework.session.data.redis.config.annotation.web.http.RedisHttpSessionConfiguration;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
@@ -33,6 +36,7 @@ public class RedisStorageManager {
     private final RedisProperties redisProperties;
 
     public HashOperations map;
+
     public ListOperations list;
     public SetOperations set;
     public ValueOperations value;
@@ -45,8 +49,15 @@ public class RedisStorageManager {
     @Bean
     public LettuceConnectionFactory redisConnectionFactory() {
 
-        final SocketOptions socketOptions = SocketOptions.builder().connectTimeout(Duration.ofSeconds(60)).build();
-        final ClientOptions clientOptions = ClientOptions.builder().socketOptions(socketOptions).build();
+        final SocketOptions socketOptions = SocketOptions.builder()
+                .connectTimeout(Duration.ofSeconds(60))
+                .tcpNoDelay(true)
+                .build();
+
+        final ClientOptions clientOptions = ClientOptions.builder()
+                .socketOptions(socketOptions)
+                .autoReconnect(true)
+                .build();
 
         LettuceClientConfiguration clientConfig = LettuceClientConfiguration.builder().commandTimeout(Duration.ofSeconds(60)).clientOptions(clientOptions).build();
 
@@ -66,13 +77,13 @@ public class RedisStorageManager {
     @Profile({"prod", "dev"})
     @Bean
     public RedisClusterConfiguration getRedisClusterConfiguration() {
-        return new RedisClusterConfiguration(List.of(redisProperties.getRedisHost() + ":" + redisProperties.getRedisPort()));
+        return new RedisClusterConfiguration(List.of(redisProperties.getHost() + ":" + redisProperties.getPort()));
     }
 
     @Profile({"local"})
     @Bean
     public RedisConfiguration getRedisStandaloneConfiguration() {
-        return new RedisStandaloneConfiguration(redisProperties.getRedisHost(), redisProperties.getRedisPort());
+        return new RedisStandaloneConfiguration(redisProperties.getHost(), redisProperties.getPort());
     }
 
     @Bean
@@ -105,6 +116,7 @@ public class RedisStorageManager {
         this.conn = Objects.requireNonNull(redisTemplate.getConnectionFactory()).getConnection();
 
         this.redisTemplate = redisTemplate;
+
         return redisTemplate;
     }
 }

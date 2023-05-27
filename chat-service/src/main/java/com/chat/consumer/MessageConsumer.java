@@ -8,12 +8,14 @@ import com.chat.model.request.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
 import static com.chat.constant.PrefixConstant.*;
 import static java.util.concurrent.CompletableFuture.runAsync;
 
+@Lazy
 @Component
 @RequiredArgsConstructor
 public class MessageConsumer implements Consumer {
@@ -23,16 +25,16 @@ public class MessageConsumer implements Consumer {
     private final SessionService sessionService;
     private final ChatSocketService chatSocketService;
 
+
     @Override
-    @RabbitListener(queues = "${amqp.queue}")
+    @RabbitListener(queues = "${spring.rabbitmq.template.default-receive-queue}")
     public <T> void consumeMessage(BroadCastNotification<T> broadCastNotification) {
         switch (broadCastNotification.getNotificationType()) {
             case SEEN: {
                 SeenRequest seenRequest = objectMapper.convertValue(broadCastNotification.getPayload(), SeenRequest.class);
                 checkIsUserConnected(seenRequest, connected -> {
                     if (connected) {
-                        runAsync(() -> simpMessagingTemplate.convertAndSend(String.format("%s%s/%s", MESSAGE_SEEN_DESTINATION_PREFIX,
-                                seenRequest.getChatId(), seenRequest.getMessageId()), true));
+                        runAsync(() -> simpMessagingTemplate.convertAndSend(String.format("%s%s/%s", MESSAGE_SEEN_DESTINATION_PREFIX, seenRequest.getChatId(), seenRequest.getMessageId()), true));
                         runAsync(() -> chatSocketService.seenMessageOperations(seenRequest));
                     }
                 });
@@ -56,8 +58,7 @@ public class MessageConsumer implements Consumer {
                 MessageRequest messageRequest = objectMapper.convertValue(broadCastNotification.getPayload(), MessageRequest.class);
                 checkIsUserConnected(messageRequest, connected -> {
                     if (connected) {
-                        runAsync(() ->
-                                simpMessagingTemplate.convertAndSend(MESSAGE_DESTINATION_PREFIX + messageRequest.getChatId(), messageRequest.getMessage()));
+                        runAsync(() -> simpMessagingTemplate.convertAndSend(MESSAGE_DESTINATION_PREFIX + messageRequest.getChatId(), messageRequest.getMessage()));
                         runAsync(() -> chatSocketService.saveMessageOperations(messageRequest));
                     }
                 });

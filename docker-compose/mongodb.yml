@@ -12,4 +12,3 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
     networks:
       - ${GLOBAL_NETWORK:-chat-db}
-      - ${GLOBAL_NETWORK:-services}
