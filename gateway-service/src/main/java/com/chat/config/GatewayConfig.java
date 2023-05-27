@@ -101,7 +101,6 @@ public class GatewayConfig {
                 .retry(retryConfig -> {
                     retryConfig.setBackoff(Duration.ofMillis(100), Duration.ofMillis(1000), 2, Boolean.TRUE);
                 }).saveSession()
-                .saveSession()
                 .rewritePath(String.format("/%s(?<segment>/?.*)", pathReplace), "$\\{segment}")
                 .circuitBreaker(config -> {
                     config.setFallbackUri(String.format("/fallback/%s-fallback", fallback));
