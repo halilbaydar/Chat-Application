@@ -8,10 +8,12 @@ import com.chat.model.request.RegisterRequest;
 //import io.swagger.v3.oas.annotations.responses.ApiResponse;
 //import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import reactor.core.publisher.Mono;
 
+@RequestMapping(path = "/v1")
 public interface RegisterController extends ParentController<RegisterService> {
-//    @Operation(summary = "Register User.")
+    //    @Operation(summary = "Register User.")
 //    @ApiResponses(value = {
 //            @ApiResponse(responseCode = "200", description = "Successful response.", content = {
 //                    @Content(mediaType = "application/vnd.api.v1+json",

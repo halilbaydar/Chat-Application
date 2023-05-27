@@ -18,7 +18,7 @@ public class UserEntity {
 
     @Column
     @CreatedDate
-    private Date createdDate;
+    private Date createdAt;
 
     @Column
     private String username;

@@ -24,8 +24,7 @@ public class ElasticKafkaProducer {
 
     public void run() {
         Flux.range(0, 1)
-                .map(
-                        index -> UserAvroModel
+                .map(index -> UserAvroModel
                                 .newBuilder()
                                 .setId(UUID.randomUUID().toString())
                                 .setName("random-name")

@@ -1,0 +1,4 @@
+spring:
+  flyway:
+    url: jdbc:postgresql://user:password@localhost:5432/users
+    locations: classpath:db/migration

@@ -27,6 +27,9 @@
         <module>common</module>
         <module>elastic</module>
         <module>asset-service</module>
+        <module>migrations</module>
+        <module>migrations/notification-db</module>
+        <module>migrations/user-db</module>
     </modules>
 
     <repositories>
