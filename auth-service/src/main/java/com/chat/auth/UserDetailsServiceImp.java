@@ -33,6 +33,8 @@ public class UserDetailsServiceImp implements UserDetailsService, Serializable {
                 username,
                 message -> {
                     message.getMessageProperties().setReplyTo(this.rabbitProperties.getTemplate().getDefaultReceiveQueue());
+                    message.getMessageProperties().setCorrelationId(this.rabbitProperties.getTemplate().getRoutingKey());
+                    message.getMessageProperties().setReceivedRoutingKey(this.rabbitProperties.getTemplate().getRoutingKey());
                     return message;
                 },
                 ParameterizedTypeReference.forType(RabbitUserEntity.class)

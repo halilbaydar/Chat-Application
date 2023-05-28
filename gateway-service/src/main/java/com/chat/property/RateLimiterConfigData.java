@@ -1,4 +1,4 @@
-package com.chat.config;
+package com.chat.property;
 
 import lombok.Getter;
 import lombok.Setter;

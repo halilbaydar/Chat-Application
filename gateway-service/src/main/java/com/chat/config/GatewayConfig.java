@@ -1,6 +1,7 @@
 package com.chat.config;
 
 import com.chat.filter.AuthenticationFilter;
+import com.chat.property.RateLimiterConfigData;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.timelimiter.TimeLimiterConfig;
 import lombok.RequiredArgsConstructor;

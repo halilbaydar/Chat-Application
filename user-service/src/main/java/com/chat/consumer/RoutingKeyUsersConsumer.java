@@ -6,10 +6,9 @@ import com.chat.redis.RedisStorageManager;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.boot.autoconfigure.amqp.RabbitProperties;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
 import java.util.Date;
 import java.util.Objects;
 
@@ -17,14 +16,12 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class RoutingKeyUsersConsumer {
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
-    private final RabbitTemplate rabbitTemplate;
     private final UserRepository userRepository;
     private final RedisStorageManager redisStorageManager;
-    private final RabbitProperties rabbitProperties;
 
     @UserRequestsListener
     public Object provideUserToOtherServices(String username) {
-        Object user = redisStorageManager.map.get("users", username);
+        Object user = redisStorageManager.value.get(username);
         if (user != null) {
             return user;
         } else {
@@ -43,7 +40,7 @@ public class RoutingKeyUsersConsumer {
                             .createdAt(new Date().getTime())
                             .build())
                     .doOnNext(userEntity -> {
-                        redisStorageManager.map.put("users", username, userEntity);
+                        redisStorageManager.value.set(username, userEntity, Duration.ofSeconds(10));
                     })
                     .doOnError(error -> {
                         logger.error("Error while responding request from auth service: %s", error);
