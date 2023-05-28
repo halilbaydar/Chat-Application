@@ -1,8 +1,9 @@
 package com.chat.service;
 
-import com.chat.interfaces.repository.UserRepository;
 import com.chat.interfaces.service.JwtService;
-import com.chat.model.entity.UserEntity;
+import com.chat.model.common.Role;
+import com.chat.model.entity.message.RabbitUserEntity;
+import com.chat.rabbit.RabbitUserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -23,7 +24,7 @@ import static com.chat.util.StringUtil.isBlank;
 public class JwtServiceImpl implements JwtService {
 
     private final SecretKey secretKey;
-    private final UserRepository userRepository;
+    private final RabbitUserService rabbitUserService;
 
     @Override
     public Claims getBody(String token) {
@@ -41,11 +42,11 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public boolean isValidRole(String username, List<SimpleGrantedAuthority> authorities) {
-        UserEntity activeUser = userRepository.findByUsername(username);
+        RabbitUserEntity activeUser = rabbitUserService.receiveUserFromUserService(username);
         if (activeUser == null) {
             return false;
         }
-        List<SimpleGrantedAuthority> simpleGrantedAuthorities = activeUser.getRole().getGrantedAuthorities();
+        List<SimpleGrantedAuthority> simpleGrantedAuthorities = Role.valueOf(activeUser.getRole()).getGrantedAuthorities();
         return Arrays.equals(authorities.toArray(), simpleGrantedAuthorities.toArray());
     }
 
@@ -73,10 +74,10 @@ public class JwtServiceImpl implements JwtService {
     @Override
     public String getUsernameFromToken(String token) {
         if (isBlank(token)) throw new RuntimeException(INVALID_OPERATION);
-        return getBody(pickBearer(token)).getSubject();
+        return getBody(removeBearer(token)).getSubject();
     }
 
-    private String pickBearer(String token) {
+    private String removeBearer(String token) {
         if (isBlank(token)) throw new RuntimeException(INVALID_OPERATION);
         return token.replaceFirst("Bearer ", "");
     }

@@ -21,9 +21,18 @@ spring:
     username: guest
     password: guest
     template:
+      retry:
+        max-attempts: 3
       exchange: userExchange
       routing-key: "routing-user"
       default-receive-queue: "queue-user"
+    listener:
+      simple:
+        retry:
+          max-attempts: 3
+      direct:
+        retry:
+          max-attempts: 3
   redis:
     host: localhost
     port: 6379

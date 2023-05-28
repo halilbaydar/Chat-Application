@@ -1,4 +1,4 @@
-package com.chat.config;
+package com.chat.rabbit;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.core.Binding;

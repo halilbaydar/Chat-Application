@@ -9,7 +9,7 @@ spring:
     password: guest
     template:
       routing-key: ${random.int(1000000)}
-      default-receive-queue: "auth-user"
+      default-receive-queue: "queue-auth-user"
       exchange: userExchange
   application:
     name: auth-service

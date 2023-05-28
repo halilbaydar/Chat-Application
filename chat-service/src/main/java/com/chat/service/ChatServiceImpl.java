@@ -2,13 +2,13 @@ package com.chat.service;
 
 import com.chat.exception.CustomException;
 import com.chat.interfaces.repository.ChatEntityRepository;
-import com.chat.interfaces.repository.UserRepository;
 import com.chat.interfaces.service.ChatService;
 import com.chat.model.entity.ChatEntity;
 import com.chat.model.entity.MessageEntity;
-import com.chat.model.entity.UserEntity;
+import com.chat.model.entity.message.RabbitUserEntity;
 import com.chat.model.request.CreateChatRoomRequest;
 import com.chat.model.request.GetMessagesRequest;
+import com.chat.rabbit.RabbitUserService;
 import com.mongodb.client.MongoDatabase;
 import lombok.RequiredArgsConstructor;
 import org.bson.Document;
@@ -31,7 +31,7 @@ import static com.chat.util.SessionUtil.getActiveUser;
 public class ChatServiceImpl implements ChatService {
     private final ChatEntityRepository chatRepository;
     private final MongoDatabase mongoDatabase;
-    private final UserRepository userRepository;
+    private final RabbitUserService rabbitUserService;
 
     private static Integer getSkip(int pageNumber, long numberOfMessages) {
         int totalPages = (int) Math.ceil((numberOfMessages * 1D) / PAGE_SIZE);
@@ -54,8 +54,8 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public List<?> getChatsByPagination(Integer pageNumber) {
-        UserEntity activeUser = getActiveUser();
-        List<?> response = mongoDatabase.getCollection(CHATS, ChatEntity.class).aggregate(List.of(
+        RabbitUserEntity activeUser = getActiveUser();
+        return mongoDatabase.getCollection(CHATS, ChatEntity.class).aggregate(List.of(
                 new Document("$match", new Document("users", new Document("$all", List.of(activeUser.getUsername())))),
                 new Document("$addFields",
                         new Document("id",
@@ -71,12 +71,11 @@ public class ChatServiceImpl implements ChatService {
                                 .append("createdDate", 1)
                 )
         )).into(new ArrayList<>());
-        return response;
     }
 
     @Override
     public Stack<MessageEntity> getChatMessagesByPagination(GetMessagesRequest getMessagesRequest) {
-        UserEntity activeUser = getActiveUser();
+        RabbitUserEntity activeUser = getActiveUser();
 
         Document document = mongoDatabase.getCollection(CHATS, Document.class).aggregate(List.of(
                 new Document("$match", new Document("$and", List.of(
@@ -128,12 +127,12 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public <Res> Res createChatRoom(CreateChatRoomRequest createChatRoomRequest) {
-        UserEntity activeUser = getActiveUser();
+        RabbitUserEntity activeUser = getActiveUser();
         if (createChatRoomRequest.getUsername().equals(activeUser.getUsername())) {
             throw new RuntimeException("YOU_CANNOT_CHAT_YOURSELF");
         }
-        boolean usernameExists = userRepository.existsByUsername(createChatRoomRequest.getUsername());
-        if (!usernameExists) {
+        RabbitUserEntity rabbitUserEntity = rabbitUserService.receiveUserFromUserService(createChatRoomRequest.getUsername());
+        if (rabbitUserEntity != null) {
             throw new CustomException(USER_NOT_EXIST);
         }
         ChatEntity chatEntity = chatRepository.findByUsers(mongoDatabase, activeUser.getUsername(), createChatRoomRequest.getUsername());

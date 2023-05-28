@@ -1,13 +1,11 @@
 server:
   port: 91
 
-#amqp:
-#  queue: "#{ T(java.util.UUID).randomUUID().toString().replace('-', '') }"
-#  exchange: messageExchange
-#  routingKey: messageRoutingKey
-
 redis:
   online-users-map: chat
+
+queue-const: ${random.int(1000000)}
+routingKey-const: ${random.int(1000000)}
 
 spring:
   main:
@@ -18,8 +16,8 @@ spring:
     username: guest
     password: guest
     template:
-      routing-key: ${random.int(1000000)}
-      default-receive-queue: ${random.int(1000000)}
+      routing-key: ${routingKey-const}
+      default-receive-queue: "queue-message"
       exchange: messageExchange
   data:
     mongodb:

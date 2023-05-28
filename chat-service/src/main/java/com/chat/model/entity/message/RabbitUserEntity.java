@@ -1,4 +1,4 @@
-package com.chat.model.message;
+package com.chat.model.entity.message;
 
 import lombok.*;
 

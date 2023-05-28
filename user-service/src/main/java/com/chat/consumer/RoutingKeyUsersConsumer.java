@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 import java.util.Date;
@@ -27,6 +28,7 @@ public class RoutingKeyUsersConsumer {
         } else {
             return this.userRepository.findByUsername(username)
                     .filter(Objects::nonNull)
+                    .switchIfEmpty(Mono.error(new RuntimeException(String.format("username is not valid %s", username))))
                     .map(userEntity -> RabbitUserEntity.
                             builder()
                             .id(userEntity.getId())
@@ -46,8 +48,11 @@ public class RoutingKeyUsersConsumer {
                         logger.error("Error while responding request from auth service: %s", error);
                     })
                     .doOnSuccess(rabbitUserEntity -> {
-                        logger.info("Response sent successfully for username: ${}", rabbitUserEntity.getUsername());
-                    }).block();
+                        if (rabbitUserEntity != null) {
+                            logger.info("Response sent successfully for username: ${}", rabbitUserEntity.getUsername());
+                        }
+                    })
+                    .block();
         }
     }
 }

@@ -13,6 +13,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.chat.exception.CustomExceptionHandler.getExceptionResponse;
@@ -23,8 +24,7 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
 
     @SneakyThrows
     @Override
-    protected void doFilterInternal(final HttpServletRequest httpServletRequest, final HttpServletResponse response,
-                                    final FilterChain filterChain) {
+    protected void doFilterInternal(final HttpServletRequest httpServletRequest, final HttpServletResponse response, final FilterChain filterChain) {
         try {
 
             Authentication authentication = generateAuthentication(httpServletRequest);
@@ -39,18 +39,9 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
     private Authentication generateAuthentication(HttpServletRequest httpServletRequest) {
         String username = httpServletRequest.getHeader("username");
 
-        //List<SimpleGrantedAuthority> simpleGrantedAuthorities = ArraysUtilKt.fromString(httpServletRequest.getHeader("authorities"));
+        List<SimpleGrantedAuthority> simpleGrantedAuthorities = Arrays.stream(httpServletRequest
+                .getHeader("authorities").split(",")).map(SimpleGrantedAuthority::new).toList();
 
-        //isValidRole(username, simpleGrantedAuthorities);
-
-        return new UsernamePasswordAuthenticationToken(
-                username,
-                null,
-                null//simpleGrantedAuthorities
-        );
-    }
-
-    private void isValidRole(String username, List<SimpleGrantedAuthority> authorities) {
-        jwtService.isValidRole(username, authorities);
+        return new UsernamePasswordAuthenticationToken(username, null, simpleGrantedAuthorities);
     }
 }

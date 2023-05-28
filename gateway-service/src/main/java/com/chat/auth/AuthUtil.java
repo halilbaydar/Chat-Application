@@ -8,10 +8,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import javax.crypto.SecretKey;
+import javax.validation.constraints.NotBlank;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static com.chat.constant.ErrorConstant.ErrorMessage.INVALID_OPERATION;
 
 public abstract class AuthUtil {
     public abstract SecretKey getKey();
@@ -19,29 +22,25 @@ public abstract class AuthUtil {
     public abstract Claims getBody(String token);
 
     public Claims getAllClaimsFromToken(String token) {
-        return Jwts.parserBuilder().setSigningKey(getKey()).build().parseClaimsJws(token).getBody();
+        return Jwts.parserBuilder().setSigningKey(getKey()).build().parseClaimsJws(removeBearer(token)).getBody();
     }
 
-    private boolean isTokenExpired(Claims claims, Date date) {
-        return claims.getExpiration().before(date);
-    }
-
-    private boolean isTokenExpired(String token, Date date) {
-        return this.getAllClaimsFromToken(token).getExpiration().before(date);
+    public boolean isTokenExpired(Claims claims, Date date) {
+        return claims.getExpiration() != null && claims.getExpiration().before(date);
     }
 
     public boolean isInvalid(Claims claims) {
         return this.isTokenExpired(claims, new Date());
     }
 
-    public boolean isInvalid(String token) {
-        return this.isTokenExpired(token, new Date());
-    }
-
     public List<SimpleGrantedAuthority> getGrantedAuthorities(Claims body) {
         List<Map<String, String>> authorities = (List<Map<String, String>>) body.get(HttpConstant.JWT_AUTH_SUBJECT);
         return authorities.stream()
                 .map(m -> new SimpleGrantedAuthority(m.get("authority"))).collect(Collectors.toList());
+    }
+
+    private String removeBearer(@NotBlank String token) {
+        return token.replaceFirst("Bearer ", "");
     }
 
     public Authentication generateAuthentication(String token, String username) {

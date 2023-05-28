@@ -51,7 +51,7 @@ public class SecurityConfig {
                 .and()
                 .addFilterBefore(new JwtTokenVerifier(jwtService), BasicAuthenticationFilter.class)
                 .authorizeRequests()
-                .antMatchers("/v1/register/**", "/swagger-ui/**", "/ws/**", "/app/**", "/login/***").permitAll()
+                .antMatchers("/swagger-ui/**", "/ws/**", "/app/**").permitAll()
                 .antMatchers("/user/**").hasAnyRole(Role.USER.name())
                 .anyRequest().fullyAuthenticated()
                 .and().build();
@@ -66,6 +66,6 @@ public class SecurityConfig {
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web
                 .ignoring()
-                .antMatchers("/v1/register/**", "/ws/**", "/app/**");
+                .antMatchers("/ws/**", "/app/**");
     }
 }
