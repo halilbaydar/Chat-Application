@@ -15,6 +15,7 @@ import java.lang.annotation.Target;
 //                arguments = @Argument(name = "x-message-ttl", value = "10000",
 //                        type = "java.lang.Integer")
         ),
+        key = {"${spring.rabbitmq.template.routing-key}"},
         exchange = @Exchange(value = "${spring.rabbitmq.template.exchange}", type = ExchangeTypes.TOPIC, autoDelete = "false")
 //        arguments = {
 //                @Argument(name = "x-match", value = "all"),

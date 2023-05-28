@@ -48,9 +48,7 @@ public class RoutingKeyUsersConsumer {
                         logger.error("Error while responding request from auth service: %s", error);
                     })
                     .doOnSuccess(rabbitUserEntity -> {
-                        if (rabbitUserEntity != null) {
-                            logger.info("Response sent successfully for username: ${}", rabbitUserEntity.getUsername());
-                        }
+                        logger.info("Response sent successfully for username: ${}", rabbitUserEntity.getUsername());
                     })
                     .block();
         }
