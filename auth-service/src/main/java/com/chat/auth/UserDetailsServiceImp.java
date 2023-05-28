@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.UUID;
 
 import static com.chat.constant.ErrorConstant.ErrorMessage.USER_NOT_EXIST;
 
@@ -33,11 +32,7 @@ public class UserDetailsServiceImp implements UserDetailsService, Serializable {
                 "routing-user",
                 username,
                 message -> {
-                    message.getMessageProperties().setReplyTo(this.rabbitProperties.getTemplate().getRoutingKey());
-                    String corrId = UUID.randomUUID().toString().replace("-", "");
-                    message.getMessageProperties().setCorrelationId(corrId);
-                    message.getMessageProperties().setHeader("correlationId", corrId);
-                    message.getMessageProperties().setHeader("replayTo", this.rabbitProperties.getTemplate().getRoutingKey());
+                    message.getMessageProperties().setReplyTo(this.rabbitProperties.getTemplate().getDefaultReceiveQueue());
                     return message;
                 },
                 ParameterizedTypeReference.forType(RabbitUserEntity.class)
