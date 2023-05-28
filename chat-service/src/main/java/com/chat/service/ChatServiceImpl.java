@@ -15,10 +15,7 @@ import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.Stack;
+import java.util.*;
 
 import static com.chat.constant.DocumentConstant.CHATS;
 import static com.chat.constant.ErrorConstant.ErrorMessage.CHAT_NOT_FOUND;
@@ -56,9 +53,9 @@ public class ChatServiceImpl implements ChatService {
     public List<?> getChatsByPagination(Integer pageNumber) {
         RabbitUserEntity activeUser = getActiveUser();
         return mongoDatabase.getCollection(CHATS, ChatEntity.class).aggregate(List.of(
-                new Document("$match", new Document("users", new Document("$all", List.of(activeUser.getUsername())))),
+                new Document("$match", new Document("users", new Document("$all", Collections.singletonList(activeUser.getUsername())))),
                 new Document("$addFields",
-                        new Document("id",
+                        new Document("_id",
                                 new Document("$toString", "$_id")
                         )
                 ),
@@ -66,7 +63,7 @@ public class ChatServiceImpl implements ChatService {
                 new Document("$limit", PAGE_SIZE),
                 new Document("$project",
                         new Document("users", 1)
-                                .append("id", 1)
+                                .append("_id", 1)
                                 .append("type", 1)
                                 .append("createdDate", 1)
                 )
@@ -132,17 +129,15 @@ public class ChatServiceImpl implements ChatService {
             throw new RuntimeException("YOU_CANNOT_CHAT_YOURSELF");
         }
         RabbitUserEntity rabbitUserEntity = rabbitUserService.receiveUserFromUserService(createChatRoomRequest.getUsername());
-        if (rabbitUserEntity != null) {
+        if (rabbitUserEntity == null) {
             throw new CustomException(USER_NOT_EXIST);
         }
         ChatEntity chatEntity = chatRepository.findByUsers(mongoDatabase, activeUser.getUsername(), createChatRoomRequest.getUsername());
-        if (chatEntity != null) {
-            chatEntity.setMessages(getChatMessagesByPagination(new GetMessagesRequest(0, chatEntity.getId())));
-            return (Res) chatEntity;
+        if (chatEntity == null) {
+            chatEntity = new ChatEntity();
+            chatEntity.setUsers(Set.of(activeUser.getUsername(), createChatRoomRequest.getUsername()));
+            chatEntity = chatRepository.save(chatEntity);
         }
-        ChatEntity chat = new ChatEntity();
-        chat.setUsers(Set.of(activeUser.getUsername(), createChatRoomRequest.getUsername()));
-        chat = chatRepository.save(chat);
-        return (Res) chat;
+        return (Res) chatEntity;
     }
 }
