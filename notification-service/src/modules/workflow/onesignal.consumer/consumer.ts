@@ -33,14 +33,11 @@ export class NotificationSenderListener extends QueueEventsHost {
     }
 
     @OnQueueEvent('completed')
-    async onCompleted(
-        args: {
-            jobId: string;
-            failedReason: string;
-            prev?: string;
-        },
-        id: string,
-    ) {
+    async completed(args: {
+        jobId: string;
+        returnvalue: string;
+        prev?: string;
+    }, id: string): Promise<void> {
         const queue = this.queueService.getQueueByName(QueueName.INSTANT_NOTIFICATION_SENDER);
         await queue.remove(args.jobId);
     }

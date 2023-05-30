@@ -25,21 +25,38 @@ class KafkaConsumerConfig {
 
     @Bean("user-to-elastic-option")
     fun receiverOps(kafkaProperties: KafkaProperties): ReceiverOptions<String, UserAvroModel> {
-        return ReceiverOptions.create<String?, UserAvroModel?>(kafkaProperties.buildConsumerProperties()).consumerProperty(ConsumerConfig.GROUP_INSTANCE_ID_CONFIG, UUID.randomUUID().toString()).consumerProperty(ConsumerConfig.ALLOW_AUTO_CREATE_TOPICS_CONFIG, "false").consumerProperty(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, "true").consumerProperty(ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, CooperativeStickyAssignor::class.jvmName).commitInterval(Duration.ofSeconds(1)).subscription(listOf(userTopic))
+        return ReceiverOptions.create<String?, UserAvroModel?>(kafkaProperties.buildConsumerProperties())
+            .consumerProperty(ConsumerConfig.GROUP_INSTANCE_ID_CONFIG, UUID.randomUUID().toString())
+            .consumerProperty(ConsumerConfig.ALLOW_AUTO_CREATE_TOPICS_CONFIG, "false")
+            .consumerProperty(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, "true")
+            .consumerProperty(
+                ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG,
+                CooperativeStickyAssignor::class.jvmName
+            )
+            .commitInterval(Duration.ofSeconds(1)).subscription(listOf(userTopic))
     }
 
     @Bean("user-to-elastic")
-    fun reactiveKafkaConsumerTemplate(@Qualifier("user-to-elastic-option") receiverOptions: ReceiverOptions<String, UserAvroModel>): ReactiveKafkaConsumerTemplate<String, UserAvroModel> {
+    fun reactiveKafkaConsumerTemplate(
+        @Qualifier("user-to-elastic-option") receiverOptions: ReceiverOptions<String, UserAvroModel>
+    ):
+            ReactiveKafkaConsumerTemplate<String, UserAvroModel> {
         return ReactiveKafkaConsumerTemplate(receiverOptions)
     }
 
     @Bean("user-to-elastic-receiver")
-    fun reactiveUserElastic(@Qualifier("user-to-elastic-option") receiverOptions: ReceiverOptions<String, UserAvroModel>): KafkaReceiver<String, UserAvroModel> {
+    fun reactiveUserElastic(
+        @Qualifier("user-to-elastic-option") receiverOptions: ReceiverOptions<String, UserAvroModel>
+    ):
+            KafkaReceiver<String, UserAvroModel> {
         return KafkaReceiver.create(receiverOptions)
     }
 
     @Bean("kafka-to-elastic-retry")
     fun retryConfig(): Retry {
-        return Retry.fixedDelay(3, Duration.ofSeconds(2)).filter { IndexOutOfBoundsException::class.java.isInstance(it) }.onRetryExhaustedThrow { spec, signal -> signal.failure() }
+        return Retry
+            .fixedDelay(3, Duration.ofSeconds(2))
+            .filter { IndexOutOfBoundsException::class.java.isInstance(it) }
+            .onRetryExhaustedThrow { spec, signal -> signal.failure() }
     }
 }

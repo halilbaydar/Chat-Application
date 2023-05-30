@@ -9,6 +9,7 @@ import {NotificationModule} from "./modules/notification/notification.module";
 import {OnesignalModule} from "./modules/onesignal/onesignal.module";
 import {RedisModule} from "./modules/caching/io.redis.module";
 import {EurekaModule} from "nestjs-eureka";
+import {WORKFLOW_CONFIG} from "./modules/workflow/core/queue.configs";
 
 @Module({
     imports: [...ModuleDatabase,
@@ -17,7 +18,9 @@ import {EurekaModule} from "nestjs-eureka";
             restApiKey: process.env.NOTIFICATION_API_KEY
         }),
         RedisModule.forRoot(createRedisConnection({config: null, bullmq: false})),
-        NotificationModule, ModuleWorkflow, BullModule.forRoot({
+        NotificationModule,
+        ModuleWorkflow,
+        BullModule.forRoot({
             defaultJobOptions: {
                 backoff: 5,
             },
@@ -29,7 +32,7 @@ import {EurekaModule} from "nestjs-eureka";
             eureka: {
                 host: 'localhost',
                 port: 80,
-                registryFetchInterval:  60 * 1000,
+                registryFetchInterval: 60 * 1000,
                 servicePath: '/eureka/apps',
                 maxRetries: 3,
             },
