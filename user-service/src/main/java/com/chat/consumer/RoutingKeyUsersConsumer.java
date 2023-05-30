@@ -15,7 +15,7 @@ import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
-public class RoutingKeyUsersConsumer implements RMessageConsumer<String, Object, RuntimeException> {
+public class RoutingKeyUsersConsumer implements RMessageConsumer<String, Object> {
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
     private final UserRepository userRepository;
     private final RedisStorageManager redisStorageManager;
@@ -48,7 +48,7 @@ public class RoutingKeyUsersConsumer implements RMessageConsumer<String, Object,
                         logger.error("Error while responding request from auth service: %s", error);
                     })
                     .doOnSuccess(rabbitUserEntity -> {
-                        logger.info("Response sent successfully for username: ${}", rabbitUserEntity.username());
+                        logger.info("Response sent successfully for username: ${}", rabbitUserEntity.getUsername());
                     })
                     .block();
         }

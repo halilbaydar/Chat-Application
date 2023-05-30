@@ -1,13 +1,12 @@
 package com.chat.model.entity;
 
-import com.chat.constant.MessageStatus;
+import com.chat.type.MessageStatus;
 import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.UUID;
 
 @Getter
 @Setter

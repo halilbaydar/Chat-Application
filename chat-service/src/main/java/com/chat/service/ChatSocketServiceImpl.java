@@ -1,14 +1,14 @@
 package com.chat.service;
 
-import com.chat.constant.MessageStatus;
-import com.chat.constant.NotificationType;
 import com.chat.interfaces.service.ChatSocketService;
+import com.chat.model.BroadCastNotification;
 import com.chat.model.entity.ChatEntity;
 import com.chat.model.entity.MessageEntity;
-import com.chat.model.other.BroadCastNotification;
 import com.chat.model.request.*;
 import com.chat.redis.ChatRedisProperties;
 import com.chat.redis.RedisStorageManager;
+import com.chat.type.MessageStatus;
+import com.chat.type.NotificationType;
 import lombok.AllArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.boot.autoconfigure.amqp.RabbitProperties;
@@ -51,9 +51,7 @@ public class ChatSocketServiceImpl implements ChatSocketService {
             runAsync(() -> simpMessagingTemplate.convertAndSend(MESSAGE_DESTINATION_PREFIX + messageRequest.getRecipientId(), messageRequest));
         } else if (Boolean.TRUE.equals(redisStorageManager.redisTemplate.hasKey(messageRequest.getRecipientId()))) {
             var routingKey = (String) this.redisStorageManager.map.get(chatRedisProperties.getOnlineUsersMap(), messageRequest.getRecipientId());
-            BroadCastNotification<MessageRequest> broadCastNotification = new BroadCastNotification<>();
-            broadCastNotification.setNotificationType(NotificationType.MESSAGE);
-            broadCastNotification.setPayload(messageRequest);
+            BroadCastNotification<MessageRequest> broadCastNotification = new BroadCastNotification<>(NotificationType.MESSAGE, messageRequest);
             this.rabbitTemplate.convertAndSend("", "", "", message -> {
                 message.getMessageProperties().setReplyTo("responseQueue");
                 return message;
@@ -81,9 +79,7 @@ public class ChatSocketServiceImpl implements ChatSocketService {
             runAsync(() -> simpMessagingTemplate.convertAndSend(String.format("%s%s", MESSAGE_SEEN_DESTINATION_PREFIX, seenRequest.getChatId()), true));
         } else if (Boolean.TRUE.equals(this.redisStorageManager.map.hasKey(chatRedisProperties.getOnlineUsersMap(), seenRequest.getRecipientId()))) {
             var routingKey = (String) this.redisStorageManager.map.get(chatRedisProperties.getOnlineUsersMap(), seenRequest.getRecipientId());
-            BroadCastNotification<SeenRequest> broadCastNotification = new BroadCastNotification<>();
-            broadCastNotification.setNotificationType(NotificationType.SEEN);
-            broadCastNotification.setPayload(seenRequest);
+            BroadCastNotification<SeenRequest> broadCastNotification = new BroadCastNotification<>(NotificationType.SEEN, seenRequest);
             runAsync(() -> rabbitTemplate.convertAndSend(rabbitProperties.getTemplate().getExchange(), routingKey, broadCastNotification));
         } else {
             //TODO pass
@@ -104,9 +100,7 @@ public class ChatSocketServiceImpl implements ChatSocketService {
             simpMessagingTemplate.convertAndSend(String.format("%s%s/%s", CHAT_TYPING_DESTINATION_PREFIX, typingRequest.getChatId(), typingRequest.getRecipientId()), true);
         } else if (Boolean.TRUE.equals(redisStorageManager.map.hasKey(chatRedisProperties.getOnlineUsersMap(), typingRequest.getRecipientId()))) {
             var routingKey = (String) this.redisStorageManager.map.get(chatRedisProperties.getOnlineUsersMap(), typingRequest.getRecipientId());
-            BroadCastNotification<TypingRequest> broadCastNotification = new BroadCastNotification<>();
-            broadCastNotification.setNotificationType(NotificationType.TYPING);
-            broadCastNotification.setPayload(typingRequest);
+            BroadCastNotification<TypingRequest> broadCastNotification = new BroadCastNotification<>(NotificationType.TYPING, typingRequest);
             rabbitTemplate.convertAndSend(rabbitProperties.getTemplate().getExchange(), routingKey, broadCastNotification);
         } else {
             //TODO pass
@@ -115,9 +109,8 @@ public class ChatSocketServiceImpl implements ChatSocketService {
 
     @Override
     public void online(OnlineRequest onlineRequest) {
-        BroadCastNotification<OnlineRequest> broadCastNotification = new BroadCastNotification<>();
-        broadCastNotification.setNotificationType(NotificationType.ONLINE);
-        broadCastNotification.setPayload(onlineRequest);
+        BroadCastNotification<OnlineRequest> broadCastNotification = new BroadCastNotification<>(NotificationType.ONLINE, onlineRequest);
+
         //TODO implement here
 //        rabbitTemplate.convertAndSend(rabbitProperties.getExchange(), rabbitProperties.getRoutingKey(), broadCastNotification);
     }

@@ -2,7 +2,7 @@ package com.chat.consumer;
 
 import com.chat.interfaces.service.ChatSocketService;
 import com.chat.interfaces.service.SessionService;
-import com.chat.model.other.BroadCastNotification;
+import com.chat.model.BroadCastNotification;
 import com.chat.model.request.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ import static java.util.concurrent.CompletableFuture.runAsync;
 
 @Component
 @RequiredArgsConstructor
-public class MessageConsumer implements RMessageConsumer<BroadCastNotification<?>, Void, RuntimeException> {
+public class MessageConsumer implements RMessageConsumer<BroadCastNotification<?>, Void> {
 
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final ObjectMapper objectMapper;

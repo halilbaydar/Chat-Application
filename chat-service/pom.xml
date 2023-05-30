@@ -150,6 +150,10 @@
             <groupId>com.chat</groupId>
             <artifactId>common</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.chat</groupId>
+            <artifactId>rabbitmq</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

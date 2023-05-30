@@ -1,8 +1,8 @@
 package com.chat.service;
 
-import com.chat.constant.MessageStatus;
 import com.chat.interfaces.service.MessageOperationService;
 import com.chat.model.entity.ChatEntity;
+import com.chat.type.MessageStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
