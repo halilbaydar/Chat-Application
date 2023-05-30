@@ -1,6 +1,5 @@
 package com.chat.consumer;
 
-import com.chat.interfaces.common.Consumer;
 import com.chat.interfaces.service.ChatSocketService;
 import com.chat.interfaces.service.SessionService;
 import com.chat.model.other.BroadCastNotification;
@@ -16,7 +15,7 @@ import static java.util.concurrent.CompletableFuture.runAsync;
 
 @Component
 @RequiredArgsConstructor
-public class MessageConsumer implements Consumer {
+public class MessageConsumer implements RMessageConsumer<BroadCastNotification<?>, Void, RuntimeException> {
 
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final ObjectMapper objectMapper;
@@ -25,9 +24,9 @@ public class MessageConsumer implements Consumer {
 
     @Override
     @RabbitListener(queues = "${spring.rabbitmq.template.default-receive-queue}")
-    public <T> void consumeMessage(BroadCastNotification<T> broadCastNotification) {
+    public Void consume(BroadCastNotification<?> broadCastNotification) throws RuntimeException {
         switch (broadCastNotification.getNotificationType()) {
-            case SEEN: {
+            case SEEN -> {
                 SeenRequest seenRequest = objectMapper.convertValue(broadCastNotification.getPayload(), SeenRequest.class);
                 checkIsUserConnected(seenRequest, connected -> {
                     if (connected) {
@@ -36,13 +35,11 @@ public class MessageConsumer implements Consumer {
                     }
                 });
             }
-            break;
-            case ONLINE: {
+            case ONLINE -> {
                 OnlineRequest onlineRequest = objectMapper.convertValue(broadCastNotification.getPayload(), OnlineRequest.class);
                 //TODO implement here
             }
-            break;
-            case TYPING: {
+            case TYPING -> {
                 TypingRequest typingRequest = objectMapper.convertValue(broadCastNotification.getPayload(), TypingRequest.class);
                 checkIsUserConnected(typingRequest, connected -> {
                     if (connected) {
@@ -50,8 +47,7 @@ public class MessageConsumer implements Consumer {
                     }
                 });
             }
-            break;
-            case MESSAGE: {
+            case MESSAGE -> {
                 MessageRequest messageRequest = objectMapper.convertValue(broadCastNotification.getPayload(), MessageRequest.class);
                 checkIsUserConnected(messageRequest, connected -> {
                     if (connected) {
@@ -60,8 +56,8 @@ public class MessageConsumer implements Consumer {
                     }
                 });
             }
-            break;
         }
+        return null;
     }
 
     private <T extends ParentMessageRequest> void checkIsUserConnected(T t, java.util.function.Consumer<Boolean> consumer) {
