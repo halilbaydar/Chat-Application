@@ -134,6 +134,10 @@
 <!--            <artifactId>spring-boot-starter-data-redis-reactive</artifactId>-->
 <!--        </dependency>-->
         <!-- REDIS -->
+        <dependency>
+            <groupId>com.chat</groupId>
+            <artifactId>rabbitmq</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

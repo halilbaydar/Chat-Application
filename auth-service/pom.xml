@@ -99,6 +99,10 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.chat</groupId>
+            <artifactId>rabbitmq</artifactId>
+        </dependency>
     </dependencies>
 
 

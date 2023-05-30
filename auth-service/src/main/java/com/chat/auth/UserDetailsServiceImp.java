@@ -1,6 +1,6 @@
 package com.chat.auth;
 
-import com.chat.model.message.message.RabbitUserEntity;
+import com.chat.model.RabbitUserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.boot.autoconfigure.amqp.RabbitProperties;
@@ -44,16 +44,16 @@ public class UserDetailsServiceImp implements UserDetailsService, Serializable {
             throw new RuntimeException(USER_NOT_EXIST);
         }
 
-        if (!attemptedUser.getUsername().equals(username)) {
+        if (!attemptedUser.username().equals(username)) {
             throw new RuntimeException(USER_NOT_EXIST);
         }
 
-        List<SimpleGrantedAuthority> authorities = Role.valueOf(attemptedUser.getRole()).getGrantedAuthorities();
+        List<SimpleGrantedAuthority> authorities = Role.valueOf(attemptedUser.role()).getGrantedAuthorities();
 
         return new UserDetailsImp(
                 authorities,
-                attemptedUser.getUsername(),
-                attemptedUser.getPassword(),
+                attemptedUser.username(),
+                attemptedUser.password(),
                 true, true,
                 true, true) {
         };

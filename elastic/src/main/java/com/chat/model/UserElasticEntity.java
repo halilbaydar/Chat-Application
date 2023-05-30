@@ -31,11 +31,11 @@ public class UserElasticEntity implements ElasticIndexModel<String>, Persistable
     @JsonProperty
     private String id;
 
-    @Field(type = FieldType.Keyword, analyzer = "completion")
+    @Field(type = FieldType.Keyword)
     @JsonProperty
     private String username;
 
-    @Field(type = FieldType.Keyword, analyzer = "completion")
+    @Field(type = FieldType.Keyword)
     @JsonProperty
     private String name;
 

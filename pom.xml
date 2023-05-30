@@ -30,6 +30,7 @@
         <module>migrations</module>
         <module>migrations/notification-db</module>
         <module>migrations/user-db</module>
+        <module>rabbitmq</module>
     </modules>
 
     <repositories>
@@ -405,6 +406,12 @@
                 <version>1.12.183</version>
             </dependency>
             <!--  END OF AWS  -->
+
+            <dependency>
+                <groupId>com.chat</groupId>
+                <artifactId>rabbitmq</artifactId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
