@@ -2,7 +2,6 @@ package com.chat.redis;
 
 import io.lettuce.core.ClientOptions;
 import io.lettuce.core.SocketOptions;
-import io.lettuce.core.protocol.ProtocolVersion;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
@@ -20,7 +19,6 @@ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.session.data.redis.config.ConfigureRedisAction;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
-import org.springframework.session.data.redis.config.annotation.web.http.RedisHttpSessionConfiguration;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;

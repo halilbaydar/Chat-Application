@@ -1,12 +1,12 @@
 package com.chat.config;
 
 import com.chat.filter.JwtTokenVerifier;
-import com.chat.interfaces.service.JwtService;
 import com.chat.model.common.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -27,9 +27,9 @@ import java.util.EventListener;
 @Configuration
 @RequiredArgsConstructor
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
+@Profile(value = {"development", "production"})
 public class SecurityConfig {
 
-    private final JwtService jwtService;
     private final FindByIndexNameSessionRepository<? extends Session> sessionRepository;
 
     @Bean
@@ -49,7 +49,7 @@ public class SecurityConfig {
                 .csrf().disable()// TODO: Enabeble this in production
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 .and()
-                .addFilterBefore(new JwtTokenVerifier(jwtService), BasicAuthenticationFilter.class)
+                .addFilterBefore(new JwtTokenVerifier(), BasicAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/swagger-ui/**", "/ws/**", "/app/**").permitAll()
                 .antMatchers("/user/**").hasAnyRole(Role.USER.name())

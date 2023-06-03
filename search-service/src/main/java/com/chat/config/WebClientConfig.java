@@ -7,6 +7,7 @@ package com.chat.config;
 //import org.springframework.context.annotation.Bean;
 //import org.springframework.context.annotation.Configuration;
 //import org.springframework.http.HttpHeaders;
+//import org.springframework.http.MediaType;
 //import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 //import org.springframework.web.reactive.function.client.WebClient;
 //import reactor.netty.http.client.HttpClient;
@@ -17,27 +18,33 @@ package com.chat.config;
 //@RequiredArgsConstructor
 //public class WebClientConfig {
 //
-//    private final ElasticQueryWebClientConfigData.WebClient webClientConfig;
+//    private final ElasticQueryWebClientConfigData webClientConfig;
 //
-//    @Bean("webClient")
+//    @Bean("webTestClient")
 //    public WebClient webClient() {
-//        return WebClient.builder()
-//                .baseUrl(webClientConfig.getBaseUrl())
-//                .defaultHeader(HttpHeaders.CONTENT_TYPE, webClientConfig.getContentType())
+//        return WebClient
+//                .builder()
+//                .baseUrl(webClientConfig.getWebClient().getBaseUrl())
+//                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.getType())
 //                .clientConnector(new ReactorClientHttpConnector(getHttpClient()))
 //                .codecs(configurer -> configurer
 //                        .defaultCodecs()
-//                        .maxInMemorySize(webClientConfig.getMaxInMemorySize()))
+//                        .maxInMemorySize(webClientConfig
+//                                .getWebClient()
+//                                .getMaxInMemorySize()))
 //                .build();
 //    }
 //
 //    private HttpClient getHttpClient() {
 //        return HttpClient.create()
-//                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, webClientConfig.getConnectTimeoutMs())
+//                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS,
+//                        webClientConfig.getWebClient().getConnectTimeoutMs())
 //                .doOnConnected(connection -> {
-//                    connection.addHandlerLast(new ReadTimeoutHandler(webClientConfig.getReadTimeoutMs(),
+//                    connection.addHandlerLast(new ReadTimeoutHandler(
+//                            webClientConfig.getWebClient().getReadTimeoutMs(),
 //                            TimeUnit.MILLISECONDS));
-//                    connection.addHandlerLast(new WriteTimeoutHandler(webClientConfig.getWriteTimeoutMs(),
+//                    connection.addHandlerLast(new WriteTimeoutHandler(
+//                            webClientConfig.getWebClient().getWriteTimeoutMs(),
 //                            TimeUnit.MILLISECONDS));
 //                });
 //    }

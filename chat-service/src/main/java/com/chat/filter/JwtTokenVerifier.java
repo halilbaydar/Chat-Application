@@ -1,6 +1,5 @@
 package com.chat.filter;
 
-import com.chat.interfaces.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
@@ -20,7 +19,6 @@ import static com.chat.exception.CustomExceptionHandler.getExceptionResponse;
 
 @RequiredArgsConstructor
 public class JwtTokenVerifier extends OncePerRequestFilter {
-    private final JwtService jwtService;
 
     @SneakyThrows
     @Override

@@ -1,0 +1,83 @@
+server:
+  port: 91
+
+redis:
+  online-users-map: chat
+
+queue-const: ${random.int(1000000)}
+routingKey-const: ${random.int(1000000)}
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    template:
+      routing-key: ${routingKey-const}
+      default-receive-queue: "queue-message"
+      exchange: messageExchange
+  data:
+    mongodb:
+      database: chatdb
+      username: user
+      password: password
+      port: 27017
+      host: localhost
+      uri: mongodb://user:password@localhost:27017
+  session:
+    store-type: redis
+    redis:
+      flush-mode: on_save
+      namespace: spring:session
+  redis:
+    password: password
+    username: user
+    host: localhost
+    port: 6379
+  application:
+    name: chat-service
+
+jwt:
+  secretKey: 1231231231231231231231231231231231231231231231231231231231231231
+  tokenPrefix: 'Bearer '
+  tokenExpirationForVerification: 10
+  tokenExpirationForLogin: 20
+
+cors:
+  origins: /**
+  allowedHeaders:
+    Content-Type, content-type, x-requested-with,
+    Access-Control-Allow-Origin,
+    Access-Control-Allow-Credentials,
+    Access-Control-Allow-Headers,
+    x-auth-token, x-app-id, Origin, Accept,
+    X-Requested-With, Access-Control-Request-Method,
+    Access-Control-Request-Headers, Authorization,
+    Set-Cookie, Cookie
+  exposedHeaders:
+    Authorization, set-cookie
+
+management:
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure.include: health, prometheus, gateway
+      path-mapping.prometheus: metrics
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      cache.time-to-live: 1ms
+    gateway:
+      enabled: true
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:80/eureka/
+  instance:
+    lease-expiration-duration-in-seconds: 5
+    lease-renewal-interval-in-seconds: 2

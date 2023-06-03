@@ -17,7 +17,8 @@ public class ElasticKafkaProducer {
 
     public ElasticKafkaProducer(
             @Qualifier("user-to-elastic-producer-template")
-            ReactiveKafkaProducerTemplate<String, UserAvroModel> reactiveKafkaProducerTemplate, KafkaConfigData kafkaConfigData) {
+            ReactiveKafkaProducerTemplate<String, UserAvroModel> reactiveKafkaProducerTemplate,
+            KafkaConfigData kafkaConfigData) {
         this.reactiveKafkaProducerTemplate = reactiveKafkaProducerTemplate;
         this.kafkaConfigData = kafkaConfigData;
     }
@@ -25,12 +26,12 @@ public class ElasticKafkaProducer {
     public void run() {
         Flux.range(0, 1)
                 .map(index -> UserAvroModel
-                                .newBuilder()
-                                .setId(UUID.randomUUID().toString())
-                                .setName("random-name")
-                                .setUsername("username-1")
-                                .setCreatedDate(new Date().getTime())
-                                .build()
+                        .newBuilder()
+                        .setId(UUID.randomUUID().toString())
+                        .setName("random-name")
+                        .setUsername("username-1")
+                        .setCreatedDate(new Date().getTime())
+                        .build()
                 )
                 .doOnNext(it -> System.out.println("Data: $it"))
                 .flatMap(it -> this.reactiveKafkaProducerTemplate.send(kafkaConfigData.getTopicName(), it.getId(), it))
