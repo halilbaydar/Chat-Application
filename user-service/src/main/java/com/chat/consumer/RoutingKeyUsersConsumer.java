@@ -25,23 +25,24 @@ public class RoutingKeyUsersConsumer implements RMessageConsumer<String, Object>
     @Override
     @UserRequestsListener
     public Object consume(String username) throws RuntimeException {
-        var userCache = redissonReactiveClient.getBucket(String.format("cache:user:%s", username),
-                new TypedJsonJacksonCodec(UserEntity.class));
-        return userCache.get()
+        var userCache = redissonReactiveClient.getMapCache("cache:user",
+                new TypedJsonJacksonCodec(String.class, UserEntity.class));
+        return userCache.get(userCache)
                 .filter(Objects::nonNull)
                 .switchIfEmpty(this.userRepository.findByUsername(username)
-                                .filter(Objects::nonNull)
-                                .map(userEntity -> new RabbitUserEntity(
-                                        userEntity.getId(),
-                                        userEntity.getUsername(),
-                                        userEntity.getName(),
-                                        userEntity.getRole(),
-                                        userEntity.getStatus(),
-                                        userEntity.getPassword(),
-                                        new Date().getTime(),
-                                        new Date().getTime(),
-                                        new Date().getTime()))
-                                .flatMap(user -> userCache.set(user, 30, TimeUnit.SECONDS))
+                        .filter(Objects::nonNull)
+                        .map(userEntity -> new RabbitUserEntity(
+                                userEntity.getId(),
+                                userEntity.getUsername(),
+                                userEntity.getName(),
+                                userEntity.getRole(),
+                                userEntity.getStatus(),
+                                userEntity.getPassword(),
+                                new Date().getTime(),
+                                new Date().getTime(),
+                                new Date().getTime()))
+                        .flatMap(user -> userCache.fastPut(username, user, 30, TimeUnit.SECONDS)
+                                .thenReturn(user))
                 )
                 .doOnError(error -> {
                     logger.error("Error while responding request from auth service: %s", error);
