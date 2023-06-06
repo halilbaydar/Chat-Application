@@ -3,9 +3,11 @@ services:
   redis-master:
     image: redis:${REDIS_VERSION:-latest}
     hostname: redis
-    command: ["redis-server", "--appendonly", "yes"]
+    command: ["redis-server", "--appendonly", "yes", "--notify-keyspace-events", "KEA"]
     ports:
       - "6379:6379"
+    environment:
+      - "notify-keyspace-events KEA"
     networks:
       - ${GLOBAL_NETWORK:-redis}
   redis-slave:
@@ -13,6 +15,8 @@ services:
     command: ["redis-server", "--slaveof", "redis-master", "6379"]
     ports:
       - "6380:6379"
+    environment:
+      - "notify-keyspace-events KEA"
     depends_on:
       - redis-master
     networks:

@@ -36,14 +36,14 @@ public class ChatKafkaAdminClient {
     private final WebClient webClient;
 
     public synchronized void close() {
-        try {
-            retryTemplate.execute(retryContext -> {
-                adminClient.close();
-                return null;
-            });
-        } catch (Exception e) {
-            LOG.error("Error : {}", e.getMessage());
-        }
+        retryTemplate.execute(this::doClose);
+    }
+
+    private int doClose(RetryContext retryContext) {
+        LOG.info("Closing kafka attempt {}", retryContext.getRetryCount());
+        this.adminClient.close();
+        LOG.info("Closed kafka stream {}", retryContext.getRetryCount());
+        return retryContext.getRetryCount();
     }
 
     public synchronized void createTopics() {

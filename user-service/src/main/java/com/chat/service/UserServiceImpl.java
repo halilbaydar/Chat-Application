@@ -1,6 +1,7 @@
 package com.chat.service;
 
 import com.chat.constants.UserStatus;
+//import com.chat.consumer.RoutingKeyUsersConsumer;
 import com.chat.interfaces.repository.UserRepository;
 import com.chat.interfaces.service.UserService;
 import com.chat.model.entity.UserResponse;
@@ -14,10 +15,11 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+//    private final RoutingKeyUsersConsumer routingKeyUsersConsumer;
 
     @Override
     public Mono<UserResponse> getUser() {
-//        UserResponse activeUser = SessionUtil.getActiveUser();
+//        UserResponse activeUser = routingKeyUsersConsumer.consume()
         return Mono.just(null);
     }
 

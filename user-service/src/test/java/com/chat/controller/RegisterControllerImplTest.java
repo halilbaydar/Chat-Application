@@ -30,7 +30,6 @@ class RegisterControllerImplTest {
     @InjectMocks
     private RegisterController registerController;
 
-
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -39,6 +38,6 @@ class RegisterControllerImplTest {
 
     @Test
     void registerTest() {
-        Mockito.when(registerController.register(Mono.just(null))).thenReturn(Mono.just(SUCCESS));
+        Mockito.when(registerController.register(null)).thenReturn(Mono.just(SUCCESS));
     }
 }

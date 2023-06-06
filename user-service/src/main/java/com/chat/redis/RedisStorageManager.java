@@ -4,26 +4,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.lettuce.core.ClientOptions;
 import io.lettuce.core.SocketOptions;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
-import org.springframework.data.redis.connection.RedisClusterConfiguration;
-import org.springframework.data.redis.connection.RedisConfiguration;
-import org.springframework.data.redis.connection.RedisConnection;
-import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.*;
 import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.*;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.RedisSerializer;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
-import org.springframework.session.data.redis.config.ConfigureRedisAction;
-import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 import org.springframework.stereotype.Component;
 
-import java.io.Serializable;
 import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
@@ -32,84 +26,69 @@ import java.util.Objects;
 @Configuration
 //@EnableRedisHttpSession //NOTE it conflicts with webflux
 @RequiredArgsConstructor
+@Import({RedisProperties.class})
 public class RedisStorageManager {
 
     private final RedisProperties redisProperties;
-
-    public HashOperations<Object, Object, Serializable> map;
-    public ListOperations<Object, Object> list;
-    public SetOperations<Object, Object> set;
-    public ValueOperations<Object, Object> value;
-    public RedisConnection conn;
-    public RedisTemplate<Object, Object> redisTemplate;
     private final ObjectMapper objectMapper;
-
-    @Value("${spring.profiles.active}")
-    private String profile;
+    public ReactiveHashOperations<String, Object, Object> map;
+    public ReactiveListOperations<String, Object> list;
+    public ReactiveSetOperations<String, Object> set;
+    public ReactiveValueOperations<String, Object> value;
+    public ReactiveRedisConnection conn;
+    public ReactiveRedisTemplate<String, Object> reactiveRedisTemplate;
 
     @Bean
-    public LettuceConnectionFactory redisConnectionFactory() {
+    public ReactiveRedisConnectionFactory redisConnectionFactory(RedisConfiguration redisConfiguration) {
 
         final SocketOptions socketOptions = SocketOptions.builder().connectTimeout(Duration.ofSeconds(60)).build();
         final ClientOptions clientOptions = ClientOptions.builder().socketOptions(socketOptions).build();
 
         LettuceClientConfiguration clientConfig = LettuceClientConfiguration.builder().commandTimeout(Duration.ofSeconds(60)).clientOptions(clientOptions).build();
 
-        LettuceConnectionFactory lettuceConnectionFactory = new LettuceConnectionFactory(getRedisConfiguration(), clientConfig);
+        LettuceConnectionFactory lettuceConnectionFactory = new LettuceConnectionFactory(redisConfiguration, clientConfig);
         lettuceConnectionFactory.setValidateConnection(true);
+        lettuceConnectionFactory.afterPropertiesSet();
 
         return lettuceConnectionFactory;
     }
 
-    private RedisConfiguration getRedisConfiguration() {
-        if (!profile.equals("local")) return getRedisClusterConfiguration();
-        return getRedisStandaloneConfiguration();
-    }
-
     @Profile({"prod", "dev"})
     @Bean
-    public RedisClusterConfiguration getRedisClusterConfiguration() {
+    public RedisConfiguration getRedisClusterConfiguration() {
         return new RedisClusterConfiguration(List.of(redisProperties.getHost() + ":" + redisProperties.getPort()));
     }
 
-    @Profile({"local"})
+    @Profile({"local", "test"})
     @Bean
     public RedisConfiguration getRedisStandaloneConfiguration() {
         return new RedisStandaloneConfiguration(redisProperties.getHost(), redisProperties.getPort());
     }
 
     @Bean
-    public ConfigureRedisAction configureRedisAction() {
-        return ConfigureRedisAction.NO_OP;
-    }
-
-    @Bean
-    public RedisTemplate<Object, Object> redisTemplate() {
-        RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<Object, Object>();
-        redisTemplate.setConnectionFactory(redisConnectionFactory());
-
-        redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+    public ReactiveRedisTemplate<String, Object> redisTemplate(ReactiveRedisConnectionFactory reactiveRedisConnectionFactory) {
         RedisSerializer<Object> jsonSerializer = new Jackson2JsonRedisSerializer<>(Object.class);
-        ((Jackson2JsonRedisSerializer<?>) jsonSerializer).setObjectMapper(objectMapper);
-        redisTemplate.setHashValueSerializer(jsonSerializer);
+        ((Jackson2JsonRedisSerializer<?>) jsonSerializer).setObjectMapper(new ObjectMapper());
 
-        redisTemplate.setStringSerializer(new StringRedisSerializer());
+        RedisSerializationContext<String, Object> redisSerializationContext = RedisSerializationContext
+                .<String, Object>newSerializationContext()
+                .hashValue(RedisSerializationContext.SerializationPair.fromSerializer(jsonSerializer))
+                .value(RedisSerializationContext.SerializationPair.fromSerializer(jsonSerializer))
+                .string(RedisSerializationContext.SerializationPair.fromSerializer(RedisSerializer.string()))
+                .hashKey(RedisSerializationContext.SerializationPair.fromSerializer(RedisSerializer.string()))
+                .key(RedisSerializationContext.SerializationPair.fromSerializer(RedisSerializer.string()))
+                .build();
 
-        redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(Object.class));
+        ReactiveRedisTemplate<String, Object> reactiveRedisTemplate = new ReactiveRedisTemplate<>(reactiveRedisConnectionFactory, redisSerializationContext);
 
-        redisTemplate.setDefaultSerializer(new Jackson2JsonRedisSerializer<>(Object.class));
+        this.map = reactiveRedisTemplate.opsForHash();
+        this.list = reactiveRedisTemplate.opsForList();
+        this.set = reactiveRedisTemplate.opsForSet();
+        this.value = reactiveRedisTemplate.opsForValue();
 
-        redisTemplate.afterPropertiesSet();
+        this.conn = Objects.requireNonNull(reactiveRedisTemplate.getConnectionFactory()).getReactiveConnection();
 
-        this.map = redisTemplate.opsForHash();
-        this.list = redisTemplate.opsForList();
-        this.set = redisTemplate.opsForSet();
-        this.value = redisTemplate.opsForValue();
-
-        this.conn = Objects.requireNonNull(redisTemplate.getConnectionFactory()).getConnection();
-
-        this.redisTemplate = redisTemplate;
-        return redisTemplate;
+        this.reactiveRedisTemplate = reactiveRedisTemplate;
+        return reactiveRedisTemplate;
     }
 }

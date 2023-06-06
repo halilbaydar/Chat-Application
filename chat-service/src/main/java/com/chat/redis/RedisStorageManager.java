@@ -8,17 +8,13 @@ import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.data.redis.connection.RedisClusterConfiguration;
-import org.springframework.data.redis.connection.RedisConfiguration;
-import org.springframework.data.redis.connection.RedisConnection;
-import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.*;
 import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.*;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.session.data.redis.config.ConfigureRedisAction;
-import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
@@ -27,7 +23,7 @@ import java.util.Objects;
 
 @Component
 @Configuration
-@EnableRedisHttpSession
+//@EnableRedisHttpSession
 @RequiredArgsConstructor
 public class RedisStorageManager {
 
@@ -45,7 +41,7 @@ public class RedisStorageManager {
     private String profile;
 
     @Bean
-    public LettuceConnectionFactory redisConnectionFactory() {
+    public RedisConnectionFactory redisConnectionFactory(RedisConfiguration redisConfiguration) {
 
         final SocketOptions socketOptions = SocketOptions.builder()
                 .connectTimeout(Duration.ofSeconds(60))
@@ -59,26 +55,19 @@ public class RedisStorageManager {
 
         LettuceClientConfiguration clientConfig = LettuceClientConfiguration.builder().commandTimeout(Duration.ofSeconds(60)).clientOptions(clientOptions).build();
 
-        LettuceConnectionFactory lettuceConnectionFactory = new LettuceConnectionFactory(getRedisConfiguration(), clientConfig);
+        LettuceConnectionFactory lettuceConnectionFactory = new LettuceConnectionFactory(redisConfiguration, clientConfig);
         lettuceConnectionFactory.setValidateConnection(true);
 
         return lettuceConnectionFactory;
     }
 
-    private RedisConfiguration getRedisConfiguration() {
-        if (profile.equals("local")) {
-            return getRedisStandaloneConfiguration();
-        }
-        return getRedisClusterConfiguration();
-    }
-
     @Profile({"prod", "dev"})
     @Bean
-    public RedisClusterConfiguration getRedisClusterConfiguration() {
+    public RedisConfiguration getRedisClusterConfiguration() {
         return new RedisClusterConfiguration(List.of(redisProperties.getHost() + ":" + redisProperties.getPort()));
     }
 
-    @Profile({"local"})
+    @Profile({"local", "test"})
     @Bean
     public RedisConfiguration getRedisStandaloneConfiguration() {
         return new RedisStandaloneConfiguration(redisProperties.getHost(), redisProperties.getPort());
@@ -90,9 +79,9 @@ public class RedisStorageManager {
     }
 
     @Bean
-    public RedisTemplate<Object, Object> redisTemplate() {
-        RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<Object, Object>();
-        redisTemplate.setConnectionFactory(redisConnectionFactory());
+    public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(redisConnectionFactory);
 
         redisTemplate.setHashKeySerializer(new StringRedisSerializer());
         redisTemplate.setHashValueSerializer(new StringRedisSerializer());

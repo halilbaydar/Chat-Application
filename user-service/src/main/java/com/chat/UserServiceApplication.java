@@ -6,11 +6,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 
-@EnableDiscoveryClient
 @RequiredArgsConstructor
-@SpringBootApplication(scanBasePackages = "com.chat")
+@SpringBootApplication(exclude = {RedisAutoConfiguration.class})
 public class UserServiceApplication implements CommandLineRunner {
     private final ChatKafkaAdminClient chatKafkaAdminClient;
     private final ElasticKafkaProducer elasticKafkaProducer;
@@ -26,3 +25,4 @@ public class UserServiceApplication implements CommandLineRunner {
 //        elasticKafkaProducer.run();
     }
 }
+
