@@ -11,6 +11,11 @@ spring:
       routing-key: ${random.int(1000000)}
       default-receive-queue: "queue-auth-user"
       exchange: userExchange
+      retry:
+        max-attempts: 2
+        enabled: true
+        max-interval: 1000ms
+        multiplier: 2
   application:
     name: auth-service
   profiles:

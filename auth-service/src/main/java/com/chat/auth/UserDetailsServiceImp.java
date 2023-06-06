@@ -44,16 +44,16 @@ public class UserDetailsServiceImp implements UserDetailsService, Serializable {
             throw new RuntimeException(USER_NOT_EXIST);
         }
 
-        if (!attemptedUser.username().equals(username)) {
+        if (!attemptedUser.getUsername().equals(username)) {
             throw new RuntimeException(USER_NOT_EXIST);
         }
 
-        List<SimpleGrantedAuthority> authorities = Role.valueOf(attemptedUser.role()).getGrantedAuthorities();
+        List<SimpleGrantedAuthority> authorities = Role.valueOf(attemptedUser.getRole()).getGrantedAuthorities();
 
         return new UserDetailsImp(
                 authorities,
-                attemptedUser.username(),
-                attemptedUser.password(),
+                attemptedUser.getUsername(),
+                attemptedUser.getPassword(),
                 true, true,
                 true, true) {
         };

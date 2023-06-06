@@ -14,4 +14,6 @@ data class RabbitUserEntity(
     val createdAt: Long,
     val deletedAt: Long,
     val updatedAt: Long
-) : Serializable
+) : Serializable {
+    constructor() : this(BigInteger.valueOf(1L), "", "", "", "", "", 1L, 1L, 1L)
+}

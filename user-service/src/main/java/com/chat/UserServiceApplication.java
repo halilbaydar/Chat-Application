@@ -3,13 +3,14 @@ package com.chat;
 import com.chat.client.ChatKafkaAdminClient;
 import com.chat.kafka.producer.ElasticKafkaProducer;
 import lombok.RequiredArgsConstructor;
+import org.redisson.spring.starter.RedissonAutoConfiguration;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 
 @RequiredArgsConstructor
-@SpringBootApplication(exclude = {RedisAutoConfiguration.class})
+@SpringBootApplication(exclude = {RedisAutoConfiguration.class, RedissonAutoConfiguration.class})
 public class UserServiceApplication implements CommandLineRunner {
     private final ChatKafkaAdminClient chatKafkaAdminClient;
     private final ElasticKafkaProducer elasticKafkaProducer;

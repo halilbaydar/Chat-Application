@@ -1,8 +1,6 @@
 package com.chat.model.entity;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -18,20 +16,22 @@ import java.util.Date;
 @Setter
 @Builder
 @Table(name = "users")
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserEntity implements Serializable {
     @Id
     private BigInteger id;
 
     @Column("created_at")
     @CreatedDate
-    private LocalDate createdAt;
+    private Long createdAt;
 
     @Column("deleted_at")
-    private LocalDate deletedAt;
+    private Long deletedAt;
 
     @Column("updated_at")
     @LastModifiedDate
-    private LocalDate updatedAt;
+    private Long updatedAt;
 
     @Column
     private String username;
