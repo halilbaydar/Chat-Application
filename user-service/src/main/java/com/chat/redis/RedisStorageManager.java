@@ -79,7 +79,8 @@ public class RedisStorageManager {
                 .key(RedisSerializationContext.SerializationPair.fromSerializer(RedisSerializer.string()))
                 .build();
 
-        ReactiveRedisTemplate<String, Object> reactiveRedisTemplate = new ReactiveRedisTemplate<>(reactiveRedisConnectionFactory, redisSerializationContext);
+        ReactiveRedisTemplate<String, Object> reactiveRedisTemplate =
+                new ReactiveRedisTemplate<>(reactiveRedisConnectionFactory, redisSerializationContext);
 
         this.map = reactiveRedisTemplate.opsForHash();
         this.list = reactiveRedisTemplate.opsForList();

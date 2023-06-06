@@ -14,4 +14,9 @@ public class RegisterContextRequest {
     public RegisterContextRequest(RegisterRequest registerRequest) {
         this.registerRequest = registerRequest;
     }
+
+    public UserEntity setNewUser(UserEntity userEntity) {
+        this.newUser = userEntity;
+        return userEntity;
+    }
 }

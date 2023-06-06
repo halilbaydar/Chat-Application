@@ -1,5 +1,6 @@
 package com.chat.model.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -15,6 +16,7 @@ import java.util.Date;
 
 @Getter
 @Setter
+@Builder
 @Table(name = "users")
 public class UserEntity implements Serializable {
     @Id
