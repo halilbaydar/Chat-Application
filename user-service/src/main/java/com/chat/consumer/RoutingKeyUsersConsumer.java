@@ -29,9 +29,8 @@ public class RoutingKeyUsersConsumer implements RMessageConsumer<String, Object>
                 new TypedJsonJacksonCodec(UserEntity.class));
         return userCache.get()
                 .filter(Objects::nonNull)
-                .switchIfEmpty(
-                        this.userRepository.findByUsername(username)
-                                .switchIfEmpty(Mono.error(new RuntimeException(String.format("username is not valid %s", username))))
+                .switchIfEmpty(this.userRepository.findByUsername(username)
+                                .filter(Objects::nonNull)
                                 .map(userEntity -> new RabbitUserEntity(
                                         userEntity.getId(),
                                         userEntity.getUsername(),

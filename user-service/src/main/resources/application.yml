@@ -22,7 +22,8 @@ spring:
     password: guest
     template:
       retry:
-        max-attempts: 3
+        max-attempts: 1
+        enabled: true
       exchange: userExchange
       routing-key: "routing-user"
       default-receive-queue: "queue-user"

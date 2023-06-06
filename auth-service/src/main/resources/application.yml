@@ -12,7 +12,7 @@ spring:
       default-receive-queue: "queue-auth-user"
       exchange: userExchange
       retry:
-        max-attempts: 2
+        max-attempts: 1
         enabled: true
         max-interval: 1000ms
         multiplier: 2
