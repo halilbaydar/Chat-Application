@@ -47,9 +47,11 @@ docker-compose up
 ### API
 * Api Gateway port: **9092**
 * RabbitMQ port: **15672**
-* Zipkin Port: **9092**
-* Discovery Service Port: **80**
+* Zipkin Port: **9411**
+* Eureka Service Port: **8761**
 * Kibana Port: **5601**
+* Prometheus Port: **3000**
+* Grafana Port: **9090**
 * Kibana Port: **5601**
 
 ### Backlog
