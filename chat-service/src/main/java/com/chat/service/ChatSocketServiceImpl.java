@@ -1,14 +1,14 @@
 package com.chat.service;
 
 import com.chat.interfaces.service.ChatSocketService;
-import com.chat.model.BroadCastNotification;
+import com.chat.model.DispatchMessage;
 import com.chat.model.entity.ChatEntity;
 import com.chat.model.entity.MessageEntity;
 import com.chat.model.request.*;
 import com.chat.redis.ChatRedisProperties;
 import com.chat.redis.RedisStorageManager;
 import com.chat.type.MessageStatus;
-import com.chat.type.NotificationType;
+import com.chat.type.MessageType;
 import lombok.AllArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.boot.autoconfigure.amqp.RabbitProperties;
@@ -17,10 +17,12 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.user.SimpUser;
 import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static com.chat.constant.PrefixConstant.*;
 import static java.util.concurrent.CompletableFuture.runAsync;
@@ -29,6 +31,7 @@ import static java.util.concurrent.CompletableFuture.runAsync;
 @AllArgsConstructor
 public class ChatSocketServiceImpl implements ChatSocketService {
 
+    private final static int PARALLEL_LIMIT = 10000;
     private final SimpUserRegistry simpUserRegistry;
     private final RedisStorageManager redisStorageManager;
     private final RabbitTemplate rabbitTemplate;
@@ -39,7 +42,15 @@ public class ChatSocketServiceImpl implements ChatSocketService {
 
     @Override
     public boolean isUserConnected(String name) {
-        return simpUserRegistry.getUsers().stream().parallel().anyMatch(user -> user.getName().equals(name));
+        var users = simpUserRegistry.getUsers();
+        var size = users.size();
+        Stream<SimpUser> stream;
+        if (size > PARALLEL_LIMIT) {
+            stream = users.stream().parallel();
+        } else {
+            stream = users.stream();
+        }
+        return stream.anyMatch(user -> user.getName().equals(name));
     }
 
     @Override
@@ -51,12 +62,8 @@ public class ChatSocketServiceImpl implements ChatSocketService {
             runAsync(() -> simpMessagingTemplate.convertAndSend(MESSAGE_DESTINATION_PREFIX + messageRequest.getRecipientId(), messageRequest));
         } else if (Boolean.TRUE.equals(redisStorageManager.redisTemplate.hasKey(messageRequest.getRecipientId()))) {
             var routingKey = (String) this.redisStorageManager.map.get(chatRedisProperties.getOnlineUsersMap(), messageRequest.getRecipientId());
-            BroadCastNotification<MessageRequest> broadCastNotification = new BroadCastNotification<>(NotificationType.MESSAGE, messageRequest);
-            this.rabbitTemplate.convertAndSend("", "", "", message -> {
-                message.getMessageProperties().setReplyTo("responseQueue");
-                return message;
-            });
-            runAsync(() -> rabbitTemplate.convertAndSend(rabbitProperties.getTemplate().getExchange(), routingKey, broadCastNotification));
+            DispatchMessage<MessageRequest> dispatchMessage = new DispatchMessage<>(MessageType.MESSAGE, messageRequest);
+            runAsync(() -> rabbitTemplate.convertAndSend(rabbitProperties.getTemplate().getExchange(), routingKey, dispatchMessage));
         } else {
             //TODO send this message via notification
         }
@@ -79,8 +86,8 @@ public class ChatSocketServiceImpl implements ChatSocketService {
             runAsync(() -> simpMessagingTemplate.convertAndSend(String.format("%s%s", MESSAGE_SEEN_DESTINATION_PREFIX, seenRequest.getChatId()), true));
         } else if (Boolean.TRUE.equals(this.redisStorageManager.map.hasKey(chatRedisProperties.getOnlineUsersMap(), seenRequest.getRecipientId()))) {
             var routingKey = (String) this.redisStorageManager.map.get(chatRedisProperties.getOnlineUsersMap(), seenRequest.getRecipientId());
-            BroadCastNotification<SeenRequest> broadCastNotification = new BroadCastNotification<>(NotificationType.SEEN, seenRequest);
-            runAsync(() -> rabbitTemplate.convertAndSend(rabbitProperties.getTemplate().getExchange(), routingKey, broadCastNotification));
+            DispatchMessage<SeenRequest> dispatchMessage = new DispatchMessage<>(MessageType.SEEN, seenRequest);
+            runAsync(() -> rabbitTemplate.convertAndSend(rabbitProperties.getTemplate().getExchange(), routingKey, dispatchMessage));
         } else {
             //TODO pass
         }
@@ -100,8 +107,8 @@ public class ChatSocketServiceImpl implements ChatSocketService {
             simpMessagingTemplate.convertAndSend(String.format("%s%s/%s", CHAT_TYPING_DESTINATION_PREFIX, typingRequest.getChatId(), typingRequest.getRecipientId()), true);
         } else if (Boolean.TRUE.equals(redisStorageManager.map.hasKey(chatRedisProperties.getOnlineUsersMap(), typingRequest.getRecipientId()))) {
             var routingKey = (String) this.redisStorageManager.map.get(chatRedisProperties.getOnlineUsersMap(), typingRequest.getRecipientId());
-            BroadCastNotification<TypingRequest> broadCastNotification = new BroadCastNotification<>(NotificationType.TYPING, typingRequest);
-            rabbitTemplate.convertAndSend(rabbitProperties.getTemplate().getExchange(), routingKey, broadCastNotification);
+            DispatchMessage<TypingRequest> dispatchMessage = new DispatchMessage<>(MessageType.TYPING, typingRequest);
+            rabbitTemplate.convertAndSend(rabbitProperties.getTemplate().getExchange(), routingKey, dispatchMessage);
         } else {
             //TODO pass
         }
@@ -109,7 +116,7 @@ public class ChatSocketServiceImpl implements ChatSocketService {
 
     @Override
     public void online(OnlineRequest onlineRequest) {
-        BroadCastNotification<OnlineRequest> broadCastNotification = new BroadCastNotification<>(NotificationType.ONLINE, onlineRequest);
+        DispatchMessage<OnlineRequest> dispatchMessage = new DispatchMessage<>(MessageType.ONLINE, onlineRequest);
 
         //TODO implement here
 //        rabbitTemplate.convertAndSend(rabbitProperties.getExchange(), rabbitProperties.getRoutingKey(), broadCastNotification);

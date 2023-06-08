@@ -2,7 +2,7 @@ package com.chat.consumer;
 
 import com.chat.interfaces.service.ChatSocketService;
 import com.chat.interfaces.service.SessionService;
-import com.chat.model.BroadCastNotification;
+import com.chat.model.DispatchMessage;
 import com.chat.model.request.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -15,19 +15,18 @@ import static java.util.concurrent.CompletableFuture.runAsync;
 
 @Component
 @RequiredArgsConstructor
-public class MessageConsumer implements RMessageConsumer<BroadCastNotification<?>, Void> {
+public class MessageConsumer implements RMessageConsumer<DispatchMessage<?>, Void> {
 
     private final SimpMessagingTemplate simpMessagingTemplate;
-    private final ObjectMapper objectMapper;
     private final SessionService sessionService;
     private final ChatSocketService chatSocketService;
 
     @Override
     @RabbitListener(queues = "${spring.rabbitmq.template.default-receive-queue}")
-    public Void consume(BroadCastNotification<?> broadCastNotification) throws RuntimeException {
-        switch (broadCastNotification.getNotificationType()) {
+    public Void consume(DispatchMessage<?> dispatchMessage) throws RuntimeException {
+        switch (dispatchMessage.getMessageType()) {
             case SEEN -> {
-                SeenRequest seenRequest = objectMapper.convertValue(broadCastNotification.getPayload(), SeenRequest.class);
+                SeenRequest seenRequest = (SeenRequest) dispatchMessage.getPayload();
                 checkIsUserConnected(seenRequest, connected -> {
                     if (connected) {
                         runAsync(() -> simpMessagingTemplate.convertAndSend(String.format("%s%s/%s", MESSAGE_SEEN_DESTINATION_PREFIX, seenRequest.getChatId(), seenRequest.getMessageId()), true));
@@ -36,11 +35,11 @@ public class MessageConsumer implements RMessageConsumer<BroadCastNotification<?
                 });
             }
             case ONLINE -> {
-                OnlineRequest onlineRequest = objectMapper.convertValue(broadCastNotification.getPayload(), OnlineRequest.class);
+                OnlineRequest onlineRequest = (OnlineRequest) dispatchMessage.getPayload();
                 //TODO implement here
             }
             case TYPING -> {
-                TypingRequest typingRequest = objectMapper.convertValue(broadCastNotification.getPayload(), TypingRequest.class);
+                TypingRequest typingRequest = (TypingRequest) dispatchMessage.getPayload();
                 checkIsUserConnected(typingRequest, connected -> {
                     if (connected) {
                         simpMessagingTemplate.convertAndSend(String.format("%s%s", CHAT_TYPING_DESTINATION_PREFIX, typingRequest.getChatId()), true);
@@ -48,7 +47,7 @@ public class MessageConsumer implements RMessageConsumer<BroadCastNotification<?
                 });
             }
             case MESSAGE -> {
-                MessageRequest messageRequest = objectMapper.convertValue(broadCastNotification.getPayload(), MessageRequest.class);
+                MessageRequest messageRequest = (MessageRequest) dispatchMessage.getPayload();
                 checkIsUserConnected(messageRequest, connected -> {
                     if (connected) {
                         runAsync(() -> simpMessagingTemplate.convertAndSend(MESSAGE_DESTINATION_PREFIX + messageRequest.getChatId(), messageRequest.getMessage()));

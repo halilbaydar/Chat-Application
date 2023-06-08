@@ -37,7 +37,9 @@ public class RegisterServiceImpl implements RegisterService {
 
     public RegisterServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
                                @Qualifier("user-to-elastic-producer-template")
-                               ReactiveKafkaProducerTemplate<String, UserAvroModel> reactiveKafkaProducerTemplate, KafkaConfigData kafkaConfigData, RedisStorageManager redisStorageManager) {
+                               ReactiveKafkaProducerTemplate<String, UserAvroModel> reactiveKafkaProducerTemplate,
+                               KafkaConfigData kafkaConfigData,
+                               RedisStorageManager redisStorageManager) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.reactiveKafkaProducerTemplate = reactiveKafkaProducerTemplate;

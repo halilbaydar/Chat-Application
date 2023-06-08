@@ -1,5 +1,5 @@
 package com.chat.type
 
-enum class NotificationType {
+enum class MessageType {
     TYPING, SEEN, MESSAGE, ONLINE
 }

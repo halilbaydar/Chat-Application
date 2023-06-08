@@ -35,6 +35,6 @@ public class UserElasticQueryWebClient implements ElasticQueryWebClient {
                     LOG.search.info("Querying by name {}", s.getKeyword());
                 })
                 .map(s -> elasticQueryUtil.getSuggesstionQuery("name", s.getKeyword(), s))
-                .flatMap(suggesstion -> reactiveElasticsearchOperations.suggest(suggesstion, UserElasticEntity.class));
+                .flatMap(suggestion -> reactiveElasticsearchOperations.suggest(suggestion, UserElasticEntity.class));
     }
 }

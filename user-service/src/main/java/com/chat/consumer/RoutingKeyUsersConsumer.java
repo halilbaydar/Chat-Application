@@ -9,9 +9,7 @@ import org.redisson.codec.TypedJsonJacksonCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import reactor.core.publisher.Mono;
 
-import java.util.Date;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -38,9 +36,8 @@ public class RoutingKeyUsersConsumer implements RMessageConsumer<String, Object>
                                 userEntity.getRole(),
                                 userEntity.getStatus(),
                                 userEntity.getPassword(),
-                                new Date().getTime(),
-                                new Date().getTime(),
-                                new Date().getTime()))
+                                userEntity.getCreatedAt(),
+                                userEntity.getUpdatedAt()))
                         .flatMap(user -> userCache.fastPut(username, user, 30, TimeUnit.SECONDS)
                                 .thenReturn(user))
                 )
