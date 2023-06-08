@@ -17,38 +17,39 @@ import java.util.*
 
 @Component
 class ElasticKafkaConsumer(
-        @Qualifier("user-to-elastic")
-        private val kafkaConsumerTemplate: ReactiveKafkaConsumerTemplate<String, UserAvroModel>,
-        @Qualifier("user-to-elastic-receiver")
-        private val kafkaReceiver: KafkaReceiver<String, UserAvroModel>,
-        private val LOG: LoggingConfig,
-        private val elasticClientService: ElasticClientService,
-        @Qualifier("kafka-to-elastic-retry")
-        private val retry: Retry) : CommandLineRunner {
+    @Qualifier("user-to-elastic")
+    private val kafkaConsumerTemplate: ReactiveKafkaConsumerTemplate<String, UserAvroModel>,
+    @Qualifier("user-to-elastic-receiver")
+    private val kafkaReceiver: KafkaReceiver<String, UserAvroModel>,
+    private val LOG: LoggingConfig,
+    private val elasticClientService: ElasticClientService,
+    @Qualifier("kafka-to-elastic-retry")
+    private val retry: Retry
+) : CommandLineRunner {
 
     fun receiveUserModel() {
         this.kafkaReceiver
-                .receiveAutoAck()
-                .flatMap({ batchProcess(it) }, 10)
-                .retryWhen(retry)
-                .doOnError {
-                    LOG.kafkaToElastic.error("Error while saving user to elastic with message: ${it.message}")
-                }
-                .subscribe()
+            .receiveAutoAck()
+            .flatMap({ batchProcess(it) }, 10)
+            .retryWhen(retry)
+            .doOnError {
+                LOG.kafkaToElastic.error("Error while saving user to elastic with message: ${it.message}")
+            }
+            .subscribe()
     }
 
     private fun batchProcess(flux: Flux<ConsumerRecord<String, UserAvroModel>>): Mono<Void> {
         return flux
-                .publishOn(Schedulers.boundedElastic())
-                .doOnNext { message ->
-                    println("Message to user service. key: ${message.key()}, username: ${message.value().username}")
-                }
-                .map { it.value() }
-                .collectList()
-                .flatMap { this.elasticClientService.saveAll(it) }
-                .doOnError {
-                    println("Error while saving: ${it.message}")
-                }.then()
+            .publishOn(Schedulers.newBoundedElastic(3, 10, "user-to-elastic-batch-consumer"))
+            .doOnNext { message ->
+                println("Message to user service. key: ${message.key()}, username: ${message.value().username}")
+            }
+            .map { it.value() }
+            .collectList()
+            .flatMap { this.elasticClientService.saveAll(it) }
+            .doOnError {
+                println("Error while saving: ${it.message}")
+            }.then()
     }
 
     override fun run(vararg args: String?) {
