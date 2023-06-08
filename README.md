@@ -34,8 +34,15 @@ This is a simple chat application which is implemented in Spring Boot Reactive, 
 
 ### Setup
 * Request .env file from me and then put into docker-compose directory
-* No docker images are available publicly right now on docker hub. That's why you have to run ``mvn clean install`` to create docker images
-* Go to **docker-compose** directory and then run ```docker-compose up```
+* No docker images are available publicly right now on docker hub. That's why you have to run
+```sh 
+mvn clean install
+``` 
+to run tests and create docker images
+* Go to **docker-compose** directory and then run
+```shell
+docker-compose up 
+```
 
 ### API
 * Api Gateway port: **9092**
