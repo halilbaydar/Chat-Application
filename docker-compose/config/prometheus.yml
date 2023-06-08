@@ -17,4 +17,29 @@ scrape_configs:
     scrape_interval: 1m
     metrics_path: '/actuator/metrics'
     static_configs:
-      - targets: ['chat-service:80']
+      - targets: ['chat-service:91']
+  - job_name: 'asset-service'
+    scrape_interval: 1m
+    metrics_path: '/actuator/metrics'
+    static_configs:
+      - targets: [ 'asset-service:89' ]
+  - job_name: 'auth-service'
+    scrape_interval: 1m
+    metrics_path: '/actuator/metrics'
+    static_configs:
+      - targets: [ 'auth-service:88' ]
+  - job_name: 'kafka-to-elastic-service'
+    scrape_interval: 1m
+    metrics_path: '/actuator/metrics'
+    static_configs:
+      - targets: [ 'kafka-to-elastic-service:83' ]
+  - job_name: 'user-service'
+    scrape_interval: 1m
+    metrics_path: '/actuator/metrics'
+    static_configs:
+      - targets: [ 'user-service:83' ]
+  - job_name: 'search-service'
+    scrape_interval: 1m
+    metrics_path: '/actuator/metrics'
+    static_configs:
+      - targets: [ 'search-service:85' ]
