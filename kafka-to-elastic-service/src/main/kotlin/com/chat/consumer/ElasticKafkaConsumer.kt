@@ -1,6 +1,7 @@
 package com.chat.consumer
 
 import com.chat.config.LoggingConfig
+import com.chat.exception.ElasticSaveException
 import com.chat.kafka.avro.model.UserAvroModel
 import com.chat.service.ElasticClientService
 import org.apache.kafka.clients.consumer.ConsumerRecord
@@ -46,10 +47,11 @@ class ElasticKafkaConsumer(
             }
             .map { it.value() }
             .collectList()
-            .flatMap { this.elasticClientService.saveAll(it) }
+            .flatMapMany { this.elasticClientService.saveAll(it) }
             .doOnError {
                 println("Error while saving: ${it.message}")
-            }.then()
+            }.doOnError { throw ElasticSaveException(it.message!!, it.cause) }
+            .then()
     }
 
     override fun run(vararg args: String?) {

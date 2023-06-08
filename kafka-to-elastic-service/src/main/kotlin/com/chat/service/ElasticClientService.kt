@@ -4,6 +4,7 @@ import com.chat.kafka.avro.model.UserAvroModel
 import com.chat.model.UserElasticEntity
 import org.springframework.data.elasticsearch.core.ReactiveElasticsearchOperations
 import org.springframework.stereotype.Service
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.util.*
 
@@ -24,7 +25,7 @@ class ElasticClientService(
                 .then()
     }
 
-    fun saveAll(list: List<UserAvroModel>): Mono<Void> {
+    fun saveAll(list: List<UserAvroModel>): Flux<UserElasticEntity> {
         return this.reactiveElasticsearchOperations.saveAll(
                 Mono.just(list.map { user ->
                     UserElasticEntity
@@ -35,6 +36,6 @@ class ElasticClientService(
                             .createdDate(Date(user.createdDate))
                             .build()
                 }), UserElasticEntity::class.java
-        ).then()
+        )
     }
 }
