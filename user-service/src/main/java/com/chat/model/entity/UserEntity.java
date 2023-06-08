@@ -10,6 +10,7 @@ import org.springframework.data.relational.core.mapping.Table;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 @Getter
@@ -24,14 +25,14 @@ public class UserEntity implements Serializable {
 
     @Column("created_at")
     @CreatedDate
-    private Long createdAt;
+    private Long createdAt = new Date().getTime();
 
     @Column("deleted_at")
     private Long deletedAt;
 
     @Column("updated_at")
     @LastModifiedDate
-    private Long updatedAt;
+    private Long updatedAt = new Date().getTime();
 
     @Column
     private String username;

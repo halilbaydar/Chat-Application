@@ -11,6 +11,7 @@ import com.chat.model.entity.UserEntity;
 import com.chat.model.request.RegisterContextRequest;
 import com.chat.model.request.RegisterRequest;
 import com.chat.redis.RedisStorageManager;
+import org.redisson.api.RedissonReactiveClient;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.kafka.core.reactive.ReactiveKafkaProducerTemplate;
@@ -33,18 +34,15 @@ public class RegisterServiceImpl implements RegisterService {
     private final PasswordEncoder passwordEncoder;
     private final ReactiveKafkaProducerTemplate<String, UserAvroModel> reactiveKafkaProducerTemplate;
     private final KafkaConfigData kafkaConfigData;
-    private final RedisStorageManager redisStorageManager;
 
     public RegisterServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
                                @Qualifier("user-to-elastic-producer-template")
                                ReactiveKafkaProducerTemplate<String, UserAvroModel> reactiveKafkaProducerTemplate,
-                               KafkaConfigData kafkaConfigData,
-                               RedisStorageManager redisStorageManager) {
+                               KafkaConfigData kafkaConfigData) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.reactiveKafkaProducerTemplate = reactiveKafkaProducerTemplate;
         this.kafkaConfigData = kafkaConfigData;
-        this.redisStorageManager = redisStorageManager;
     }
 
     @Override
@@ -66,12 +64,6 @@ public class RegisterServiceImpl implements RegisterService {
                                 .build())
                         .map(registerContextRequest::setNewUser)
                         .thenReturn(registerContextRequest))
-                .flatMap((registerContextRequest) -> {
-                    UserEntity userEntity = registerContextRequest.getNewUser();
-                    userEntity.setPassword(null);
-                    return redisStorageManager.map.put(USERS, userEntity.getUsername(), userEntity)
-                            .thenReturn(registerContextRequest);
-                })
                 .map(RegisterContextRequest::getNewUser)
                 .flatMap(userEntity -> this.reactiveKafkaProducerTemplate.send(
                         kafkaConfigData.getTopicName(),
