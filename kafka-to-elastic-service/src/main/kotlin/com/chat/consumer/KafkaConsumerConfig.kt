@@ -34,7 +34,6 @@ class KafkaConsumerConfig {
                 CooperativeStickyAssignor::class.jvmName
             )
             .consumerProperty(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 500)
-            .consumerProperty(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, 100)
             .commitInterval(Duration.ofSeconds(1)).subscription(listOf(userTopic))
     }
 

@@ -50,6 +50,7 @@ docker-compose up
 * Zipkin Port: **9092**
 * Discovery Service Port: **80**
 * Kibana Port: **5601**
+* Kibana Port: **5601**
 
 ### Backlog
 * Kafka streams, analytics and kraft mode

@@ -12,7 +12,7 @@ eureka:
     eviction-interval-timer-in-ms: 2000
 
 server:
-  port: 80
+  port: 8761
 
 spring:
   application:
@@ -26,3 +26,17 @@ logging:
 
 log:
   app-name: discovery-service
+
+management:
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure.include: health, prometheus, gateway
+      path-mapping.prometheus: metrics
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      cache.time-to-live: 1ms
+    gateway:
+      enabled: true
