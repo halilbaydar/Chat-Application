@@ -1,6 +1,7 @@
 package com.chat.service;
 
 import com.chat.config.KafkaConfigData;
+import com.chat.config.UserLogger;
 import com.chat.constants.UserStatus;
 import com.chat.exception.CustomException;
 import com.chat.interfaces.repository.UserRepository;
@@ -10,8 +11,6 @@ import com.chat.model.Role;
 import com.chat.model.entity.UserEntity;
 import com.chat.model.request.RegisterContextRequest;
 import com.chat.model.request.RegisterRequest;
-import com.chat.redis.RedisStorageManager;
-import org.redisson.api.RedissonReactiveClient;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.kafka.core.reactive.ReactiveKafkaProducerTemplate;
@@ -24,7 +23,6 @@ import reactor.core.scheduler.Schedulers;
 import java.util.Date;
 
 import static com.chat.constant.ErrorConstant.ErrorMessage.USERNAME_IN_USE;
-import static com.chat.constant.RedisKeyConstant.USERS;
 import static com.chat.constant.SuccessConstant.FAILED;
 import static com.chat.constant.SuccessConstant.SUCCESS;
 
@@ -34,21 +32,27 @@ public class RegisterServiceImpl implements RegisterService {
     private final PasswordEncoder passwordEncoder;
     private final ReactiveKafkaProducerTemplate<String, UserAvroModel> reactiveKafkaProducerTemplate;
     private final KafkaConfigData kafkaConfigData;
+    private final UserLogger LOG;
 
     public RegisterServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
                                @Qualifier("user-to-elastic-producer-template")
                                ReactiveKafkaProducerTemplate<String, UserAvroModel> reactiveKafkaProducerTemplate,
-                               KafkaConfigData kafkaConfigData) {
+                               KafkaConfigData kafkaConfigData, UserLogger userLogger) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.reactiveKafkaProducerTemplate = reactiveKafkaProducerTemplate;
         this.kafkaConfigData = kafkaConfigData;
+        this.LOG = userLogger;
     }
 
     @Override
     @Transactional
     public Mono<String> register(Mono<RegisterRequest> registerRequestMono) {
-        return registerRequestMono.map(RegisterContextRequest::new)
+        return registerRequestMono
+                .doOnNext(body -> {
+                    LOG.register.info(String.format("User register request with payload: %s", body.toString()));
+                })
+                .map(RegisterContextRequest::new)
                 .flatMap(registerContextRequest -> userRepository
                         .existsByUsername(registerContextRequest.getRegisterRequest().getUsername())
                         .doOnNext(registerContextRequest::setExistsByUsername)
@@ -75,7 +79,11 @@ public class RegisterServiceImpl implements RegisterService {
                                 .setId(userEntity.getId().toString())
                                 .build())).map(senderResult -> SUCCESS)
                 .onErrorResume(Mono::error)
+                .doOnError(ex ->
+                        LOG.register.info("User register failed with ex: {}", ex.getMessage(), ex)
+                )
                 .switchIfEmpty(Mono.just(FAILED))
+                .doOnSuccess(s -> LOG.register.info("User register done with message: {}", s))
                 .subscribeOn(Schedulers.boundedElastic());
     }
 }

@@ -15,6 +15,17 @@ kafka-config:
   replicationFactor: 3
 
 spring:
+  zipkin:
+    base-url: http://localhost:9411/
+    sender:
+      type: web
+    enabled: true
+    locator:
+      discovery:
+        enabled: true
+    discovery-client-enabled: true
+    service:
+      name: user-service
   rabbitmq:
     host: localhost
     port: 5672
@@ -91,3 +102,13 @@ eureka:
   instance:
     lease-expiration-duration-in-seconds: 5
     lease-renewal-interval-in-seconds: 2
+
+logging:
+  level:
+    ROOT: INFO
+    com.netflix.eureka: OFF
+    com.netflix.discovery: OFF
+
+logstash:
+  host: localhost
+  port: 5000

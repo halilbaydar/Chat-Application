@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+
+    <springProperty name="log.app-name" source="log.app-name"/>
+
+    <property name="DEV_HOME" value="./user-service/logs"/>
+    <property name="APP_NAME" value="${log.app-name}"/>
+
+<!--    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">-->
+<!--        <layout class="ch.qos.logback.classic.PatternLayout">-->
+<!--            <Pattern>-->
+<!--                %d{yyyy-MM-dd HH:mm:ss} [%thread] [%X{traceId:-},%X{spanId:-}] %-5level %X{correlationID} %logger{36} - %msg%n-->
+<!--            </Pattern>-->
+<!--        </layout>-->
+<!--    </appender>-->
+
+<!--    <appender name="FILE"-->
+<!--              class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+<!--        <file>${DEV_HOME}/${APP_NAME}.log</file>-->
+<!--        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">-->
+<!--            <Pattern>-->
+<!--                %d{yyyy-MM-dd HH:mm:ss} [%thread] [%X{traceId:-},%X{spanId:-}] %-5level %X{correlationID} %logger{36} - %msg%n-->
+<!--            </Pattern>-->
+<!--        </encoder>-->
+<!--        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">-->
+<!--            &lt;!&ndash; rollover daily &ndash;&gt;-->
+<!--            <fileNamePattern>${DEV_HOME}/archived/${APP_NAME}-log.%d{yyyy-MM-dd}.%i.log-->
+<!--            </fileNamePattern>-->
+<!--            <maxFileSize>10MB</maxFileSize>-->
+<!--            <maxHistory>60</maxHistory>-->
+<!--            <totalSizeCap>20GB</totalSizeCap>-->
+<!--        </rollingPolicy>-->
+<!--    </appender>-->
+
+<!--    <appender name="STASH" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+<!--        <file>${DEV_HOME}/logstash/${APP_NAME}.log</file>-->
+<!--        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">-->
+<!--            &lt;!&ndash; rollover daily &ndash;&gt;-->
+<!--            <fileNamePattern>${DEV_HOME}/logstash/archived/${APP_NAME}-log.%d{yyyy-MM-dd}.%i.log-->
+<!--            </fileNamePattern>-->
+<!--            <maxFileSize>10MB</maxFileSize>-->
+<!--            <maxHistory>60</maxHistory>-->
+<!--            <totalSizeCap>20GB</totalSizeCap>-->
+<!--        </rollingPolicy>-->
+<!--        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>-->
+<!--    </appender>-->
+
+
+<!--    <logger name="com.microservices.demo" level="info" additivity="false">-->
+<!--        <appender-ref ref="FILE"/>-->
+<!--        <appender-ref ref="STDOUT"/>-->
+<!--        <appender-ref ref="STASH"/>-->
+<!--    </logger>-->
+
+<!--    <root level="info">-->
+<!--        <appender-ref ref="FILE"/>-->
+<!--        <appender-ref ref="STDOUT"/>-->
+<!--        <appender-ref ref="STASH"/>-->
+<!--    </root>-->
+
+<!--    <logger name="register" level="info" additivity="false">-->
+<!--        <appender-ref ref="FILE"/>-->
+<!--        <appender-ref ref="STDOUT"/>-->
+<!--        <appender-ref ref="STASH"/>-->
+<!--    </logger>-->
+
+    <!-- -->
+
+    <appender name="STASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <param name="Encoding" value="UTF-8"/>
+        <addDefaultStatusListener>false</addDefaultStatusListener>
+        <destination>localhost:5000</destination>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <providers>
+                <pattern>
+                    <omitEmptyFields>true</omitEmptyFields>
+                    <Pattern>
+                        %d{yyyy-MM-dd HH:mm:ss} [%thread] [%X{traceId:-},%X{spanId:-}] %-5level %X{correlationID} %logger{36} -
+                        %msg%n
+                    </Pattern>
+                </pattern>
+            </providers>
+        </encoder>
+    </appender>
+
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>
+                %d{yyyy-MM-dd HH:mm:ss} [%thread] [%X{traceId:-},%X{spanId:-}] %-5level %X{correlationID} %logger{36} -
+                %msg%n
+            </Pattern>
+        </layout>
+    </appender>
+
+<!--    <appender name="FILE"-->
+<!--              class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+<!--        <file>${DEV_HOME}/${APP_NAME}.log</file>-->
+<!--        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">-->
+<!--            <Pattern>-->
+<!--                %d{yyyy-MM-dd HH:mm:ss} [%thread] [%X{traceId:-},%X{spanId:-}] %-5level %X{correlationID} %logger{36} - -->
+<!--                %msg%n-->
+<!--            </Pattern>-->
+<!--        </encoder>-->
+<!--        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">-->
+<!--            &lt;!&ndash; rollover daily &ndash;&gt;-->
+<!--            <fileNamePattern>${DEV_HOME}/archived/${APP_NAME}-log.%d{yyyy-MM-dd}.%i.log-->
+<!--            </fileNamePattern>-->
+<!--            <maxFileSize>10MB</maxFileSize>-->
+<!--            <maxHistory>60</maxHistory>-->
+<!--            <totalSizeCap>20GB</totalSizeCap>-->
+<!--        </rollingPolicy>-->
+<!--    </appender>-->
+
+    <!--    <appender name="STASH" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+    <!--        <file>${DEV_HOME}/logstash/${APP_NAME}.log</file>-->
+    <!--        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">-->
+    <!--            &lt;!&ndash; rollover daily &ndash;&gt;-->
+    <!--            <fileNamePattern>${DEV_HOME}/logstash/archived/${APP_NAME}-log.%d{yyyy-MM-dd}.%i.log</fileNamePattern>-->
+    <!--            <maxFileSize>10MB</maxFileSize>-->
+    <!--            <maxHistory>60</maxHistory>-->
+    <!--            <totalSizeCap>20GB</totalSizeCap>-->
+    <!--        </rollingPolicy>-->
+    <!--        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>-->
+    <!--    </appender>-->
+
+
+<!--    <logger name="com.chat" level="info" additivity="false">-->
+<!--        <appender-ref ref="STDOUT"/>-->
+<!--        <appender-ref ref="STASH"/>-->
+<!--    </logger>-->
+
+
+    <root level="info">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="STASH"/>
+<!--        <appender-ref ref="FILE"/>-->
+    </root>
+
+    <logger name="register" level="ERROR">
+        <appender-ref ref="STASH"/>
+        <appender-ref ref="STDOUT"/>
+<!--        <appender-ref ref="FILE"/>-->
+    </logger>
+
+    <logger name="register" level="INFO">
+        <appender-ref ref="STASH"/>
+        <appender-ref ref="STDOUT"/>
+<!--        <appender-ref ref="FILE"/>-->
+    </logger>
+</configuration>
