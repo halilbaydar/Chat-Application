@@ -5,14 +5,11 @@ services:
     hostname: elastic-1
     environment:
       - node.name=elastic-1
-      - cluster.name=chat-cluster
+      - cluster.name=es-twitter-cluster
       - discovery.seed_hosts=elastic-2,elastic-3
       - cluster.initial_master_nodes=elastic-1,elastic-2,elastic-3
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
-      - ELASTIC_USERNAME=${ELASTIC_USERNAME}
-      - Logger.level=INFO
     ulimits:
       memlock:
         soft: -1
@@ -27,14 +24,11 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}
     environment:
       - node.name=elastic-2
-      - cluster.name=chat-cluster
+      - cluster.name=es-twitter-cluster
       - discovery.seed_hosts=elastic-1,elastic-3
       - cluster.initial_master_nodes=elastic-1,elastic-2,elastic-3
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
-      - ELASTIC_USERNAME=${ELASTIC_USERNAME}
-      - Logger.level=INFO
     ulimits:
       memlock:
         soft: -1
@@ -47,14 +41,11 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}
     environment:
       - node.name=elastic-3
-      - cluster.name=chat-cluster
+      - cluster.name=es-twitter-cluster
       - discovery.seed_hosts=elastic-1,elastic-2
       - cluster.initial_master_nodes=elastic-1,elastic-2,elastic-3
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
-      - ELASTIC_USERNAME=${ELASTIC_USERNAME}
-      - Logger.level=INFO
     ulimits:
       memlock:
         soft: -1
@@ -89,7 +80,7 @@ services:
       - ./docker-logs/logstash:/logs
     environment:
       LS_JAVA_OPTS: "-Xms256m -Xmx512m"
-      CLUSTER_NAME: chat-cluster
+      CLUSTER_NAME: es-twitter-cluster
       XPACK_MONITORING_ELASTICSEARCH_HOSTS: http://elastic-1:9200
     networks:
       - ${GLOBAL_NETWORK:-elastic}
@@ -101,3 +92,72 @@ volumes:
     driver: local
   data03_7_17_4:
     driver: local
+
+#version: '3.2'
+#services:
+#  elasticsearch:
+#    image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION:-latest}
+#    volumes:
+#      - elasticsearch:/usr/share/elasticsearch/data
+#    environment:
+#      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+#      # Note: currently there doesn't seem to be a way to change the default user for Elasticsearch
+#      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+#      # Use single node discovery in order to disable production mode and avoid bootstrap checks
+#      # see https://www.elastic.co/guide/en/elasticsearch/reference/current/bootstrap-checks.html
+#      discovery.type: single-node
+#      # X-Pack security needs to be enabled for Elasticsearch to actually authenticate requests
+#      xpack.security.enabled: "true"
+#    ports:
+#      - "9200:9200"
+#      - "9300:9300"
+#    healthcheck:
+#      test: "wget -q -O - http://$ELASTIC_USER:$ELASTIC_PASSWORD@localhost:9200/_cat/health"
+#      interval: 1s
+#      timeout: 30s
+#      retries: 300
+#    networks:
+#      - internal
+#    restart: unless-stopped
+#  # https://www.elastic.co/guide/en/logstash/current/docker-config.html
+#  logstash:
+#    image: docker.elastic.co/logstash/logstash:${ELASTIC_VERSION}
+#    ports:
+#      - "5000:5000"
+#      - "9600:9600"
+#    environment:
+#      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+#      ELASTIC_USER: ${ELASTIC_USER}
+#      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+#      XPACK_MONITORING_ELASTICSEARCH_USERNAME: ${ELASTIC_USER}
+#      XPACK_MONITORING_ELASTICSEARCH_PASSWORD: ${ELASTIC_PASSWORD}
+#      XPACK_MONITORING_ELASTICSEARCH_HOSTS: "elasticsearch:9200"
+#      XPACK_MONITORING_ENABLED: "true"
+#    volumes:
+#      - ./config:/usr/share/logstash/pipeline:ro
+#    networks:
+#      - internal
+#    restart: unless-stopped
+#    depends_on:
+#      - elasticsearch
+#  # https://www.elastic.co/guide/en/kibana/current/docker.html
+#  kibana:
+#    image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION}
+#    environment:
+#      ELASTICSEARCH_USERNAME: ${ELASTIC_USER}
+#      ELASTICSEARCH_PASSWORD: ${ELASTIC_PASSWORD}
+#      # Because Elasticsearch is running in a containerized environment
+#      # (setting this to false will result in CPU stats not being correct in the Monitoring UI):
+#      XPACK_MONITORING_UI_CONTAINER_ELASTICSEARCH_ENABLED: "true"
+#    ports:
+#      - "5601:5601"
+#    networks:
+#      - internal
+#    restart: unless-stopped
+#    depends_on:
+#      - elasticsearch
+#      - logstash
+#networks:
+#  internal:
+#volumes:
+#  elasticsearch:
