@@ -1,10 +1,8 @@
 package com.chat.auth;
 
 import com.chat.model.RabbitUserEntity;
+import com.chat.service.RabbitUserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.boot.autoconfigure.amqp.RabbitProperties;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,25 +18,13 @@ import static com.chat.constant.ErrorConstant.ErrorMessage.USER_NOT_EXIST;
 @Service
 @RequiredArgsConstructor
 public class UserDetailsServiceImp implements UserDetailsService, Serializable {
-    private final RabbitTemplate rabbitTemplate;
-    private final RabbitProperties rabbitProperties;
+    private final RabbitUserService rabbitUserService;
 
     @Override
     public final UserDetails loadUserByUsername(final String username)
             throws UsernameNotFoundException {
 
-        RabbitUserEntity attemptedUser = this.rabbitTemplate.convertSendAndReceiveAsType(
-                rabbitProperties.getTemplate().getExchange(),
-                "routing-user",
-                username,
-                message -> {
-                    message.getMessageProperties().setReplyTo(this.rabbitProperties.getTemplate().getDefaultReceiveQueue());
-                    message.getMessageProperties().setCorrelationId(this.rabbitProperties.getTemplate().getRoutingKey());
-                    message.getMessageProperties().setReceivedRoutingKey(this.rabbitProperties.getTemplate().getRoutingKey());
-                    return message;
-                },
-                ParameterizedTypeReference.forType(RabbitUserEntity.class)
-        );
+        RabbitUserEntity attemptedUser = this.rabbitUserService.getUserFromUserServiceByUsername(username);
 
         if (attemptedUser == null) {
             throw new RuntimeException(USER_NOT_EXIST);

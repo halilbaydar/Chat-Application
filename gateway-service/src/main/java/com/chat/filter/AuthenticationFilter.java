@@ -12,7 +12,6 @@ import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.server.ServerWebExchange;
@@ -64,7 +63,7 @@ public class AuthenticationFilter implements GatewayFilter {
     }
 
     private void populateRequestWithHeaders(ServerWebExchange exchange, Claims claims) {
-        List<SimpleGrantedAuthority> grantedAuthorities = jwtUtil.getGrantedAuthorities(claims);
+        List<String> grantedAuthorities = jwtUtil.getGrantedAuthorities(claims);
         String username = claims.getSubject();
         exchange.getRequest().mutate()
                 .header("username", username)

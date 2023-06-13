@@ -2,6 +2,7 @@ package com.chat.filter;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -37,9 +38,14 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
     private Authentication generateAuthentication(HttpServletRequest httpServletRequest) {
         String username = httpServletRequest.getHeader("username");
 
-        List<SimpleGrantedAuthority> simpleGrantedAuthorities = Arrays.stream(httpServletRequest
-                .getHeader("authorities").split(",")).map(SimpleGrantedAuthority::new).toList();
+        List<SimpleGrantedAuthority> simpleGrantedAuthorities = getAuthorities(httpServletRequest);
 
         return new UsernamePasswordAuthenticationToken(username, null, simpleGrantedAuthorities);
+    }
+
+    @NotNull
+    private static List<SimpleGrantedAuthority> getAuthorities(HttpServletRequest httpServletRequest) {
+        return Arrays.stream(httpServletRequest
+                .getHeader("authorities").split(",")).map(SimpleGrantedAuthority::new).toList();
     }
 }

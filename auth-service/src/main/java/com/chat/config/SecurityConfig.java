@@ -55,8 +55,29 @@ public class SecurityConfig {
 
     @Bean
     protected SecurityFilterChain configure(HttpSecurity http, BCryptPasswordEncoder bCryptPasswordEncoder, UserDetailsService userDetailService) throws Exception {
-        return http.cors().and().csrf().disable()// TODO: Enabeble this in production
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED).and().addFilter(new JwtUsernameAndPasswordAuthenticationFilter(jwtConfig, jwtService, authenticationManager(http, bCryptPasswordEncoder, userDetailService))).authorizeRequests().antMatchers("/v1/register/**", "/swagger-ui/**", "/ws/**", "/app/**", "/login/***").permitAll().antMatchers("/user/**").hasAnyRole(Role.USER.name()).anyRequest().fullyAuthenticated().and().build();
+        return http
+                .cors()
+                .and()
+                .csrf()
+                .disable()// TODO: Enabeble this in production
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                .and()
+                .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(
+                        jwtConfig,
+                        jwtService,
+                        authenticationManager(http,
+                                bCryptPasswordEncoder,
+                                userDetailService)))
+                .authorizeRequests()
+                .antMatchers("/v1/register/**", "/swagger-ui/**", "/ws/**", "/app/**", "/login/***")
+                .permitAll()
+                .antMatchers("/user/**")
+                .hasAnyRole(Role.USER.name())
+                .anyRequest()
+                .fullyAuthenticated()
+                .and()
+                .build();
     }
 
 //    @Bean

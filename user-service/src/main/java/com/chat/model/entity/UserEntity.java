@@ -1,17 +1,11 @@
 package com.chat.model.entity;
 
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.io.Serializable;
 import java.math.BigInteger;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
 
 @Getter
 @Setter
@@ -19,20 +13,7 @@ import java.util.Date;
 @Table(name = "users")
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserEntity implements Serializable {
-    @Id
-    private BigInteger id;
-
-    @Column("created_at")
-    @CreatedDate
-    private Long createdAt = new Date().getTime();
-
-    @Column("deleted_at")
-    private Long deletedAt;
-
-    @Column("updated_at")
-    @LastModifiedDate
-    private Long updatedAt = new Date().getTime();
+public class UserEntity extends AbstractEntity<BigInteger> implements Serializable {
 
     @Column
     private String username;
