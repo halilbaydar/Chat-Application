@@ -1,47 +1,58 @@
 package com.chat.filter;
 
 import com.chat.auth.UserDetailsImp;
+import com.chat.model.entity.UserPermission;
 import com.chat.model.request.IdRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.Objects;
+import java.util.Optional;
 
-
-@Component
-public class ChatPermissionEvaluator implements PermissionEvaluator {
+public abstract class ChatPermissionEvaluator implements PermissionEvaluator {
 
     @Override
     public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
 
         if (targetDomainObject == null) {
             return false;
-        }
-
-        if (targetDomainObject instanceof IdRequest) {
-            return checkPermission(authentication, ((IdRequest) targetDomainObject).getId(), permission);
+        } else if (targetDomainObject instanceof IdRequest) {
+            return preAuthorize(authentication, ((IdRequest<?>) targetDomainObject).getId(), (String) permission);
+        } else if (targetDomainObject instanceof ResponseEntity) {
+            var responseBody = ((ResponseEntity<?>) targetDomainObject).getBody();
+            Objects.requireNonNull(responseBody);
+            return postAuthorize(authentication, responseBody, permission);
         }
 
         return false;
     }
 
-    private boolean checkPermission(Authentication authentication, Object id, Object permission) {
-        Collection<? extends GrantedAuthority> permissions = ((UserDetailsImp) authentication.getPrincipal()).getPermissions();
-        if (permissions == null || permissions.size() == 0) {
+    public abstract boolean postAuthorize(Authentication authentication, Object responseBody, Object permission);
+
+    private boolean preAuthorize(final Authentication authentication, final Object id, final String permission) {
+        var firstPermission = Optional.ofNullable(
+                ((UserDetailsImp) authentication.getPrincipal())
+                        .getPermissions()
+                        .get((String) id)
+        ).orElse(UserPermission.empty());
+
+        if (firstPermission.isEmpty()) {
             return true;
         }
-        return permissions.stream().anyMatch(userPer -> hasPermission((String) permission, userPer.getAuthority()));
+        return hasPermission(permission, firstPermission);
     }
 
-    private boolean hasPermission(final String requiredPermission, final String userPermission) {
-        return requiredPermission.equals(userPermission);
+    boolean hasPermission(final String requiredPermission, final UserPermission userPermission) {
+        return requiredPermission.equals(userPermission.getPermissionType());
     }
 
     @Override
-    public boolean hasPermission(Authentication authentication, Serializable targetId, String targetType, Object permission) {
-        return false;
+    public boolean hasPermission(final Authentication authentication, final Serializable targetId, final String targetType, final Object permission) {
+        if (targetId == null) {
+            return false;
+        }
+        return preAuthorize(authentication, targetId, (String) permission);
     }
 }

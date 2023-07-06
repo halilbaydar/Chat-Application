@@ -22,9 +22,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
-//import org.springframework.session.FindByIndexNameSessionRepository;
-//import org.springframework.session.Session;
-//import org.springframework.session.security.SpringSessionBackedSessionRegistry;
 
 import java.util.EventListener;
 
@@ -54,12 +51,15 @@ public class SecurityConfig {
     }
 
     @Bean
-    protected SecurityFilterChain configure(HttpSecurity http, BCryptPasswordEncoder bCryptPasswordEncoder, UserDetailsService userDetailService) throws Exception {
+    protected SecurityFilterChain configure(HttpSecurity http,
+                                            BCryptPasswordEncoder bCryptPasswordEncoder,
+                                            UserDetailsService userDetailService)
+            throws Exception {
         return http
                 .cors()
                 .and()
                 .csrf()
-                .disable()// TODO: Enabeble this in production
+                .disable()// TODO: Enable this in production
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 .and()

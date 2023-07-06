@@ -20,7 +20,8 @@ public class WebSecurityConfig {
                 .anyExchange()
                 .permitAll()
                 .and()
-                .csrf().disable()
+                .csrf()
+                .disable()
                 .build();
     }
 }

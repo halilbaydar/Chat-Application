@@ -43,10 +43,15 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
 
     @NotNull
     private static Stream<SimpleGrantedAuthority> getAuthorities(final HttpServletRequest httpServletRequest) {
-        return Arrays.stream(httpServletRequest
-                        .getHeader(ROLES_CLAIM)
-                        .split(","))
+        return Arrays.stream(getClaims(httpServletRequest))
                 .map(SimpleGrantedAuthority::new);
+    }
+
+    @NotNull
+    private static String[] getClaims(HttpServletRequest httpServletRequest) {
+        return httpServletRequest
+                .getHeader(ROLES_CLAIM)
+                .split(",");
     }
 
     @NotNull

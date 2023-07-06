@@ -12,8 +12,8 @@ import java.math.BigInteger;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "user_permission")
 public class UserPermission extends AbstractEntity<BigInteger> implements Serializable {
 
@@ -25,4 +25,8 @@ public class UserPermission extends AbstractEntity<BigInteger> implements Serial
 
     @Column
     private String permissionType;
+
+    public static UserPermission empty() {
+        return new UserPermission();
+    }
 }

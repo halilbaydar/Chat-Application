@@ -1,10 +1,12 @@
 package com.chat.auth;
 
+import com.chat.model.entity.UserPermission;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 public class UserDetailsImp implements UserDetails {
 
@@ -15,7 +17,7 @@ public class UserDetailsImp implements UserDetails {
     private final boolean isCredentialsNonExpired;
     private final boolean isEnabled;
     private final String password;
-    private List<? extends GrantedAuthority> permissions;
+    private Map<String,UserPermission> permissions;
     public UserDetailsImp(
             final List<? extends GrantedAuthority> grantedAuthorities,
             final String username,
@@ -34,11 +36,11 @@ public class UserDetailsImp implements UserDetails {
         this.isEnabled = isEnabled;
     }
 
-    public List<? extends GrantedAuthority> getPermissions() {
+    public Map<String, UserPermission> getPermissions() {
         return permissions;
     }
 
-    public void setPermissions(List<? extends GrantedAuthority> permissions) {
+    public void setPermissions(Map<String, UserPermission> permissions) {
         this.permissions = permissions;
     }
 

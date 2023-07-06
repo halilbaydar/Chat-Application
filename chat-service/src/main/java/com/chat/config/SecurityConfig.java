@@ -1,6 +1,7 @@
 package com.chat.config;
 
 import com.chat.filter.JwtTokenVerifier;
+import com.chat.interfaces.repository.ChatSecurityContextRepository;
 import com.chat.model.common.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
@@ -31,6 +32,7 @@ import java.util.EventListener;
 public class SecurityConfig {
 
     private final FindByIndexNameSessionRepository<? extends Session> sessionRepository;
+    private final ChatSecurityContextRepository chatSecurityContextRepository;
 
     @Bean
     public static <T extends EventListener> ServletListenerRegistrationBean<T> httpSessionEventPublisher() {
@@ -44,17 +46,27 @@ public class SecurityConfig {
 
     @Bean
     protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
-        return http.cors()
+        return http
+                .sessionManagement(sessionConfig -> sessionConfig
+                        .maximumSessions(1)
+                        .maxSessionsPreventsLogin(true)
+                ).cors()
                 .and()
-                .csrf().disable()// TODO: Enabeble this in production
+                .csrf()
+                .disable()// TODO: Enable this in production
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 .and()
+                .securityContext(contextConfigurer -> {
+                    contextConfigurer.securityContextRepository(chatSecurityContextRepository);
+                })
                 .addFilterBefore(new JwtTokenVerifier(), BasicAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/swagger-ui/**", "/ws/**", "/app/**").permitAll()
                 .antMatchers("/user/**").hasAnyRole(Role.USER.name())
-                .anyRequest().fullyAuthenticated()
-                .and().build();
+                .anyRequest()
+                .fullyAuthenticated()
+                .and()
+                .build();
     }
 
     @Bean

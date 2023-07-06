@@ -11,7 +11,7 @@ import reactor.core.publisher.Mono;
 public interface UserController {
 
     @GetMapping("/user")
-    @PreAuthorize("hashRole('USER')")
+    @PreAuthorize("hashRole('USER') && hasPermission(returnObject, 'READ_USER')")
     Mono<UserResponse> getUser();
 
     //    @Operation(summary = "Get All users.")
