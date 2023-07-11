@@ -11,6 +11,8 @@ import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Set;
+
 @Configuration
 @RequiredArgsConstructor
 public class RouteLocatorConfig {
@@ -26,14 +28,12 @@ public class RouteLocatorConfig {
                 .routes()
                 .route(p -> p
                         .path("/chat/**")
-                        .filters(gatewayFilterSpec -> getGatewayFilterSpec(gatewayFilterSpec, "chat", "chat")
-                        )
+                        .filters(gatewayFilterSpec -> getGatewayFilterSpec(gatewayFilterSpec, "chat", "chat"))
                         .uri("lb://chat-service")
                 )
                 .route(p -> p
                         .path("/user/**")
-                        .filters(gatewayFilterSpec -> getGatewayFilterSpec(gatewayFilterSpec, "user", "user")
-                        )
+                        .filters(gatewayFilterSpec -> getGatewayFilterSpec(gatewayFilterSpec, "user", "user"))
                         .uri("lb://user-service")
                 )
                 .route(p -> p
@@ -64,6 +64,7 @@ public class RouteLocatorConfig {
                 .circuitBreaker(config -> {
                     config.setFallbackUri(String.format("/fallback/%s-fallback", fallback));
                     config.setName("chatCircuitBreaker");
+                    config.setStatusCodes(Set.of());
                 });
     }
 }

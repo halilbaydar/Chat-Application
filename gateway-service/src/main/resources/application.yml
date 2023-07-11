@@ -4,7 +4,7 @@ gateway-service:
   slow-call-rate-threshold: 50
   slow-call-duration-threshold: 50
   permitted-num-of-calls-in-half-open-state: 10
-  sliding-window-size: 10
+  sliding-window-size: 100
   min-number-of-calls: 10
   wait-duration-in-open-state: 60000
   defaultReplenishRate: 5
