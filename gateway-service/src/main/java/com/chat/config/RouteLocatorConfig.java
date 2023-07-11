@@ -2,6 +2,7 @@ package com.chat.config;
 
 import com.chat.filter.AuthenticationFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cloud.gateway.filter.factory.RetryGatewayFilterFactory;
 import org.springframework.cloud.gateway.filter.ratelimit.KeyResolver;
 import org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter;
 import org.springframework.cloud.gateway.route.RouteLocator;
@@ -10,8 +11,6 @@ import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.time.Duration;
-
 @Configuration
 @RequiredArgsConstructor
 public class RouteLocatorConfig {
@@ -19,6 +18,7 @@ public class RouteLocatorConfig {
     private final AuthenticationFilter authenticationFilter;
     private final RedisRateLimiter redisRateLimiter;
     private final KeyResolver authHeaderResolver;
+    private final RetryGatewayFilterFactory.BackoffConfig backoffConfig;
 
     @Bean
     public RouteLocator routeLocator(RouteLocatorBuilder builder) {
@@ -58,7 +58,7 @@ public class RouteLocatorConfig {
                     config.setRateLimiter(redisRateLimiter);
                 })
                 .retry(retryConfig -> {
-                    retryConfig.setBackoff(Duration.ofMillis(100), Duration.ofMillis(1000), 2, Boolean.TRUE);
+                    retryConfig.setBackoff(backoffConfig);
                 }).saveSession()
                 .rewritePath(String.format("/%s(?<segment>/?.*)", pathReplace), "$\\{segment}")
                 .circuitBreaker(config -> {

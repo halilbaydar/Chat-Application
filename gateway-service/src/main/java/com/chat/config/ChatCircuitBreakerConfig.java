@@ -1,6 +1,7 @@
 package com.chat.config;
 
 import com.chat.property.RateLimiterConfigData;
+import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.timelimiter.TimeLimiterConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cloud.circuitbreaker.resilience4j.ReactiveResilience4JCircuitBreakerFactory;
@@ -13,7 +14,7 @@ import java.time.Duration;
 
 @Configuration
 @RequiredArgsConstructor
-public class CircuitBreakerConfig {
+public class ChatCircuitBreakerConfig {
     private final RateLimiterConfigData rateLimitConfigData;
 
     @Bean
@@ -23,7 +24,7 @@ public class CircuitBreakerConfig {
                         .timeLimiterConfig(TimeLimiterConfig.custom()
                                 .timeoutDuration(Duration.ofMillis(rateLimitConfigData.getTimeoutMs()))
                                 .build())
-                        .circuitBreakerConfig(io.github.resilience4j.circuitbreaker.CircuitBreakerConfig.custom()
+                        .circuitBreakerConfig(CircuitBreakerConfig.custom()
                                 .failureRateThreshold(rateLimitConfigData.getFailureRateThreshold())
                                 .slowCallRateThreshold(rateLimitConfigData.getSlowCallRateThreshold())
                                 .slowCallDurationThreshold(Duration.ofMillis(rateLimitConfigData
@@ -34,6 +35,7 @@ public class CircuitBreakerConfig {
                                 .minimumNumberOfCalls(rateLimitConfigData.getMinNumberOfCalls())
                                 .waitDurationInOpenState(Duration.ofMillis(rateLimitConfigData
                                         .getWaitDurationInOpenState()))
+                                .enableAutomaticTransitionFromOpenToHalfOpen()
                                 .build())
                         .build());
     }
