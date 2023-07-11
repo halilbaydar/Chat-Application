@@ -6,6 +6,5 @@ CREATE TABLE IF NOT EXISTS users (
                     status VARCHAR(255) NOT NULL,
                     role VARCHAR(255) NOT NULL,
                     created_at DATE NOT NULL DEFAULT CURRENT_DATE,
-                    deleted_at DATE NOT NULL DEFAULT CURRENT_DATE,
                     updated_at DATE DEFAULT NULL
 );
