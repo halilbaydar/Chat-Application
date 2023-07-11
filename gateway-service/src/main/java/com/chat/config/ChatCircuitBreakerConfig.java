@@ -1,6 +1,7 @@
 package com.chat.config;
 
 import com.chat.property.RateLimiterConfigData;
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import io.github.resilience4j.timelimiter.TimeLimiterConfig;
@@ -63,4 +64,10 @@ public class ChatCircuitBreakerConfig {
     public CircuitBreakerRegistry circuitBreakerRegistry(CircuitBreakerConfig circuitBreakerConfig) {
         return CircuitBreakerRegistry.of(circuitBreakerConfig);
     }
+
+    @Bean
+    public CircuitBreaker circuitBreaker(CircuitBreakerConfig circuitBreakerConfig) {
+        return CircuitBreaker.of("global", circuitBreakerConfig);
+    }
+
 }
