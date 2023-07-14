@@ -14,8 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.chat.constant.ErrorConstant.ErrorMessage.INVALID_OPERATION;
-
 public abstract class AuthUtil {
     public abstract SecretKey getKey();
 
@@ -33,24 +31,16 @@ public abstract class AuthUtil {
         return this.isTokenExpired(claims, new Date());
     }
 
-    public List<SimpleGrantedAuthority> getGrantedAuthorities(Claims body) {
+    public List<String> getGrantedAuthorities(Claims body) {
         List<Map<String, String>> authorities = (List<Map<String, String>>) body.get(HttpConstant.JWT_AUTH_SUBJECT);
         return authorities.stream()
-                .map(m -> new SimpleGrantedAuthority(m.get("authority"))).collect(Collectors.toList());
+                .map(m -> m.get("authority")).collect(Collectors.toList());
     }
 
     private String removeBearer(@NotBlank String token) {
         return token.replaceFirst("Bearer ", "");
     }
 
-    public Authentication generateAuthentication(String token, String username) {
-        List<SimpleGrantedAuthority> simpleGrantedAuthorities = getGrantedAuthorities(getBody(token));
-        return new UsernamePasswordAuthenticationToken(
-                username,
-                null,
-                simpleGrantedAuthorities
-        );
-    }
 
     public Authentication generateAuthentication(String username, List<SimpleGrantedAuthority> simpleGrantedAuthorities) {
         return new UsernamePasswordAuthenticationToken(
