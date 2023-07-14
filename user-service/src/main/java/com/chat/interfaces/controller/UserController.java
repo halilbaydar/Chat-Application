@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+@PreAuthorize("isAuthenticated()")
 @RequestMapping(path = "/v1")
 public interface UserController {
 

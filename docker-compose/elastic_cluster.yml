@@ -5,7 +5,7 @@ services:
     hostname: elastic-1
     environment:
       - node.name=elastic-1
-      - cluster.name=es-twitter-cluster
+      - cluster.name=chat-cluster
       - discovery.seed_hosts=elastic-2,elastic-3
       - cluster.initial_master_nodes=elastic-1,elastic-2,elastic-3
       - bootstrap.memory_lock=true
@@ -24,7 +24,7 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}
     environment:
       - node.name=elastic-2
-      - cluster.name=es-twitter-cluster
+      - cluster.name=chat-cluster
       - discovery.seed_hosts=elastic-1,elastic-3
       - cluster.initial_master_nodes=elastic-1,elastic-2,elastic-3
       - bootstrap.memory_lock=true
@@ -41,7 +41,7 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}
     environment:
       - node.name=elastic-3
-      - cluster.name=es-twitter-cluster
+      - cluster.name=chat-cluster
       - discovery.seed_hosts=elastic-1,elastic-2
       - cluster.initial_master_nodes=elastic-1,elastic-2,elastic-3
       - bootstrap.memory_lock=true
@@ -80,7 +80,7 @@ services:
       - ./docker-logs/logstash:/logs
     environment:
       LS_JAVA_OPTS: "-Xms256m -Xmx512m"
-      CLUSTER_NAME: es-twitter-cluster
+      CLUSTER_NAME: chat-cluster
       XPACK_MONITORING_ELASTICSEARCH_HOSTS: http://elastic-1:9200
     networks:
       - ${GLOBAL_NETWORK:-elastic}
