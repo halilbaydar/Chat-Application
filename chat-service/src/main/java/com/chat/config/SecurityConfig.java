@@ -1,6 +1,6 @@
 package com.chat.config;
 
-import com.chat.filter.JwtTokenVerifier;
+import com.chat.filter.PreAuthenticationFilter;
 import com.chat.interfaces.repository.ChatSecurityContextRepository;
 import com.chat.model.common.Role;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.session.FindByIndexNameSessionRepository;
 import org.springframework.session.Session;
@@ -59,7 +58,7 @@ public class SecurityConfig {
                 .securityContext(contextConfigurer -> {
                     contextConfigurer.securityContextRepository(chatSecurityContextRepository);
                 })
-                .addFilterBefore(new JwtTokenVerifier(), BasicAuthenticationFilter.class)
+                .addFilterBefore(new PreAuthenticationFilter(), PreAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/swagger-ui/**", "/ws/**", "/app/**").permitAll()
                 .antMatchers("/user/**").hasAnyRole(Role.USER.name())

@@ -2,6 +2,7 @@ package com.chat.filter;
 
 import com.chat.auth.JwtUtilImpl;
 import com.chat.constant.HttpConstant;
+import com.chat.exception.token.TokenNotFoundException;
 import com.chat.util.RouterValidator;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
@@ -33,17 +34,25 @@ public class AuthenticationFilter implements GatewayFilter {
         ServerHttpRequest request = exchange.getRequest();
 
         if (routerValidator.isSecured.test(request)) {
-            if (this.isAuthMissing(request))
+            if (this.isAuthMissing(request)) {
                 return this.onError(exchange, "Authorization header is missing in request", HttpStatus.UNAUTHORIZED);
+            }
 
-            final String token = this.getAuthHeader(request);
+            final String token = extractToken(this.getAuthHeader(request));
             Claims claims = jwtUtil.getAllClaimsFromToken(token);
-            if (jwtUtil.isInvalid(claims))
+            if (jwtUtil.isInvalid(claims)) {
                 return this.onError(exchange, "Authorization header is invalid", HttpStatus.UNAUTHORIZED);
-
+            }
             this.populateRequestWithHeaders(exchange, claims);
         }
         return chain.filter(exchange);
+    }
+
+    private String extractToken(String token) {
+        if (token == null) {
+            throw new TokenNotFoundException();
+        }
+        return CollectionUtils.lastElement(Arrays.stream(token.split(" ")).toList());
     }
 
     private Mono<Void> onError(ServerWebExchange exchange, String err, HttpStatus httpStatus) {
