@@ -23,7 +23,6 @@ public class UserDetailsServiceImp implements UserDetailsService, Serializable {
     @Override
     public final UserDetails loadUserByUsername(final String username)
             throws UsernameNotFoundException {
-        HttpSessionSecurityContextRepository
         return this.userRepository
                 .findByUsername(username)
                 .switchIfEmpty(Mono.error(new RuntimeException(USER_NOT_EXIST)))
