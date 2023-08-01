@@ -1,5 +1,6 @@
 package com.chat.config.retry;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.retry.backoff.ExponentialBackOffPolicy;
@@ -7,13 +8,10 @@ import org.springframework.retry.policy.SimpleRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
 
 @Configuration
+@RequiredArgsConstructor
 public class RetryConfig {
 
     private final RetryConfigData retryConfigData;
-
-    public RetryConfig(RetryConfigData configData) {
-        this.retryConfigData = configData;
-    }
 
     @Bean
     public RetryTemplate retryTemplate() {
@@ -22,10 +20,7 @@ public class RetryConfig {
         exponentialBackOffPolicy.setMaxInterval(retryConfigData.getMaxIntervalMs());
         exponentialBackOffPolicy.setMultiplier(retryConfigData.getMultiplier());
 
-        RetryTemplate retryTemplate = RetryTemplate.builder()
-                .exponentialBackoff(exponentialBackOffPolicy)
-                .build();
-
+        RetryTemplate retryTemplate = RetryTemplate.builder().build();
 
         retryTemplate.setBackOffPolicy(exponentialBackOffPolicy);
 

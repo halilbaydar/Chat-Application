@@ -1,16 +1,12 @@
-package com.chat.config;
+package com.chat.security;
 
-import com.chat.auth.ChatReactiveUserDetailsService;
-import com.chat.filter.PreAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
-import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.ReactivePreAuthenticatedAuthenticationManager;
 import org.springframework.security.web.server.context.ServerSecurityContextRepository;
@@ -20,8 +16,8 @@ import org.springframework.web.server.WebSession;
 @RequiredArgsConstructor
 @EnableReactiveMethodSecurity
 public class WebSecurityConfig {
-    private final ChatReactiveUserDetailsService chatReactiveUserDetailsService;
-    private final ServerSecurityContextRepository serverSecurityContextRepository;
+    private final ReactiveUserDetailsService chatReactiveUserDetailsService;
+    private final ServerSecurityContextRepository redissonServerSecurityContextRepository;
 
     @Bean
     public SecurityWebFilterChain webFluxSecurityConfig(ServerHttpSecurity http) {
@@ -34,10 +30,9 @@ public class WebSecurityConfig {
                 .anyExchange()
                 .authenticated()
                 .and()
-                .addFilterAfter(new PreAuthenticationFilter(), SecurityWebFiltersOrder.AUTHORIZATION)
                 .csrf()
                 .disable()
-                .securityContextRepository(serverSecurityContextRepository)
+                .securityContextRepository(redissonServerSecurityContextRepository)
                 .build();
     }
 
@@ -48,15 +43,6 @@ public class WebSecurityConfig {
 
     @Bean
     public ReactivePreAuthenticatedAuthenticationManager reactiveAuthenticationManager() {
-        var reactivePreAuthenticatedAuthenticationManager = new ReactivePreAuthenticatedAuthenticationManager(chatReactiveUserDetailsService);
-        return reactivePreAuthenticatedAuthenticationManager;
-    }
-
-    @Bean
-    public AuthenticationProvider authenticationProvider() {
-        var daoAuthenticationProvider = new DaoAuthenticationProvider();
-        daoAuthenticationProvider.setPreAuthenticationChecks();
-
-        return daoAuthenticationProvider;
+        return new ReactivePreAuthenticatedAuthenticationManager(chatReactiveUserDetailsService);
     }
 }

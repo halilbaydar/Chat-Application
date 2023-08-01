@@ -1,4 +1,4 @@
-package com.chat.auth;
+package com.chat.security;
 
 import com.chat.interfaces.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +14,6 @@ public class ChatReactiveUserDetailsService implements ReactiveUserDetailsServic
 
     @Override
     public Mono<UserDetails> findByUsername(String username) {
-        return userService.loadUserWithRolesByUsername(username);
+        return userService.loadUserDetails(username);
     }
 }

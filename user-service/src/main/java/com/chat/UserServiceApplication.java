@@ -1,7 +1,6 @@
 package com.chat;
 
 import com.chat.client.ChatKafkaAdminClient;
-import com.chat.filter.ChatPermissionEvaluator;
 import com.chat.kafka.producer.ElasticKafkaProducer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +9,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
-import org.springframework.security.core.Authentication;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -25,8 +23,8 @@ public class UserServiceApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        chatKafkaAdminClient.createTopics();
-        chatKafkaAdminClient.checkSchemaRegistry();
+//        chatKafkaAdminClient.createTopics();
+//        chatKafkaAdminClient.checkSchemaRegistry();
         log.info("Topics generated successfully!!!!");
 //        elasticKafkaProducer.run();
     }

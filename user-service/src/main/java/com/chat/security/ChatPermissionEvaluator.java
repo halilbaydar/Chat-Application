@@ -1,4 +1,4 @@
-package com.chat.auth;
+package com.chat.security;
 
 import com.chat.model.request.IdRequest;
 import org.springframework.http.ResponseEntity;

@@ -2,7 +2,6 @@ package com.chat.config;
 
 import com.chat.auth.JwtConfig;
 import com.chat.auth.JwtUtilImpl;
-import com.chat.auth.Role;
 import com.chat.filter.JwtUsernameAndPasswordAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
@@ -73,8 +72,6 @@ public class SecurityConfig {
                 .antMatchers("/v1/register/**", "/swagger-ui/**", "/ws/**", "/app/**", "/login/***")
                 .permitAll()
                 .antMatchers("/user/**")
-                .hasAnyRole(Role.USER.name())
-                .anyRequest()
                 .fullyAuthenticated()
                 .and()
                 .build();
@@ -88,6 +85,11 @@ public class SecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring().antMatchers("/v1/register/**", "/ws/**", "/app/**");
+    }
+
+    @Bean
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     @Bean

@@ -1,8 +1,7 @@
 package com.chat.consumer;
 
 import com.chat.interfaces.repository.UserRepository;
-import com.chat.model.RabbitUserEntity;
-import com.chat.model.entity.UserEntity;
+import com.chat.model.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.redisson.api.RedissonReactiveClient;
 import org.redisson.codec.TypedJsonJacksonCodec;
@@ -24,20 +23,11 @@ public class RoutingKeyUsersConsumer implements RMessageConsumer<String, Object>
     @UserRequestsListener
     public Object consume(String username) throws RuntimeException {
         var userCache = redissonReactiveClient.getMapCache("cache:user",
-                new TypedJsonJacksonCodec(String.class, UserEntity.class));
+                new TypedJsonJacksonCodec(String.class, UserDto.class));
         return userCache.get(userCache)
                 .filter(Objects::nonNull)
                 .switchIfEmpty(this.userRepository.findByUsername(username)
                         .filter(Objects::nonNull)
-                        .map(userEntity -> new RabbitUserEntity(
-                                userEntity.getId(),
-                                userEntity.getUsername(),
-                                userEntity.getName(),
-                                userEntity.getRole(),
-                                userEntity.getStatus(),
-                                userEntity.getPassword(),
-                                userEntity.getCreatedAt(),
-                                userEntity.getUpdatedAt()))
                         .flatMap(user -> userCache.fastPut(username, user, 30, TimeUnit.SECONDS)
                                 .thenReturn(user))
                 )

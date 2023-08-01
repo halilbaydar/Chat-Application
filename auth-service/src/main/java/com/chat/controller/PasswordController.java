@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path = "/v1/user")
 public class PasswordController {
 
-    @PreAuthorize("hasRole('RESET_PASSWORD') && hasPermission() && hasAuthority('OPTIONS_UPDATE')")
+    @PreAuthorize("hasRole('RESET_PASSWORD') && hasAuthority('OPTIONS_UPDATE')")
     @PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@RequestParam("password") String password) {
         return null;

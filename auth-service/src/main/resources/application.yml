@@ -49,3 +49,10 @@ jwt:
   tokenPrefix: 'Bearer '
   tokenExpirationForVerification: 10
   tokenExpirationForLogin: 20
+
+retryConfig:
+  initialIntervalMs: 1000
+  maxIntervalMs: 100
+  multiplier: 1
+  maxAttempts: 10
+  sleepTimeMs: 100

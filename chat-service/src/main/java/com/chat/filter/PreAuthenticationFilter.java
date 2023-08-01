@@ -24,6 +24,7 @@ public class PreAuthenticationFilter extends AbstractPreAuthenticatedProcessingF
     }
 
     @NonNull
+
     private static AuthenticationManager getAuthenticationManager() {
         return authentication -> {
             var preAuthProvider = new PreAuthenticatedAuthenticationProvider();

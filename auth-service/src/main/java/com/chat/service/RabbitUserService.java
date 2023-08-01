@@ -1,6 +1,6 @@
 package com.chat.service;
 
-import com.chat.model.RabbitUserEntity;
+import com.chat.model.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.boot.autoconfigure.amqp.RabbitProperties;
@@ -13,7 +13,7 @@ public class RabbitUserService {
     private final RabbitTemplate rabbitTemplate;
     private final RabbitProperties rabbitProperties;
 
-    public RabbitUserEntity getUserFromUserServiceByUsername(final String username) {
+    public UserDto getUserFromUserServiceByUsername(final String username) {
         return this.rabbitTemplate
                 .convertSendAndReceiveAsType(
                         rabbitProperties.getTemplate().getExchange(),
@@ -25,7 +25,7 @@ public class RabbitUserService {
                             message.getMessageProperties().setReceivedRoutingKey(this.rabbitProperties.getTemplate().getRoutingKey());
                             return message;
                         },
-                        ParameterizedTypeReference.forType(RabbitUserEntity.class)
+                        ParameterizedTypeReference.forType(UserDto.class)
                 );
     }
 }

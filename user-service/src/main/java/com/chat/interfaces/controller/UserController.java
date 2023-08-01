@@ -1,6 +1,6 @@
 package com.chat.interfaces.controller;
 
-import com.chat.model.entity.UserResponse;
+import com.chat.model.dto.UserResponse;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,7 +12,7 @@ import reactor.core.publisher.Mono;
 public interface UserController {
 
     @GetMapping("/user")
-    @PreAuthorize("hashRole('USER') && hasPermission(returnObject, 'READ_USER')")
+    @PreAuthorize("hashRole('USER')")
     Mono<UserResponse> getUser();
 
     //    @Operation(summary = "Get All users.")

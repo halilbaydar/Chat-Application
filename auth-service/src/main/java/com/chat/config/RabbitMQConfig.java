@@ -20,7 +20,6 @@ import org.springframework.retry.support.RetryTemplate;
 public class RabbitMQConfig {
 
     private final RabbitProperties rabbitMQProperties;
-    private final RetryTemplate retryTemplate;
 
     @Bean
     public RabbitAdmin rabbitAdmin(ConnectionFactory connectionFactory) {

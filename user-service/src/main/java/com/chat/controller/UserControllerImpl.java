@@ -2,7 +2,7 @@ package com.chat.controller;
 
 import com.chat.interfaces.controller.UserController;
 import com.chat.interfaces.service.UserService;
-import com.chat.model.entity.UserResponse;
+import com.chat.model.dto.UserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;

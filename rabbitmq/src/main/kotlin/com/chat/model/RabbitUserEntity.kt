@@ -8,7 +8,7 @@ data class RabbitUserEntity(
     val id: BigInteger,
     val username: String,
     val name: String,
-    val role: String,
+    val roles: String,
     val status: String,
     val password: String,
     val createdAt: Long,

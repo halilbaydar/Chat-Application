@@ -44,13 +44,11 @@ public abstract class AuthUtil {
                 .map(m -> new SimpleGrantedAuthority(m.get("authority"))).collect(Collectors.toList());
     }
 
-    public Authentication generateAuthentication(String token, String username) {
-        List<SimpleGrantedAuthority> simpleGrantedAuthorities = getGrantedAuthorities(getBody(token));
-        return new UsernamePasswordAuthenticationToken(
-                username,
-                null,
-                simpleGrantedAuthorities
-        );
+    public Authentication generateAuthentication(String token) {
+        var body = getBody(token);
+        var username = body.getSubject();
+        List<SimpleGrantedAuthority> simpleGrantedAuthorities = getGrantedAuthorities(body);
+        return generateAuthentication(username, simpleGrantedAuthorities);
     }
 
     public Authentication generateAuthentication(String username, List<SimpleGrantedAuthority> simpleGrantedAuthorities) {

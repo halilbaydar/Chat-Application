@@ -20,8 +20,7 @@ import java.util.*
 class ElasticKafkaConsumer(
     @Qualifier("user-to-elastic")
     private val kafkaConsumerTemplate: ReactiveKafkaConsumerTemplate<String, UserAvroModel>,
-    @Qualifier("user-to-elastic-receiver")
-    private val kafkaReceiver: KafkaReceiver<String, UserAvroModel>,
+    private val userToElasticReceiver: KafkaReceiver<String, UserAvroModel>,
     private val LOG: LoggingConfig,
     private val elasticClientService: ElasticClientService,
     @Qualifier("kafka-to-elastic-retry")
@@ -29,7 +28,7 @@ class ElasticKafkaConsumer(
 ) : CommandLineRunner {
 
     fun receiveUserModel() {
-        this.kafkaReceiver
+        this.userToElasticReceiver
             .receiveAutoAck()
             .flatMap({ batchProcess(it) }, 10)
             .retryWhen(retry)
