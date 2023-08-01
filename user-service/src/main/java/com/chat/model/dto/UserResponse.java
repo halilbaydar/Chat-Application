@@ -1,4 +1,4 @@
-package com.chat.model.entity;
+package com.chat.model.response;
 
 import java.util.Date;
 

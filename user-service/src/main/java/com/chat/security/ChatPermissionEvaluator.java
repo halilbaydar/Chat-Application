@@ -1,15 +1,15 @@
-package com.chat.filter;
+package com.chat.auth;
 
-import com.chat.auth.UserDetailsImp;
-import com.chat.model.entity.UserPermission;
 import com.chat.model.request.IdRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Objects;
-import java.util.Optional;
 
 public abstract class ChatPermissionEvaluator implements PermissionEvaluator {
 
@@ -32,20 +32,12 @@ public abstract class ChatPermissionEvaluator implements PermissionEvaluator {
     public abstract boolean postAuthorize(Authentication authentication, Object responseBody, Object permission);
 
     private boolean preAuthorize(final Authentication authentication, final Object id, final String permission) {
-        var firstPermission = Optional.ofNullable(
-                ((UserDetailsImp) authentication.getPrincipal())
-                        .getPermissions()
-                        .get((String) id)
-        ).orElse(UserPermission.empty());
-
-        if (firstPermission.isEmpty()) {
-            return true;
-        }
-        return hasPermission(permission, firstPermission);
+        var userPermissions = ((User) authentication.getPrincipal()).getAuthorities();
+        return hasPermission(permission, userPermissions);
     }
 
-    boolean hasPermission(final String requiredPermission, final UserPermission userPermission) {
-        return requiredPermission.equals(userPermission.getPermissionType());
+    boolean hasPermission(final String requiredPermission, final Collection<GrantedAuthority> userPermissions) {
+        return userPermissions.stream().map(GrantedAuthority::getAuthority).anyMatch(requiredPermission::equals);
     }
 
     @Override
