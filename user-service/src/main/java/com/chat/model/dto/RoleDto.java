@@ -1,8 +1,10 @@
 package com.chat.model.dto;
 
+import org.springframework.security.core.GrantedAuthority;
+
 import java.util.Set;
 
-public interface RoleDto {
+public interface RoleDto extends GrantedAuthority {
     String role();
 
     default String getAuthority() {

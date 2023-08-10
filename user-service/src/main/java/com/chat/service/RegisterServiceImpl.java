@@ -27,6 +27,7 @@ public class RegisterServiceImpl implements RegisterService {
     private final PasswordEncoder passwordEncoder;
     private final UserLogger LOG;
     private final UserElasticService userElasticService;
+    private final UserRoleService userRoleService;
 
     @Override
     @Transactional
@@ -51,7 +52,8 @@ public class RegisterServiceImpl implements RegisterService {
                         .map(registerContextRequest::setNewUser)
                         .thenReturn(registerContextRequest))
                 .map(RegisterContextRequest::getNewUser)
-                .flatMap(this.userElasticService::send).map(senderResult -> SUCCESS)
+                .flatMap(newUser -> this.userElasticService.send(newUser).thenReturn(newUser)
+                        .flatMap(this.userRoleService::assignBaseRole)).map(senderResult -> SUCCESS)
                 .onErrorResume(Mono::error)
                 .doOnError(ex ->
                         LOG.register.info("User register failed with ex: {}", ex.getMessage(), ex)

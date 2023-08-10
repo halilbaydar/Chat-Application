@@ -21,7 +21,11 @@ public class RoleEntity extends BaseEntity<Long, RoleEntity> implements GrantedA
     private String role;
 
     @Transient
-    private Set<Permission> permissions;
+    private Set<PermissionEntity> permissionEntities;
+
+    public static RoleEntity assignBaseRole(UserEntity userEntity) {
+        return RoleEntity.builder().id(1L
+    }
 
     @Override
     public String getAuthority() {

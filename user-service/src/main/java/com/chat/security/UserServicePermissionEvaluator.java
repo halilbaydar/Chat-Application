@@ -1,6 +1,5 @@
 package com.chat.security;
 
-import com.chat.security.ChatPermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 

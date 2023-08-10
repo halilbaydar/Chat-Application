@@ -11,7 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 @Setter
 @SuperBuilder
 @Table(name = "CHAT_PERMISSONS")
-public class Permission extends BaseEntity<Long, Permission> implements GrantedAuthority {
+public class PermissionEntity extends BaseEntity<Long, PermissionEntity> implements GrantedAuthority {
     @Column("AUTHORITY")
     private String authority;
 }
