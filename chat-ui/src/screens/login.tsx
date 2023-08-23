@@ -2,10 +2,9 @@ import React, {JSX, useState} from "react";
 import LoginStyles from '../styles/login.css'
 import {Button, Form, Input, message} from "antd";
 import {LockOutlined, UserOutlined} from "@ant-design/icons";
-import LoginHandler from "../service/login.service";
-import {AUTHORIZATION} from "../constants/api.constant";
 import {useNavigate} from "react-router-dom";
 import ChatHeader from "../components/chat.header.component";
+import AuthService from "../api/auth.service";
 
 interface LoginFormValues {
     username: string,
@@ -14,14 +13,14 @@ interface LoginFormValues {
 
 export default function Login(): JSX.Element {
     const [loading, setLoading] = useState(false)
-    const navigator = useNavigate()
+    const navigate = useNavigate()
+    const authService = AuthService.getInstance();
+
     const onFinish = (values: LoginFormValues) => {
         setLoading(true)
-        LoginHandler(values)
+        authService.login(values)
             .then(response => {
-                const token = response.headers[AUTHORIZATION]
-                localStorage.setItem(AUTHORIZATION, token)
-                navigator("/chat")
+                navigate("/chat")
             })
             .catch(error => {
                 message.error(`Credentials are wrong. Message: ${error.message}`)
