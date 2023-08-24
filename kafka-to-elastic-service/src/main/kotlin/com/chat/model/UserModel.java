@@ -11,8 +11,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class UserModel {
     public Long id;
-    public String createdAt;
-    public String updatedAt;
+    public Object createdAt;
+    public Object updatedAt;
     public String username;
     public String name;
     public String password;
