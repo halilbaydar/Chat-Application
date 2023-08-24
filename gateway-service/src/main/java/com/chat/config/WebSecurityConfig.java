@@ -22,6 +22,9 @@ public class WebSecurityConfig {
                 .and()
                 .csrf()
                 .disable()
+                .cors(corsSpec -> {
+                    corsSpec.disable();
+                })
                 .build();
     }
 }

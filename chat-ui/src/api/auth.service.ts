@@ -33,7 +33,7 @@ export default class AuthService {
         try {
             const user = chatStorage.load(USER) as IUser
             const response = await instance.post("/refresh", {
-                username: user.username
+                username: user.username,
             })
             const token = response.headers["Authorization"]
             chatStorage.store(ACCESS_TOKEN, token)

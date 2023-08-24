@@ -16,12 +16,6 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-    <repositories>
-        <repository>
-            <id>confluent</id>
-            <url>https://packages.confluent.io/maven/</url>
-        </repository>
-    </repositories>
     <dependencies>
         <!--RabbitMQ-->
         <dependency>
@@ -57,11 +51,11 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>javax.validation</groupId>-->
-<!--            <artifactId>validation-api</artifactId>-->
-<!--            <version>2.0.1.Final</version>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>javax.validation</groupId>-->
+        <!--            <artifactId>validation-api</artifactId>-->
+        <!--            <version>2.0.1.Final</version>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>r2dbc-postgresql</artifactId>
@@ -77,17 +71,21 @@
 
         <dependency>
             <groupId>com.chat</groupId>
+            <artifactId>kafka-model</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.chat</groupId>
             <artifactId>kafka-admin</artifactId>
         </dependency>
         <dependency>
             <groupId>com.chat</groupId>
-            <artifactId>kafka-model</artifactId>
+            <artifactId>rabbitmq</artifactId>
         </dependency>
         <!--	KAFKA	-->
-<!--        <dependency>-->
-<!--            <groupId>org.springdoc</groupId>-->
-<!--            <artifactId>springdoc-openapi-ui</artifactId>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.springdoc</groupId>-->
+        <!--            <artifactId>springdoc-openapi-ui</artifactId>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
@@ -123,10 +121,10 @@
             </exclusions>
         </dependency>
         <!-- REDIS -->
-        <dependency>
-            <groupId>com.chat</groupId>
-            <artifactId>rabbitmq</artifactId>
-        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>com.chat</groupId>-->
+        <!--            <artifactId>rabbitmq</artifactId>-->
+        <!--        </dependency>-->
 
         <!-- TEST -->
         <dependency>
@@ -206,6 +204,10 @@
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
             <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
         </dependency>
         <!-- LOGBACK -->
     </dependencies>

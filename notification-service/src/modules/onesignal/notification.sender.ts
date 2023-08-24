@@ -1,11 +1,9 @@
-import {Inject, Injectable} from "@nestjs/common";
-import {ONESIGNAL_MODULE_OPTIONS} from "./onesignal.module";
-import {OneSignalService} from "./one.signal.ervice";
+import {Injectable} from "@nestjs/common";
 import {INotification} from "onesignal-api-client-core/lib/dto/notifications";
 
 @Injectable()
 export class NotificationSenderService {
-    constructor(private readonly oneSignalClient: OneSignalService) {
+    constructor() {
     }
 
     public async send(data: any): Promise<string> {
@@ -16,9 +14,7 @@ export class NotificationSenderService {
                     en: "Hello OneSignal!"
                 },
             }
-
-            const {id} = await this.oneSignalClient.createNotification(notification);
-            return id
+            return ""
         } catch (err) {
 
         }

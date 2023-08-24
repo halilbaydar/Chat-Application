@@ -2,20 +2,14 @@ import {DynamicModule, Module} from "@nestjs/common";
 import {OneSignalService} from "./one.signal.ervice";
 import {IOneSignalModuleOptions} from "./interfaces";
 
-export const ONESIGNAL_MODULE_OPTIONS = "ONESIGNAL_MODULE_OPTIONS";
+export const ONESIGNAL_MODULE_OPTIONS =  {
+    appId: process.env.NOTIFICATION_APP_ID,
+    restApiKey: process.env.NOTIFICATION_API_KEY
+}
 
 @Module({
     providers: [OneSignalService],
     exports: [OneSignalService]
 })
 export class OnesignalModule {
-    public static register(options: IOneSignalModuleOptions): DynamicModule {
-        return {
-            module: OnesignalModule,
-            providers: [{
-                provide: ONESIGNAL_MODULE_OPTIONS,
-                useValue: options || {},
-            }]
-        };
-    }
 }

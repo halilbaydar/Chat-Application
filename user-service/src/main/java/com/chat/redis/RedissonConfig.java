@@ -7,6 +7,7 @@ import org.redisson.codec.TypedJsonJacksonCodec;
 import org.redisson.config.Config;
 import org.redisson.spring.cache.RedissonSpringCacheManager;
 import org.redisson.spring.data.connection.RedissonConnectionFactory;
+import org.redisson.spring.starter.RedissonProperties;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

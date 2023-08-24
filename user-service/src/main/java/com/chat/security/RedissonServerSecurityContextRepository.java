@@ -32,7 +32,11 @@ public class RedissonServerSecurityContextRepository implements ServerSecurityCo
         var mapCache = redissonReactiveClient.<String, PreAuthenticatedAuthenticationToken>getMapCache(DEFAULT_SECURITY_CONTEXT, new TypedJsonJacksonCodec(String.class, PreAuthenticatedAuthenticationToken.class));
         var key = exchange.getRequest().getHeaders().getFirst(USERNAME);
         var authentication = mapCache.get(key);
-        return authentication.map(preAuthenticatedAuthenticationToken -> new SecurityContext() {
+        return authentication.switchIfEmpty(Mono.empty()).map(this::fromSecurityContext);
+    }
+
+    private SecurityContext fromSecurityContext(PreAuthenticatedAuthenticationToken preAuthenticatedAuthenticationToken) {
+        return new SecurityContext() {
             @Override
             public Authentication getAuthentication() {
                 return preAuthenticatedAuthenticationToken;
@@ -42,6 +46,6 @@ public class RedissonServerSecurityContextRepository implements ServerSecurityCo
             public void setAuthentication(Authentication authentication) {
 
             }
-        });
+        };
     }
 }

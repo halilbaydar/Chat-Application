@@ -15,8 +15,8 @@ export default class UserService {
 
     public async register({username, password}: LoginReq): Promise<string | undefined> {
         try {
-            const {data} = await instance.post("/register", {
-                username, password
+            const {data} = await instance.post("/user/v1/register", {
+                username, name: username, password
             })
             return data;
         } catch (err: any) {

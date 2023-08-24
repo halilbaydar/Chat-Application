@@ -7,7 +7,7 @@ log:
 kafka-to-elastic-service:
   consumer:
     topic:
-      user: 'user-to-elastic'
+      user: USER_REGISTER_KAFKA_TOPIC
 
 elastic-index:
   userIndex: users
@@ -39,7 +39,8 @@ spring:
       group-id: kafka-to-elastic-service
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+#      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
     properties:
       schema.registry.url: http://localhost:8081
   data:

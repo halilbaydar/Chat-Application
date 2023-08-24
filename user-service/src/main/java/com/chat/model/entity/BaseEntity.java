@@ -17,13 +17,14 @@ import java.time.LocalDateTime;
 public abstract class BaseEntity<ID extends Serializable, T extends BaseEntity> {
 
     @Id
+    @Column
     private ID id;
 
     @CreatedDate
-    @Column("CREATED_AT")
+    @Column
     private LocalDateTime createdAt;
 
     @LastModifiedDate
-    @Column("UPDATED_AT")
+    @Column
     private LocalDateTime updatedAt;
 }

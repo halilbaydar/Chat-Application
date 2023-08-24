@@ -1,16 +1,18 @@
 import {Module} from '@nestjs/common';
-import {NotificationConsumer} from "../kafka/notification-consumer/notification.consumer";
 import {NotificationSenderConsumer, NotificationSenderListener} from "./onesignal.consumer/consumer";
 import {BullModule} from "@nestjs/bullmq";
 import {WORKFLOW_CONFIG} from "./core/queue.configs";
+import {NotificationSenderService} from "../onesignal/notification.sender";
+import {QueueService} from "./queue.service";
 
 @Module({
     imports: [BullModule.registerQueue(...WORKFLOW_CONFIG)],
     controllers: [],
     providers: [
-        NotificationConsumer,
         NotificationSenderConsumer,
-        NotificationSenderListener
+        NotificationSenderListener,
+        NotificationSenderService,
+        QueueService
     ]
 })
 export class ModuleWorkflow {

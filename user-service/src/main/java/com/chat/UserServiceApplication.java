@@ -1,7 +1,7 @@
 package com.chat;
 
 import com.chat.client.ChatKafkaAdminClient;
-import com.chat.kafka.producer.ElasticKafkaProducer;
+import com.chat.kafka.producer.impl.KafkaUserRegisterEventProducer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.spring.starter.RedissonAutoConfiguration;
@@ -15,7 +15,7 @@ import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 @SpringBootApplication(exclude = {RedisAutoConfiguration.class, RedissonAutoConfiguration.class})
 public class UserServiceApplication implements CommandLineRunner {
     private final ChatKafkaAdminClient chatKafkaAdminClient;
-    private final ElasticKafkaProducer elasticKafkaProducer;
+    private final KafkaUserRegisterEventProducer kafkaProducer;
 
     public static void main(String[] args) {
         SpringApplication.run(UserServiceApplication.class, args);

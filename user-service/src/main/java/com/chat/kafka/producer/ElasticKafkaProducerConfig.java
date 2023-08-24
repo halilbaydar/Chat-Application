@@ -11,15 +11,15 @@ import reactor.kafka.sender.SenderOptions;
 @Configuration
 public class ElasticKafkaProducerConfig {
 
-    @Bean("user-to-elastic-producer-option")
-    public SenderOptions<String, UserAvroModel> senderOps(KafkaProperties kafkaProperties) {
+    @Bean("user-register-producer-option")
+    public SenderOptions<String, String> senderOps(KafkaProperties kafkaProperties) {
         return SenderOptions.create(kafkaProperties.buildProducerProperties());
     }
 
-    @Bean("user-to-elastic-producer-template")
-    public ReactiveKafkaProducerTemplate<String, UserAvroModel> reactiveKafkaProducerTemplate(
-            @Qualifier("user-to-elastic-producer-option")
-            SenderOptions<String, UserAvroModel> senderOptions) {
+    @Bean("user-register-producer-template")
+    public ReactiveKafkaProducerTemplate<String, String> reactiveKafkaUserProducerTemplate(
+            @Qualifier("user-register-producer-option")
+            SenderOptions<String, String> senderOptions) {
         return new ReactiveKafkaProducerTemplate<>(senderOptions);
     }
 }

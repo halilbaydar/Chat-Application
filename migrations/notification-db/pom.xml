@@ -30,6 +30,27 @@
         </dependency>
     </dependencies>
 
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.flywaydb</groupId>
+                        <artifactId>flyway-maven-plugin</artifactId>
+                        <version>8.5.13</version>
+                        <configuration>
+                            <user>user</user>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
     <build>
         <plugins>
             <plugin>

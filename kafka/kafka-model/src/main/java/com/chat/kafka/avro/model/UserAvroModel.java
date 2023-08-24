@@ -14,10 +14,10 @@ import org.apache.avro.message.SchemaStore;
 
 @org.apache.avro.specific.AvroGenerated
 public class UserAvroModel extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = -2767158066801384027L;
+  private static final long serialVersionUID = 423690647297211075L;
 
 
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"UserAvroModel\",\"namespace\":\"com.chat.kafka.avro.model\",\"fields\":[{\"name\":\"id\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"name\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"username\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"createdDate\",\"type\":[\"null\",\"long\"],\"logicalType\":[\"null\",\"date\"]}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"UserAvroModel\",\"namespace\":\"com.chat.kafka.avro.model\",\"fields\":[{\"name\":\"id\",\"type\":\"long\"},{\"name\":\"name\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"username\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"createdAt\",\"type\":[\"null\",\"long\"],\"logicalType\":[\"null\",\"date\"]}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   private static final SpecificData MODEL$ = new SpecificData();
@@ -73,10 +73,10 @@ public class UserAvroModel extends org.apache.avro.specific.SpecificRecordBase i
     return DECODER.decode(b);
   }
 
-  private java.lang.String id;
+  private long id;
   private java.lang.Object name;
   private java.lang.Object username;
-  private java.lang.Long createdDate;
+  private java.lang.Long createdAt;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -90,13 +90,13 @@ public class UserAvroModel extends org.apache.avro.specific.SpecificRecordBase i
    * @param id The new value for id
    * @param name The new value for name
    * @param username The new value for username
-   * @param createdDate The new value for createdDate
+   * @param createdAt The new value for createdAt
    */
-  public UserAvroModel(java.lang.String id, java.lang.Object name, java.lang.Object username, java.lang.Long createdDate) {
+  public UserAvroModel(java.lang.Long id, java.lang.Object name, java.lang.Object username, java.lang.Long createdAt) {
     this.id = id;
     this.name = name;
     this.username = username;
-    this.createdDate = createdDate;
+    this.createdAt = createdAt;
   }
 
   @Override
@@ -112,7 +112,7 @@ public class UserAvroModel extends org.apache.avro.specific.SpecificRecordBase i
     case 0: return id;
     case 1: return name;
     case 2: return username;
-    case 3: return createdDate;
+    case 3: return createdAt;
     default: throw new IndexOutOfBoundsException("Invalid index: " + field$);
     }
   }
@@ -122,10 +122,10 @@ public class UserAvroModel extends org.apache.avro.specific.SpecificRecordBase i
   @SuppressWarnings(value="unchecked")
   public void put(int field$, java.lang.Object value$) {
     switch (field$) {
-    case 0: id = value$ != null ? value$.toString() : null; break;
+    case 0: id = (java.lang.Long)value$; break;
     case 1: name = value$; break;
     case 2: username = value$; break;
-    case 3: createdDate = (java.lang.Long)value$; break;
+    case 3: createdAt = (java.lang.Long)value$; break;
     default: throw new IndexOutOfBoundsException("Invalid index: " + field$);
     }
   }
@@ -134,7 +134,7 @@ public class UserAvroModel extends org.apache.avro.specific.SpecificRecordBase i
    * Gets the value of the 'id' field.
    * @return The value of the 'id' field.
    */
-  public java.lang.String getId() {
+  public long getId() {
     return id;
   }
 
@@ -143,7 +143,7 @@ public class UserAvroModel extends org.apache.avro.specific.SpecificRecordBase i
    * Sets the value of the 'id' field.
    * @param value the value to set.
    */
-  public void setId(java.lang.String value) {
+  public void setId(long value) {
     this.id = value;
   }
 
@@ -182,20 +182,20 @@ public class UserAvroModel extends org.apache.avro.specific.SpecificRecordBase i
   }
 
   /**
-   * Gets the value of the 'createdDate' field.
-   * @return The value of the 'createdDate' field.
+   * Gets the value of the 'createdAt' field.
+   * @return The value of the 'createdAt' field.
    */
-  public java.lang.Long getCreatedDate() {
-    return createdDate;
+  public java.lang.Long getCreatedAt() {
+    return createdAt;
   }
 
 
   /**
-   * Sets the value of the 'createdDate' field.
+   * Sets the value of the 'createdAt' field.
    * @param value the value to set.
    */
-  public void setCreatedDate(java.lang.Long value) {
-    this.createdDate = value;
+  public void setCreatedAt(java.lang.Long value) {
+    this.createdAt = value;
   }
 
   /**
@@ -239,10 +239,10 @@ public class UserAvroModel extends org.apache.avro.specific.SpecificRecordBase i
   public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<UserAvroModel>
     implements org.apache.avro.data.RecordBuilder<UserAvroModel> {
 
-    private java.lang.String id;
+    private long id;
     private java.lang.Object name;
     private java.lang.Object username;
-    private java.lang.Long createdDate;
+    private java.lang.Long createdAt;
 
     /** Creates a new Builder */
     private Builder() {
@@ -267,8 +267,8 @@ public class UserAvroModel extends org.apache.avro.specific.SpecificRecordBase i
         this.username = data().deepCopy(fields()[2].schema(), other.username);
         fieldSetFlags()[2] = other.fieldSetFlags()[2];
       }
-      if (isValidValue(fields()[3], other.createdDate)) {
-        this.createdDate = data().deepCopy(fields()[3].schema(), other.createdDate);
+      if (isValidValue(fields()[3], other.createdAt)) {
+        this.createdAt = data().deepCopy(fields()[3].schema(), other.createdAt);
         fieldSetFlags()[3] = other.fieldSetFlags()[3];
       }
     }
@@ -291,8 +291,8 @@ public class UserAvroModel extends org.apache.avro.specific.SpecificRecordBase i
         this.username = data().deepCopy(fields()[2].schema(), other.username);
         fieldSetFlags()[2] = true;
       }
-      if (isValidValue(fields()[3], other.createdDate)) {
-        this.createdDate = data().deepCopy(fields()[3].schema(), other.createdDate);
+      if (isValidValue(fields()[3], other.createdAt)) {
+        this.createdAt = data().deepCopy(fields()[3].schema(), other.createdAt);
         fieldSetFlags()[3] = true;
       }
     }
@@ -301,7 +301,7 @@ public class UserAvroModel extends org.apache.avro.specific.SpecificRecordBase i
       * Gets the value of the 'id' field.
       * @return The value.
       */
-    public java.lang.String getId() {
+    public long getId() {
       return id;
     }
 
@@ -311,7 +311,7 @@ public class UserAvroModel extends org.apache.avro.specific.SpecificRecordBase i
       * @param value The value of 'id'.
       * @return This builder.
       */
-    public com.chat.kafka.avro.model.UserAvroModel.Builder setId(java.lang.String value) {
+    public com.chat.kafka.avro.model.UserAvroModel.Builder setId(long value) {
       validate(fields()[0], value);
       this.id = value;
       fieldSetFlags()[0] = true;
@@ -332,7 +332,6 @@ public class UserAvroModel extends org.apache.avro.specific.SpecificRecordBase i
       * @return This builder.
       */
     public com.chat.kafka.avro.model.UserAvroModel.Builder clearId() {
-      id = null;
       fieldSetFlags()[0] = false;
       return this;
     }
@@ -418,41 +417,41 @@ public class UserAvroModel extends org.apache.avro.specific.SpecificRecordBase i
     }
 
     /**
-      * Gets the value of the 'createdDate' field.
+      * Gets the value of the 'createdAt' field.
       * @return The value.
       */
-    public java.lang.Long getCreatedDate() {
-      return createdDate;
+    public java.lang.Long getCreatedAt() {
+      return createdAt;
     }
 
 
     /**
-      * Sets the value of the 'createdDate' field.
-      * @param value The value of 'createdDate'.
+      * Sets the value of the 'createdAt' field.
+      * @param value The value of 'createdAt'.
       * @return This builder.
       */
-    public com.chat.kafka.avro.model.UserAvroModel.Builder setCreatedDate(java.lang.Long value) {
+    public com.chat.kafka.avro.model.UserAvroModel.Builder setCreatedAt(java.lang.Long value) {
       validate(fields()[3], value);
-      this.createdDate = value;
+      this.createdAt = value;
       fieldSetFlags()[3] = true;
       return this;
     }
 
     /**
-      * Checks whether the 'createdDate' field has been set.
-      * @return True if the 'createdDate' field has been set, false otherwise.
+      * Checks whether the 'createdAt' field has been set.
+      * @return True if the 'createdAt' field has been set, false otherwise.
       */
-    public boolean hasCreatedDate() {
+    public boolean hasCreatedAt() {
       return fieldSetFlags()[3];
     }
 
 
     /**
-      * Clears the value of the 'createdDate' field.
+      * Clears the value of the 'createdAt' field.
       * @return This builder.
       */
-    public com.chat.kafka.avro.model.UserAvroModel.Builder clearCreatedDate() {
-      createdDate = null;
+    public com.chat.kafka.avro.model.UserAvroModel.Builder clearCreatedAt() {
+      createdAt = null;
       fieldSetFlags()[3] = false;
       return this;
     }
@@ -462,10 +461,10 @@ public class UserAvroModel extends org.apache.avro.specific.SpecificRecordBase i
     public UserAvroModel build() {
       try {
         UserAvroModel record = new UserAvroModel();
-        record.id = fieldSetFlags()[0] ? this.id : (java.lang.String) defaultValue(fields()[0]);
+        record.id = fieldSetFlags()[0] ? this.id : (java.lang.Long) defaultValue(fields()[0]);
         record.name = fieldSetFlags()[1] ? this.name :  defaultValue(fields()[1]);
         record.username = fieldSetFlags()[2] ? this.username :  defaultValue(fields()[2]);
-        record.createdDate = fieldSetFlags()[3] ? this.createdDate : (java.lang.Long) defaultValue(fields()[3]);
+        record.createdAt = fieldSetFlags()[3] ? this.createdAt : (java.lang.Long) defaultValue(fields()[3]);
         return record;
       } catch (org.apache.avro.AvroMissingFieldException e) {
         throw e;

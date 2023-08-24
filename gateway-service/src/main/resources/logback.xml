@@ -15,24 +15,24 @@
         </layout>
     </appender>
 
-    <appender name="FILE"
-              class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${DEV_HOME}/${APP_NAME}.log</file>
-        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <Pattern>
-                %d{yyyy-MM-dd HH:mm:ss} [%thread] [%X{traceId:-},%X{spanId:-}] %-5level %X{correlationID} %logger{36} -
-                %msg%n
-            </Pattern>
-        </encoder>
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <!-- rollover daily -->
-            <fileNamePattern>${DEV_HOME}/archived/${APP_NAME}-log.%d{yyyy-MM-dd}.%i.log
-            </fileNamePattern>
-            <maxFileSize>10MB</maxFileSize>
-            <maxHistory>60</maxHistory>
-            <totalSizeCap>20GB</totalSizeCap>
-        </rollingPolicy>
-    </appender>
+<!--    <appender name="FILE"-->
+<!--              class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+<!--        <file>${DEV_HOME}/${APP_NAME}.log</file>-->
+<!--        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">-->
+<!--            <Pattern>-->
+<!--                %d{yyyy-MM-dd HH:mm:ss} [%thread] [%X{traceId:-},%X{spanId:-}] %-5level %X{correlationID} %logger{36} - -->
+<!--                %msg%n-->
+<!--            </Pattern>-->
+<!--        </encoder>-->
+<!--        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">-->
+<!--            &lt;!&ndash; rollover daily &ndash;&gt;-->
+<!--            <fileNamePattern>${DEV_HOME}/archived/${APP_NAME}-log.%d{yyyy-MM-dd}.%i.log-->
+<!--            </fileNamePattern>-->
+<!--            <maxFileSize>10MB</maxFileSize>-->
+<!--            <maxHistory>60</maxHistory>-->
+<!--            <totalSizeCap>20GB</totalSizeCap>-->
+<!--        </rollingPolicy>-->
+<!--    </appender>-->
 
     <appender name="STASH" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${DEV_HOME}/logstash/${APP_NAME}.log</file>
@@ -49,13 +49,11 @@
 
 
     <logger name="com.chat" level="info" additivity="false">
-        <appender-ref ref="FILE"/>
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="STASH"/>
     </logger>
 
     <root level="info">
-        <appender-ref ref="FILE"/>
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="STASH"/>
     </root>

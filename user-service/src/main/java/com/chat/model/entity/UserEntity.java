@@ -1,34 +1,30 @@
 package com.chat.model.entity;
 
+import com.chat.model.Role;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-import org.springframework.data.annotation.Transient;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.io.Serializable;
 import java.math.BigInteger;
-import java.util.Set;
 
 @Getter
 @Setter
 @SuperBuilder
-@Table(name = "CHAT_USERS")
-public class UserEntity extends BaseEntity<BigInteger, UserEntity> implements Serializable {
+@Table(name = "chat_users")
+public class UserEntity extends BaseEntity<Long, UserEntity> implements Serializable {
 
-    @Column("USERNAME")
+    @Column
     private String username;
 
-    @Column("NAME")
+    @Column
     private String name;
 
-    @Column("PASSWORD")
+    @Column
     private String password;
 
-    @Column("STATUS")
-    private String status;
-
-    @Transient
-    private Set<RoleEntity> roles;
+    @Column
+    private Role role;
 }

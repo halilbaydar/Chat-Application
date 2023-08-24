@@ -1,10 +1,13 @@
 package com.chat.security;
 
+import com.chat.filter.LoggingFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.web.server.SecurityWebFilterChain;
@@ -27,12 +30,15 @@ public class WebSecurityConfig {
                                 .map(WebSession::invalidate)
                                 .then()))
                 .authorizeExchange()
+                .pathMatchers(HttpMethod.POST,"/v1/register").permitAll()
+                .pathMatchers(HttpMethod.POST,"/login").permitAll()
                 .anyExchange()
                 .authenticated()
                 .and()
+                .addFilterAfter(new LoggingFilter(), SecurityWebFiltersOrder.FIRST)
                 .csrf()
                 .disable()
-                .securityContextRepository(redissonServerSecurityContextRepository)
+//                .securityContextRepository(redissonServerSecurityContextRepository)
                 .build();
     }
 

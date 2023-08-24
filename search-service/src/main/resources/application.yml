@@ -47,3 +47,21 @@ elastic-query-web-client:
     method: POST
     uri: "/get-document-by-text"
     accept: ${elastic-query-web-client.webclient.accept-type}
+
+config:
+  cors:
+    mapping: /**
+    methods: GET, POST, DELETE, PUT
+    allowedCredentials: true
+    origins: http://localhost:3000
+    allowedHeaders:
+      Content-Type, content-type, x-requested-with,
+      Access-Control-Allow-Origin,
+      Access-Control-Allow-Credentials,
+      Access-Control-Allow-Headers,
+      x-auth-token, x-app-id, Origin, Accept,
+      X-Requested-With, Access-Control-Request-Method,
+      Access-Control-Request-Headers, Authorization,
+      Set-Cookie, Cookie
+    exposedHeaders:
+      Authorization, set-cookie

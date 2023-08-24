@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public enum Role {
-    USER, ADMIN, VISITOR;
+    USER;
 
     public List<SimpleGrantedAuthority> getGrantedAuthorities() {
         List<SimpleGrantedAuthority> permissions = new ArrayList<>();

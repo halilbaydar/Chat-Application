@@ -1,14 +1,16 @@
 package com.chat.service;
 
 import com.chat.config.UserLogger;
-import com.chat.constants.UserStatus;
 import com.chat.exception.CustomException;
 import com.chat.interfaces.repository.UserRepository;
 import com.chat.interfaces.service.RegisterService;
+import com.chat.kafka.producer.KafkaProducer;
+import com.chat.model.Role;
 import com.chat.model.entity.UserEntity;
 import com.chat.model.request.RegisterContextRequest;
 import com.chat.model.request.RegisterRequest;
 import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.ThreadContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -26,40 +28,45 @@ public class RegisterServiceImpl implements RegisterService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserLogger LOG;
-    private final UserElasticService userElasticService;
-    private final UserRoleService userRoleService;
+    private final KafkaProducer<UserEntity, Mono<Void>> kafkaUserRegisterEventProducer;
 
     @Override
     @Transactional
     public Mono<String> register(Mono<RegisterRequest> registerRequestMono) {
-        return registerRequestMono
+        var traceId = ThreadContext.get("traceId");
+        var requestContext = registerRequestMono
                 .doOnNext(body -> {
                     LOG.register.info(String.format("User register request with payload: %s", body.toString()));
                 })
-                .map(RegisterContextRequest::new)
+                .map(RegisterContextRequest::new);
+
+        var userExists = requestContext
                 .flatMap(registerContextRequest -> userRepository
                         .existsByUsername(registerContextRequest.getRegisterRequest().getUsername())
                         .doOnNext(registerContextRequest::setExistsByUsername)
                         .thenReturn(registerContextRequest))
                 .filter(registerContextRequest -> !registerContextRequest.getExistsByUsername())
-                .switchIfEmpty(Mono.error(new CustomException(USERNAME_IN_USE, HttpStatus.BAD_REQUEST)))
-                .flatMap(registerContextRequest -> this.userRepository.save(UserEntity.builder()
+                .switchIfEmpty(Mono.error(new CustomException(USERNAME_IN_USE, HttpStatus.BAD_REQUEST)));
+
+        var savedUser = userExists.flatMap(registerContextRequest -> this.userRepository.save(UserEntity.builder()
                                 .username(registerContextRequest.getRegisterRequest().getUsername())
                                 .name(registerContextRequest.getRegisterRequest().getName())
                                 .password(passwordEncoder.encode(registerContextRequest.getRegisterRequest().getPassword()))
-                                .status(UserStatus.ACTIVE.name())
+                                .role(Role.USER)
                                 .build())
                         .map(registerContextRequest::setNewUser)
                         .thenReturn(registerContextRequest))
-                .map(RegisterContextRequest::getNewUser)
-                .flatMap(newUser -> this.userElasticService.send(newUser).thenReturn(newUser)
-                        .flatMap(this.userRoleService::assignBaseRole)).map(senderResult -> SUCCESS)
+                .map(RegisterContextRequest::getNewUser);
+
+        var cachedUser = savedUser.flatMap(newUser -> this.kafkaUserRegisterEventProducer.send(traceId, newUser)
+                        .thenReturn(newUser)).map(senderResult -> SUCCESS)
                 .onErrorResume(Mono::error)
                 .doOnError(ex ->
                         LOG.register.info("User register failed with ex: {}", ex.getMessage(), ex)
-                )
-                .switchIfEmpty(Mono.just(FAILED))
-                .doOnSuccess(s -> LOG.register.info("User register done with message: {}", s))
-                .subscribeOn(Schedulers.boundedElastic());
+                );
+
+        var lastCheck = cachedUser.switchIfEmpty(Mono.just(FAILED))
+                .doOnSuccess(s -> LOG.register.info("User register done with message: {}", s));
+        return lastCheck.subscribeOn(Schedulers.boundedElastic());
     }
 }

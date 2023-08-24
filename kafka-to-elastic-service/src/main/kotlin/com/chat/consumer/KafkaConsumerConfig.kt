@@ -1,6 +1,5 @@
 package com.chat.consumer
 
-import com.chat.kafka.avro.model.UserAvroModel
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.CooperativeStickyAssignor
@@ -24,11 +23,12 @@ class KafkaConsumerConfig {
     private lateinit var userTopic: String
 
     @Bean("user-to-elastic-option")
-    fun receiverOps(kafkaProperties: KafkaProperties): ReceiverOptions<String, UserAvroModel> {
-        return ReceiverOptions.create<String?, UserAvroModel?>(kafkaProperties.buildConsumerProperties())
+    fun receiverOps(kafkaProperties: KafkaProperties): ReceiverOptions<String, String> {
+        return ReceiverOptions.create<String?, String?>(kafkaProperties.buildConsumerProperties())
             .consumerProperty(ConsumerConfig.GROUP_INSTANCE_ID_CONFIG, UUID.randomUUID().toString())
             .consumerProperty(ConsumerConfig.ALLOW_AUTO_CREATE_TOPICS_CONFIG, "false")
             .consumerProperty(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, "true")
+            .consumerProperty(ConsumerConfig.GROUP_ID_CONFIG, "KAFKA_TO_ELASTIC_CONSUMER_GROUP")
             .consumerProperty(
                 ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG,
                 CooperativeStickyAssignor::class.jvmName
@@ -39,17 +39,17 @@ class KafkaConsumerConfig {
 
     @Bean("user-to-elastic")
     fun reactiveKafkaConsumerTemplate(
-        @Qualifier("user-to-elastic-option") receiverOptions: ReceiverOptions<String, UserAvroModel>
+        @Qualifier("user-to-elastic-option") receiverOptions: ReceiverOptions<String, String>
     ):
-            ReactiveKafkaConsumerTemplate<String, UserAvroModel> {
+            ReactiveKafkaConsumerTemplate<String, String> {
         return ReactiveKafkaConsumerTemplate(receiverOptions)
     }
 
     @Bean("user-to-elastic-receiver")
     fun reactiveUserElastic(
-        @Qualifier("user-to-elastic-option") receiverOptions: ReceiverOptions<String, UserAvroModel>
+        @Qualifier("user-to-elastic-option") receiverOptions: ReceiverOptions<String, String>
     ):
-            KafkaReceiver<String, UserAvroModel> {
+            KafkaReceiver<String, String> {
         return KafkaReceiver.create(receiverOptions)
     }
 

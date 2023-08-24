@@ -343,29 +343,13 @@
             <!--	END OF POSTGRESQL	-->
 
             <!--	KAFKA	-->
-            <dependency>
-                <groupId>com.chat</groupId>
-                <artifactId>kafka-producer</artifactId>
-                <version>${project.version}</version>
-            </dependency>
 
             <dependency>
                 <groupId>com.chat</groupId>
-                <artifactId>kafka-admin</artifactId>
+                <artifactId>kafka</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
-            <dependency>
-                <groupId>com.chat</groupId>
-                <artifactId>kafka-model</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.chat</groupId>
-                <artifactId>kafka-consumer</artifactId>
-                <version>${project.version}</version>
-            </dependency>
+            <!--	KAFKA	-->
 
             <dependency>
                 <groupId>io.confluent</groupId>
@@ -403,6 +387,26 @@
             <dependency>
                 <groupId>com.chat</groupId>
                 <artifactId>rabbitmq</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.chat</groupId>
+                <artifactId>kafka-admin</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.chat</groupId>
+                <artifactId>kafka-consumer</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.chat</groupId>
+                <artifactId>kafka-producer</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.chat</groupId>
+                <artifactId>kafka-model</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>

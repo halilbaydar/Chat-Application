@@ -11,5 +11,15 @@ export const NOTIFICATION_QUEUE_CONFIG: RegisterQueueOptions[] = [
             removeOnComplete: true,
             removeOnFail: true,
         },
+    },
+    {
+        name: QueueName.INSTANT_NOTIFICATION_SENDER,
+        sharedConnection: true,
+        prefix: 'ntf:bull',
+        defaultJobOptions: {
+            attempts: 1,
+            removeOnComplete: true,
+            removeOnFail: true,
+        },
     }
 ]

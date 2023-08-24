@@ -1,41 +1,23 @@
 package com.chat.service
 
-import com.chat.kafka.avro.model.UserAvroModel
 import com.chat.model.UserElasticEntity
+import com.chat.model.UserModel
 import org.springframework.data.elasticsearch.core.ReactiveElasticsearchOperations
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import java.util.*
+import java.time.LocalDateTime
 
 @Service
 class ElasticClientService(
-        private val reactiveElasticsearchOperations: ReactiveElasticsearchOperations,
+    private val reactiveElasticsearchOperations: ReactiveElasticsearchOperations,
 ) {
-
-    fun save(user: UserAvroModel): Mono<Void> {
-        return this.reactiveElasticsearchOperations.save(
-                UserElasticEntity
-                        .builder()
-                        .username(user.username.toString())
-                        .id(user.id)
-                        .name(user.name.toString())
-                        .createdDate(Date(user.createdDate))
-                        .build())
-                .then()
-    }
-
-    fun saveAll(list: List<UserAvroModel>): Flux<UserElasticEntity> {
+    fun saveAll(list: List<UserModel>): Flux<UserElasticEntity> {
         return this.reactiveElasticsearchOperations.saveAll(
-                Mono.just(list.map { user ->
-                    UserElasticEntity
-                            .builder()
-                            .username(user.username.toString())
-                            .id(user.id)
-                            .name(user.name.toString())
-                            .createdDate(Date(user.createdDate))
-                            .build()
-                }), UserElasticEntity::class.java
+            Mono.just(list.map { user ->
+                UserElasticEntity.builder().username(user.username).id(user.id).name(user.name)
+                    .createdAt(user.createdAt).build()
+            }), UserElasticEntity::class.java
         )
     }
 }

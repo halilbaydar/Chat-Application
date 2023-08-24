@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 public class RegisterContextRequest {
     private RegisterRequest registerRequest;
-    private Boolean existsByUsername;
+    private Boolean existsByUsername = Boolean.FALSE;
     private UserEntity newUser;
 
     public RegisterContextRequest(RegisterRequest registerRequest) {

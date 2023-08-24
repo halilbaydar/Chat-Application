@@ -2,9 +2,9 @@
   "type": "record",
   "name": "UserAvroModel",
   "fields": [
-    {"name": "id", "type": "string"},
+    {"name": "id", "type": "long"},
     {"name": "name", "type": ["string"]},
     {"name": "username", "type": ["string"]},
-    {"name": "createdDate", "type": ["null", "long"], "logicalType": ["null", "date"]}
+    {"name": "createdAt", "type": ["null", "long"], "logicalType": ["null", "date"]}
   ]
 }

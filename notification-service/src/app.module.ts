@@ -5,21 +5,16 @@ import {ModuleWorkflow} from "./modules/workflow/module.workflow";
 import {createRedisConnection} from "./modules/caching/redis.utils";
 import {BullModule} from "@nestjs/bullmq";
 import ModuleDatabase from "./modules/database/module.database";
-import {NotificationModule} from "./modules/notification/notification.module";
 import {OnesignalModule} from "./modules/onesignal/onesignal.module";
 import {RedisModule} from "./modules/caching/io.redis.module";
 import {EurekaModule} from "nestjs-eureka";
-import {WORKFLOW_CONFIG} from "./modules/workflow/core/queue.configs";
+import {ClientKafkaModule} from "./modules/kafka/kafka.module";
 
 @Module({
     imports: [...ModuleDatabase,
-        OnesignalModule.register({
-            appId: process.env.NOTIFICATION_APP_ID,
-            restApiKey: process.env.NOTIFICATION_API_KEY
-        }),
         RedisModule.forRoot(createRedisConnection({config: null, bullmq: false})),
-        NotificationModule,
         ModuleWorkflow,
+        OnesignalModule,
         BullModule.forRoot({
             defaultJobOptions: {
                 backoff: 5,
@@ -30,8 +25,8 @@ import {WORKFLOW_CONFIG} from "./modules/workflow/core/queue.configs";
         }),
         EurekaModule.forRoot({
             eureka: {
-                host: 'localhost',
-                port: 80,
+                host: process.env.EUREKA_HOST,
+                port: process.env.EUREKA_PORT,
                 registryFetchInterval: 60 * 1000,
                 servicePath: '/eureka/apps',
                 maxRetries: 3,
@@ -41,6 +36,7 @@ import {WORKFLOW_CONFIG} from "./modules/workflow/core/queue.configs";
                 port: Number(process.env.PORT || 90),
             },
         }),
+        ClientKafkaModule
     ],
     controllers: [AppController],
     providers: [AppService],

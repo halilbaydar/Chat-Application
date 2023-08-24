@@ -14,7 +14,7 @@ public class ElasticIndexUtil<T extends UserElasticEntity> {
     public List<IndexQuery> getIndexQueries(List<T> documents) {
         return documents.stream()
                 .map(document -> new IndexQueryBuilder()
-                        .withId(document.getId())
+                        .withId(document.getId().toString())
                         .withObject(document)
                         .build()
                 ).collect(Collectors.toList());
