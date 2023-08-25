@@ -68,22 +68,22 @@
 
     <!-- -->
 
-    <appender name="STASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
-        <param name="Encoding" value="UTF-8"/>
-        <addDefaultStatusListener>false</addDefaultStatusListener>
-        <destination>localhost:5000</destination>
-        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
-            <providers>
-                <pattern>
-                    <omitEmptyFields>true</omitEmptyFields>
-                    <Pattern>
-                        %d{yyyy-MM-dd HH:mm:ss} [%thread] [%X{traceId:-},%X{spanId:-}] %-5level %X{correlationID} %logger{36} -
-                        %msg%n
-                    </Pattern>
-                </pattern>
-            </providers>
-        </encoder>
-    </appender>
+<!--    <appender name="STASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">-->
+<!--        <param name="Encoding" value="UTF-8"/>-->
+<!--        <addDefaultStatusListener>false</addDefaultStatusListener>-->
+<!--        <destination>localhost:5000</destination>-->
+<!--        <encoder class="net.logstash.logback.encoder.LogstashEncoder">-->
+<!--            <providers>-->
+<!--                <pattern>-->
+<!--                    <omitEmptyFields>true</omitEmptyFields>-->
+<!--                    <Pattern>-->
+<!--                        %d{yyyy-MM-dd HH:mm:ss} [%thread] [%X{traceId:-},%X{spanId:-}] %-5level %X{correlationID} %logger{36} - -->
+<!--                        %msg%n-->
+<!--                    </Pattern>-->
+<!--                </pattern>-->
+<!--            </providers>-->
+<!--        </encoder>-->
+<!--    </appender>-->
 
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
@@ -135,18 +135,15 @@
 
     <root level="info">
         <appender-ref ref="STDOUT"/>
-        <appender-ref ref="STASH"/>
 <!--        <appender-ref ref="FILE"/>-->
     </root>
 
     <logger name="register" level="ERROR">
-        <appender-ref ref="STASH"/>
         <appender-ref ref="STDOUT"/>
 <!--        <appender-ref ref="FILE"/>-->
     </logger>
 
     <logger name="register" level="INFO">
-        <appender-ref ref="STASH"/>
         <appender-ref ref="STDOUT"/>
 <!--        <appender-ref ref="FILE"/>-->
     </logger>

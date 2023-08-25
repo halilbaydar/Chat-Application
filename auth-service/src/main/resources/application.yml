@@ -56,3 +56,21 @@ retryConfig:
   multiplier: 1
   maxAttempts: 10
   sleepTimeMs: 100
+
+config:
+  cors:
+    mapping: /**
+    methods: GET, POST, DELETE, PUT
+    allowedCredentials: true
+    origins: http://localhost:3001
+    allowedHeaders:
+      Content-Type, content-type, x-requested-with,
+      Access-Control-Allow-Origin,
+      Access-Control-Allow-Credentials,
+      Access-Control-Allow-Headers,
+      x-auth-token, x-app-id, Origin, Accept,
+      X-Requested-With, Access-Control-Request-Method,
+      Access-Control-Request-Headers, Authorization,
+      Set-Cookie, Cookie
+    exposedHeaders:
+      Authorization, set-cookie

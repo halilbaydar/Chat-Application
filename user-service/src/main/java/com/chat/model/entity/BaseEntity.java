@@ -1,6 +1,7 @@
 package com.chat.model.entity;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.CreatedDate;
@@ -14,7 +15,8 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @SuperBuilder
-public abstract class BaseEntity<ID extends Serializable, T extends BaseEntity> {
+@NoArgsConstructor
+public abstract class BaseEntity<ID extends Serializable> {
 
     @Id
     @Column

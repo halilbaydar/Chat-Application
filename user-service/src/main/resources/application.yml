@@ -132,7 +132,7 @@ config:
     mapping: /**
     methods: GET, POST, DELETE, PUT
     allowedCredentials: true
-    origins: http://localhost:3000
+    origins: http://localhost:3001
     allowedHeaders:
       Content-Type, content-type, x-requested-with,
       Access-Control-Allow-Origin,

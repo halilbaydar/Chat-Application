@@ -1,14 +1,14 @@
 package com.chat.interfaces.service;
 
-import com.chat.model.dto.UserResponse;
+import com.chat.model.view.UserView;
 import org.springframework.security.core.userdetails.UserDetails;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface UserService {
-    Mono<UserResponse> getUser();
+    Mono<UserView> getUser();
 
-    Flux<UserResponse> getUsers();
+    Flux<UserView> getUsers();
 
     Mono<UserDetails> loadUserDetails(String username);
 }

@@ -1,4 +1,4 @@
-package com.chat.model.dto;
+package com.chat.model.view;
 
 import org.springframework.security.core.GrantedAuthority;
 

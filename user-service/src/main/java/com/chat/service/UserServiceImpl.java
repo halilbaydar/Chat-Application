@@ -2,7 +2,7 @@ package com.chat.service;
 
 import com.chat.interfaces.repository.UserRepository;
 import com.chat.interfaces.service.UserService;
-import com.chat.model.dto.UserResponse;
+import com.chat.model.view.UserView;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,16 +16,16 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-//    private final RoutingKeyUsersConsumer routingKeyUsersConsumer;
+    //    private final RoutingKeyUsersConsumer routingKeyUsersConsumer;
 
     @Override
-    public Mono<UserResponse> getUser() {
+    public Mono<UserView> getUser() {
         return ReactiveSecurityContextHolder.getContext().flatMap(securityContext ->
                 userRepository.findByUsername((String) securityContext.getAuthentication().getPrincipal()));
     }
 
     @Override
-    public Flux<UserResponse> getUsers() {
+    public Flux<UserView> getUsers() {
         return userRepository.findAllByCreatedAtLessThanEqual(LocalDateTime.now());
     }
 

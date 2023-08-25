@@ -1,6 +1,6 @@
 package com.chat.interfaces.controller;
 
-import com.chat.model.dto.UserResponse;
+import com.chat.model.view.UserView;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,7 +13,7 @@ public interface UserController {
 
     @GetMapping("/user")
     @PreAuthorize("hashRole('USER')")
-    Mono<UserResponse> getUser();
+    Mono<UserView> getUser();
 
     //    @Operation(summary = "Get All users.")
 //    @ApiResponses(value = {
@@ -26,5 +26,5 @@ public interface UserController {
 //            @ApiResponse(responseCode = "500", description = "Internal server error.")
 //    })
     @GetMapping("/user/users")
-    Flux<UserResponse> getUsers();
+    Flux<UserView> getUsers();
 }

@@ -1,6 +1,7 @@
 package com.chat;
 
 import com.chat.client.ChatKafkaAdminClient;
+import com.chat.interfaces.repository.UserRepository;
 import com.chat.kafka.producer.impl.KafkaUserRegisterEventProducer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,7 @@ import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 public class UserServiceApplication implements CommandLineRunner {
     private final ChatKafkaAdminClient chatKafkaAdminClient;
     private final KafkaUserRegisterEventProducer kafkaProducer;
+    private final UserRepository userRepository;
 
     public static void main(String[] args) {
         SpringApplication.run(UserServiceApplication.class, args);

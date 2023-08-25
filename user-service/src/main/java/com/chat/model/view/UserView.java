@@ -1,8 +1,8 @@
-package com.chat.model.dto;
+package com.chat.model.view;
 
 import java.time.LocalDateTime;
 
-public interface UserResponse {
+public interface UserView {
 
     Long getId();
 
