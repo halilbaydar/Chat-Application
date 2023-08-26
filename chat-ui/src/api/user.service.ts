@@ -20,7 +20,7 @@ export default class UserService {
             })
             return data;
         } catch (err: any) {
-            log.error("Failed to refresh access token", err)
+            log.error("Failed to register", err)
             throw err;
         }
     }
@@ -28,7 +28,7 @@ export default class UserService {
     public async getUser(): Promise<IUser | undefined> {
         try {
             const {data} = await instance.get("/user")
-            return data as IUser;
+            return data
         } catch (err) {
             log.error("Failed to get user from server", err)
             throw err

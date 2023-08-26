@@ -30,6 +30,8 @@ eureka:
     lease-renewal-interval-in-seconds: 2
 
 management:
+  server:
+    port: 89
   endpoints:
     web:
       base-path: /actuator

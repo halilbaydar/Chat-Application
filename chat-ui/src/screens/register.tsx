@@ -63,7 +63,7 @@ export default function Register(): JSX.Element {
                     htmlType="submit"
                     loading={loading}
                 >
-                    Login
+                    Register
                 </Button>
             </Form.Item>
         </Form>

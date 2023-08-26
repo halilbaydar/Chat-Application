@@ -8,7 +8,8 @@ instance.interceptors.response.use(value => {
     return value;
 }, async (error: AxiosError) => {
     if ([401, 403].includes(error.status || 200)) {
-        await authService.refreshLogin()
+        // await authService.refreshLogin()
+        console.log({error})
     }
     return error;
 })

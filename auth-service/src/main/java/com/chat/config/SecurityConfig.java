@@ -55,12 +55,10 @@ public class SecurityConfig {
                                             UserDetailsService userDetailService)
             throws Exception {
         return http
-                .cors()
-                .and()
                 .csrf()
                 .disable()// TODO: Enable this in production
                 .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(
                         jwtConfig,
@@ -69,7 +67,7 @@ public class SecurityConfig {
                                 bCryptPasswordEncoder,
                                 userDetailService)))
                 .authorizeRequests()
-                .antMatchers("/v1/register/**", "/swagger-ui/**", "/ws/**", "/app/**", "/login/***")
+                .antMatchers( "/swagger-ui/**", "/ws/**", "/app/**", "/login/***")
                 .permitAll()
                 .antMatchers("/user/**")
                 .fullyAuthenticated()
@@ -84,7 +82,7 @@ public class SecurityConfig {
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().antMatchers("/v1/register/**", "/ws/**", "/app/**");
+        return (web) -> web.ignoring().antMatchers("/ws/**", "/app/**");
     }
 
     @Bean

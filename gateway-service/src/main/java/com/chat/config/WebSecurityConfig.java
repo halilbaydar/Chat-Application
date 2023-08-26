@@ -17,14 +17,8 @@ public class WebSecurityConfig {
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
         return http
                 .authorizeExchange()
-                .anyExchange()
-                .permitAll()
-                .and()
-                .csrf()
-                .disable()
-                .cors(corsSpec -> {
-                    corsSpec.disable();
-                })
+                .anyExchange().permitAll().and()
+                .csrf().disable()
                 .build();
     }
 }

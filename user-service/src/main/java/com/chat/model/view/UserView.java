@@ -11,4 +11,8 @@ public interface UserView {
     String getUsername();
 
     String getName();
+
+    String getPassword();
+
+    String getRole();
 }

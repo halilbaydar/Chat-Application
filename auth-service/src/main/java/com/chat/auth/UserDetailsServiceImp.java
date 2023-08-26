@@ -1,10 +1,8 @@
 package com.chat.auth;
 
-import com.chat.model.dto.RoleDto;
 import com.chat.model.dto.UserDto;
 import com.chat.service.RabbitUserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,8 +11,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -40,15 +36,8 @@ public class UserDetailsServiceImp implements UserDetailsService, Serializable {
             throw new RuntimeException(USER_NOT_EXIST);
         }
 
-        var roles = attemptedUser.getRoles().stream();
-        var permissions = roles.map(RoleDto::getPermissions).flatMap(Collection::stream);
-
-        List<SimpleGrantedAuthority> authorities = Stream.concat(roles, permissions)
-                .map(GrantedAuthority::getAuthority)
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
-
-        return new User(attemptedUser.getUsername(), attemptedUser.getPassword(), authorities);
+        return new User(attemptedUser.getUsername(), attemptedUser.getPassword(), Stream.of(attemptedUser.getRole())
+                .map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
     }
 }
 

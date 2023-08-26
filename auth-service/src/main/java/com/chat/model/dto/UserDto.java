@@ -9,7 +9,7 @@ import java.util.Set;
 @Setter
 public class UserDto {
     private String username;
-    private Set<RoleDto> roles;
+    private String role;
     private String status;
     private String password;
 }

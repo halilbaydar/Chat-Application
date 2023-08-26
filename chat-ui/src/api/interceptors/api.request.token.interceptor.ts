@@ -6,5 +6,6 @@ instance.interceptors.request.use(async (options: InternalAxiosRequestConfig<unk
     if (token) {
         options.headers.Authorization = `Bearer ${token}`;
     }
+    options.headers["Access-Control-Allow-Origin"] = true
     return options;
 });
