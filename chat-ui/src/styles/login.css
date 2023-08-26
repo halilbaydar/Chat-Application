@@ -1,4 +1,4 @@
-.LoginContainer{
+.LoginContainer {
     max-width: 400px;
     max-height: 400px;
     background-color: #fff;
@@ -11,8 +11,4 @@
     border-radius: 10px;
     text-align: center;
     border: 2px solid black
-}
-
-.LoginHeader{
-
 }
