@@ -1,8 +1,8 @@
 import {instance} from "../axios.factory";
 import {AxiosError} from "axios";
-import AuthService from "../auth.service";
+import AuthApi from "../apis/auth.api";
 
-const authService = AuthService.getInstance()
+const authService = AuthApi.getInstance()
 
 instance.interceptors.response.use(value => {
     return value;

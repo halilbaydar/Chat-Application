@@ -4,7 +4,7 @@ import {Button, Form, Input, message} from "antd";
 import {LockOutlined, UserOutlined} from "@ant-design/icons";
 import {useNavigate} from "react-router-dom";
 import ChatHeader from "../components/chat.header.component";
-import AuthService from "../api/auth.service";
+import AuthApi from "../api/apis/auth.api";
 
 interface LoginFormValues {
     username: string,
@@ -14,7 +14,7 @@ interface LoginFormValues {
 export default function Login(): JSX.Element {
     const [loading, setLoading] = useState(false)
     const navigate = useNavigate()
-    const authService = AuthService.getInstance();
+    const authService = AuthApi.getInstance();
 
     const onFinish = (values: LoginFormValues) => {
         setLoading(true)

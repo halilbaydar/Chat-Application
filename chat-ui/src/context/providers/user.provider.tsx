@@ -1,5 +1,5 @@
 import {ReactComponentElement, useEffect, useMemo, useState} from "react";
-import UserService from "../../api/user.service";
+import UserApi from "../../api/apis/user.api";
 import {IUser} from "../../models/req/user";
 import {NewContext} from "../new.context";
 import {useNavigate} from "react-router-dom";
@@ -11,7 +11,7 @@ const DefaultUser: IUser = {id: "", name: "", username: ""}
 export const UserProvider = ({children}: { children: ReactComponentElement<any> }) => {
     const [user, setUser] = useState<IUser>(DefaultUser)
     const [userList, setUserList] = useState<Array<IUser>>([])
-    const userService = UserService.getInstance()
+    const userService = UserApi.getInstance()
     const userNavigator = useNavigate()
 
     useEffect(() => {

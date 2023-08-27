@@ -1,19 +1,19 @@
-import {instance} from "./axios.factory";
-import {chatStorage} from "../service/storage/chat.storage";
-import {ACCESS_TOKEN, USER} from "./api.constants";
-import {IUser} from "../models/req/user";
-import log from "../utils/logger";
-import {LoginReq} from "../models/req/login.req";
-import {ErrorMessages} from "../constants/error.constant";
+import {instance} from "../axios.factory";
+import {chatStorage} from "../../service/storage/chat.storage";
+import {ACCESS_TOKEN, USER} from "../api.constants";
+import {IUser} from "../../models/req/user";
+import log from "../../utils/logger";
+import {LoginReq} from "../../models/req/login.req";
+import {ErrorMessages} from "../../constants/error.constant";
 
-export default class AuthService {
-    private static autService: AuthService | undefined;
+export default class AuthApi {
+    private static autService: AuthApi | undefined;
 
     public static getInstance() {
-        if (!AuthService.autService) {
-            AuthService.autService = new AuthService();
+        if (!AuthApi.autService) {
+            AuthApi.autService = new AuthApi();
         }
-        return AuthService.autService;
+        return AuthApi.autService;
     }
 
     public async login({username, password}: LoginReq): Promise<string | undefined> {

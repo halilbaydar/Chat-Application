@@ -11,6 +11,8 @@ import {v4 as uuid} from 'uuid';
 import {isNotEmpty} from "../utils/string.util";
 import ChatTyping from "../components/chat.typing";
 import ChatMessages from "../components/chat.messages";
+import {useDispatch, useSelector} from "react-redux";
+import {CURRENT_ACTIVE_CHAT} from "../context/saga.reducers.ts/chat.app.reducer";
 
 const profilePic =
     "https://static.vecteezy.com/system/resources/previews/002/318/271/original/user-profile-icon-free-vector.jpg";
@@ -33,12 +35,16 @@ export default function Chat(props: React.HTMLProps<any>): JSX.Element {
     const [messages, setMessages] = useState<Array<IMessage>>([])
     const [typing, setTyping] = useState(true)
 
+    const currentChat = useSelector((state: any) => state.chatReducer.activeChat)
+    const dispatch = useDispatch()
+
     const [form] = Form.useForm();
 
     const openChat = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, chat: IUser) => {
         event.preventDefault();
         setActiveChat(chat)
         setMessages([])
+        dispatch({type: CURRENT_ACTIVE_CHAT, payload: activeChat})
     }
 
     const handleSendMessage = (e: FormEvent<HTMLElement>) => {

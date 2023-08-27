@@ -5,12 +5,12 @@ import {Button, Form, Input, message} from "antd";
 import {LockOutlined, UserOutlined} from "@ant-design/icons";
 import {RegisterReq} from "../models/req/register.req";
 import {useNavigate} from "react-router-dom";
-import UserService from "../api/user.service";
+import UserApi from "../api/apis/user.api";
 
 export default function Register(): JSX.Element {
     const [loading, setLoading] = useState(false)
     const navigate = useNavigate()
-    const userService = UserService.getInstance();
+    const userService = UserApi.getInstance();
 
     const onFinish = (values: RegisterReq) => {
         setLoading(true)
