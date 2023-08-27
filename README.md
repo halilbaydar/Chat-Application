@@ -43,15 +43,16 @@ to run tests and create docker images
 ```shell
 docker-compose up 
 ```
+# Chat Application UI
 
-### API
-* Api Gateway port: **9092**
-* RabbitMQ port: **15672**
-* Zipkin Port: **9411**
-* Eureka Service Port: **8761**
-* Prometheus Port: **3000**
-* Grafana Port: **9090**
-* Kibana Port: **5601**
+# Login Page
+![Login](https://github.com/halilbaydar/Chat-Application-Client-Side/blob/master/images/login.png)
+
+# Register Page
+![Register](https://github.com/halilbaydar/Chat-Application-Client-Side/blob/master/images/Screen%20Shot%202023-01-14%20at%2017.23.30.png)
+
+# Chat Page
+![Chat](https://github.com/halilbaydar/Chat-Application-Client-Side/blob/master/images/chat.png)
 
 ### Backlog
 * Kafka streams, analytics and kraft mode
