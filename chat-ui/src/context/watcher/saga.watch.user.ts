@@ -1,6 +1,6 @@
 import {call, put} from 'redux-saga/effects'
 import UserApi from "../../api/apis/user.api";
-import {SET_ACTIVE_USER} from "../saga.reducers.ts/chat.user.reducer";
+import {SET_ACTIVE_USER} from "../sagaReducers/chat.user.reducer";
 
 export function* getActiveUser(action: any): any {
     const userService = UserApi.getInstance();

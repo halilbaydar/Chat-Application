@@ -1,5 +1,5 @@
 import {all, fork, takeLatest} from "redux-saga/effects";
-import {ALL_ACTIVE_CHATS, CURRENT_ACTIVE_CHAT} from "../saga.reducers.ts/chat.app.reducer";
+import {ALL_ACTIVE_CHATS, CURRENT_ACTIVE_CHAT} from "../sagaReducers/chat.app.reducer";
 import {getAllChats, getChatDetail} from "../watcher/saga.watch.chat";
 
 function* getAllActiveChatsSaga() {

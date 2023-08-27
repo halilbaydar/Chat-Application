@@ -1,5 +1,5 @@
 import {fork, takeLatest} from "redux-saga/effects";
-import {SET_ACTIVE_USER} from "../saga.reducers.ts/chat.user.reducer";
+import {SET_ACTIVE_USER} from "../sagaReducers/chat.user.reducer";
 import {getActiveUser} from "../watcher/saga.watch.user";
 import {all} from "axios";
 

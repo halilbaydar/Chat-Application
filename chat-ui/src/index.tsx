@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './styles/index.css';
 import App from './App';
 import {Provider} from "react-redux";
-import {ChatStore} from "./context/saga.reducers.ts/root.reducer";
+import {ChatStore} from "./context/sagaReducers/root.reducer";
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(<Provider store={ChatStore}>

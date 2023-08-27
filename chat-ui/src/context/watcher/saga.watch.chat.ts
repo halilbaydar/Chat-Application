@@ -6,7 +6,7 @@ import {
     FETCH_ALL_ACTIVE_CHATS_FAILED,
     FETCH_CURRENT_ACTIVE_CHAT_FAILED,
     GetActiveChatAction
-} from "../saga.reducers.ts/chat.app.reducer";
+} from "../sagaReducers/chat.app.reducer";
 
 export function* getAllChats(action: any): any {
     const chatApi = ChatApi.getInstance();

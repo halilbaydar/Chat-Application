@@ -12,7 +12,7 @@ import {isNotEmpty} from "../utils/string.util";
 import ChatTyping from "../components/chat.typing";
 import ChatMessages from "../components/chat.messages";
 import {useDispatch, useSelector} from "react-redux";
-import {CURRENT_ACTIVE_CHAT} from "../context/saga.reducers.ts/chat.app.reducer";
+import {CURRENT_ACTIVE_CHAT} from "../context/sagaReducers/chat.app.reducer";
 
 const profilePic =
     "https://static.vecteezy.com/system/resources/previews/002/318/271/original/user-profile-icon-free-vector.jpg";

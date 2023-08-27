@@ -1,8 +1,7 @@
-import {combineReducers} from "redux";
 import {chatReducer} from "./chat.app.reducer";
 import {chatUserReducer} from "./chat.user.reducer";
 import createSagaMiddleware from "redux-saga";
-import {configureStore} from "@reduxjs/toolkit";
+import {combineReducers, configureStore} from "@reduxjs/toolkit";
 import rootSaga from "../sagas/saga.root";
 
 const reducers = combineReducers({

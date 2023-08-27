@@ -1,6 +1,6 @@
 import React, {createContext, JSX, useContext, useReducer} from "react";
 import {Action} from "./action";
-import {chatReducer} from "./saga.reducers.ts/chat.app.reducer";
+import {chatReducer} from "./sagaReducers/chat.app.reducer";
 
 const ChatContext = createContext<{ state: any, dispatch: React.Dispatch<Action> } | null>(null)
 
