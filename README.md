@@ -46,13 +46,13 @@ docker-compose up
 # Chat Application UI
 
 # Login Page
-![Login](https://github.com/halilbaydar/Chat-Application-Client-Side/blob/master/images/login.png)
+![Login](https://github.com/halilbaydar/Chat-Application/assets/48048893/1c765312-2cde-41b4-bdd2-0b9f3389b872)
 
 # Register Page
-![Register](https://github.com/halilbaydar/Chat-Application-Client-Side/blob/master/images/Screen%20Shot%202023-01-14%20at%2017.23.30.png)
+![Register](https://github.com/halilbaydar/Chat-Application/assets/48048893/24593b23-45f7-4a95-977a-d87ed8eb8445)
 
 # Chat Page
-![Chat](https://github.com/halilbaydar/Chat-Application-Client-Side/blob/master/images/chat.png)
+![Chat](https://github.com/halilbaydar/Chat-Application/assets/48048893/da0a1a1f-1164-4f32-a3b0-d48bb87d384d)
 
 ### Backlog
 * Kafka streams, analytics and kraft mode
