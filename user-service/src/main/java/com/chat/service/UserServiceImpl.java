@@ -4,13 +4,17 @@ import com.chat.interfaces.repository.UserRepository;
 import com.chat.interfaces.service.UserService;
 import com.chat.model.view.UserView;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +35,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Mono<UserDetails> loadUserDetails(String username) {
-        return null;
+        var user = userRepository.findByUsername(username);
+        return user.map(userView -> new User(
+                username, userView.getPassword(), Stream.of(userView.getRole())
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList())
+        ));
     }
 }

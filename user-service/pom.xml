@@ -51,11 +51,6 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
         </dependency>
-        <!--        <dependency>-->
-        <!--            <groupId>javax.validation</groupId>-->
-        <!--            <artifactId>validation-api</artifactId>-->
-        <!--            <version>2.0.1.Final</version>-->
-        <!--        </dependency>-->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>r2dbc-postgresql</artifactId>
@@ -68,7 +63,6 @@
         <!--	END OF POSTGRESQL	-->
 
         <!--	KAFKA	-->
-
         <dependency>
             <groupId>com.chat</groupId>
             <artifactId>kafka-model</artifactId>
@@ -82,10 +76,6 @@
             <artifactId>rabbitmq</artifactId>
         </dependency>
         <!--	KAFKA	-->
-        <!--        <dependency>-->
-        <!--            <groupId>org.springdoc</groupId>-->
-        <!--            <artifactId>springdoc-openapi-ui</artifactId>-->
-        <!--        </dependency>-->
         <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
@@ -121,11 +111,6 @@
             </exclusions>
         </dependency>
         <!-- REDIS -->
-        <!--        <dependency>-->
-        <!--            <groupId>com.chat</groupId>-->
-        <!--            <artifactId>rabbitmq</artifactId>-->
-        <!--        </dependency>-->
-
         <!-- TEST -->
         <dependency>
             <groupId>org.mockito</groupId>

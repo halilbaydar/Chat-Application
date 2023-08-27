@@ -7,11 +7,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@PreAuthorize("isAuthenticated()")
-@RequestMapping(path = "/v1")
 public interface UserController {
 
-    @GetMapping("/user")
+    @GetMapping("/v1/user/user")
     @PreAuthorize("hashRole('USER')")
     Mono<UserView> getUser();
 
@@ -25,6 +23,7 @@ public interface UserController {
 //            @ApiResponse(responseCode = "404", description = "Bad request."),
 //            @ApiResponse(responseCode = "500", description = "Internal server error.")
 //    })
-    @GetMapping("/user/users")
+//    @PreAuthorize("hashRole('USER')")
+    @GetMapping("/v1/user/list")
     Flux<UserView> getUsers();
 }

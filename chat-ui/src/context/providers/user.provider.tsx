@@ -1,13 +1,15 @@
-import {ReactComponentElement, useContext, useEffect, useMemo, useState} from "react";
+import {ReactComponentElement, useEffect, useMemo, useState} from "react";
 import UserService from "../../api/user.service";
 import {IUser} from "../../models/req/user";
 import {NewContext} from "../new.context";
 import {useNavigate} from "react-router-dom";
 
-export const [UserContext, useUser] = NewContext<{ user: IUser | undefined, userList: Array<IUser> }>()
+export const [UserContext, useUser] = NewContext<{ user: IUser, userList: Array<IUser> }>()
+
+const DefaultUser: IUser = {id: "", name: "", username: ""}
 
 export const UserProvider = ({children}: { children: ReactComponentElement<any> }) => {
-    const [user, setUser] = useState<IUser>()
+    const [user, setUser] = useState<IUser>(DefaultUser)
     const [userList, setUserList] = useState<Array<IUser>>([])
     const userService = UserService.getInstance()
     const userNavigator = useNavigate()
@@ -18,11 +20,11 @@ export const UserProvider = ({children}: { children: ReactComponentElement<any> 
                 if (user) {
                     setUser(user)
                 } else {
-                    userNavigator("/login")
+                    // userNavigator("/login")
                 }
             })
             .catch(err => {
-                userNavigator("/login")
+                // userNavigator("/login")
             })
     })
 
@@ -36,7 +38,7 @@ export const UserProvider = ({children}: { children: ReactComponentElement<any> 
                 }
             })
             .catch(err => {
-                userNavigator("/login")
+                // userNavigator("/login")
             })
     })
 
@@ -50,4 +52,52 @@ export const UserProvider = ({children}: { children: ReactComponentElement<any> 
     </UserContext.Provider>
 }
 
-export const UseUserContext = () => useContext(UserContext)
+// export const UseUserContextProvider = () => useContext(UserContext)
+export const UseUserContextProvider = () => ({
+    user: {
+        id: "1",
+        name: "halil",
+        username: "halil",
+    },
+    userList: [{
+        id: "2",
+        name: "veli",
+        username: "veli"
+    },
+        {
+            id: "3",
+            name: "meli",
+            username: "meli"
+        },
+        {
+            id: "4",
+            name: "meli",
+            username: "meli"
+        },
+        {
+            id: "5",
+            name: "meli",
+            username: "meli"
+        }, {
+            id: "5",
+            name: "meli",
+            username: "meli"
+        }, {
+            id: "6",
+            name: "meli",
+            username: "meli"
+        }, {
+            id: "7",
+            name: "meli",
+            username: "meli"
+        }, {
+            id: "8",
+            name: "meli",
+            username: "meli"
+        }, {
+            id: "9",
+            name: "meli",
+            username: "meli"
+        }
+    ]
+})

@@ -47,19 +47,10 @@ public class SecurityConfig {
     @Bean
     protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
         return http
-                .sessionManagement(sessionConfig -> sessionConfig
-                        .sessionFixation(SessionManagementConfigurer.SessionFixationConfigurer::changeSessionId)
-                        .maximumSessions(1)
-                        .maxSessionsPreventsLogin(true)
-                ).cors()
-                .and()
                 .csrf()
                 .disable()// TODO: Enable this in production
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 .and()
-                .securityContext(contextConfigurer -> {
-                    contextConfigurer.securityContextRepository(chatSecurityContextRepository);
-                })
                 .addFilterBefore(new PreAuthenticationFilter(), PreAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/swagger-ui/**", "/ws/**", "/app/**").permitAll()

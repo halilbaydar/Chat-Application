@@ -1,4 +1,4 @@
-package com.chat.security;
+package com.chat.filter;
 
 import lombok.NonNull;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
