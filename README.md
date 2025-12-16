@@ -58,4 +58,4 @@ docker-compose up
 * Kafka streams, analytics and kraft mode
 * Golang support with one service
 * Group messaging
-* Video messaging with FTP server
+* Video messaging
